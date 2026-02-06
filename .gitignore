@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+test-ledger/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Anchor
+.anchor/
+target/
+**/*.rs.bk
+
+# Misc
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env*.local
+
+# Vercel
+.vercel
+
+# IDE
+.vscode/
+.idea/
+*.iml

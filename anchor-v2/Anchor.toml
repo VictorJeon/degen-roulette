@@ -1,0 +1,19 @@
+[toolchain]
+anchor_version = "0.31.1"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+degen_roulette_v2 = "DoyhYB794FiGVpJrhJsSaUeWieWHBHmJRUYeiPwfwwx7"
+
+[programs.devnet]
+degen_roulette_v2 = "DoyhYB794FiGVpJrhJsSaUeWieWHBHmJRUYeiPwfwwx7"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "~/.config/solana/degen-roulette.json"

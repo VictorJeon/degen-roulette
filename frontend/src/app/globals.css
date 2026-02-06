@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .scanline {
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(0, 245, 255, 0.02) 50%
+    );
+    background-size: 100% 4px;
+    animation: scanline 8s linear infinite;
+  }
+
+  @keyframes scanline {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 0 100%;
+    }
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+
+  .neon-border {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor,
+      inset 0 0 5px currentColor;
+  }
+}
