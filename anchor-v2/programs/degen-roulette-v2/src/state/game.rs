@@ -22,8 +22,10 @@ impl GameState {
     pub const MULTIPLIERS: [u16; 5] = [116, 145, 194, 291, 582]; // basis points: 1.16x, 1.45x, 1.94x, 2.91x, 5.82x (3% house edge)
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Default)]
 pub enum GameStatus {
+    #[default]
+    Idle,
     Active,
     Won,
     Lost,
