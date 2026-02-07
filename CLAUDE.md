@@ -52,3 +52,4 @@ npx tsc --noEmit  # 타입체크
 - 온체인 배율과 프론트 배율은 반드시 동일하게 유지
 - (Anchor) Account size(LEN) 계산 시 **discriminator 8 bytes 포함**
 - (VRF) seed는 **온체인에서 생성 → GameState 조회로 vrf_seed 획득 → settle TX에서 randomness PDA 계산 후 전달** 순서 필수
+- (Next API + Vercel Postgres) API route에서 `@vercel/postgres` 쓸 때는 **반드시** `export const runtime = 'nodejs'` (edge 금지) + `sql\`...\`` 태그드 템플릿 사용. Postgres BIGINT는 JS에서 보통 **string**으로 돌아오니 변환 로직 주의.
