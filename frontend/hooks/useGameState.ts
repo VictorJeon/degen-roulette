@@ -31,6 +31,9 @@ export function useGameState() {
       }
 
       const state = program.coder.accounts.decode('GameState', accountInfo.data);
+      console.log('Decoded GameState:', JSON.stringify(state, (_, v) => typeof v === 'bigint' ? v.toString() : v, 2));
+      console.log('Status:', state.status);
+      console.log('Is active?:', 'active' in state.status);
       setGameState(state as GameState);
       setLoading(false);
     } catch (err) {
