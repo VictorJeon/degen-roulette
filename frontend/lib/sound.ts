@@ -119,6 +119,38 @@ export class SoundEngine {
     boom.stop(this.audioContext.currentTime + 0.3);
   }
 
+  playReload() {
+    this.init();
+    if (!this.audioContext) return;
+
+    // Heavy metallic "clack" — cylinder locking into place
+    const osc1 = this.audioContext.createOscillator();
+    const gain1 = this.audioContext.createGain();
+    osc1.connect(gain1);
+    gain1.connect(this.audioContext.destination);
+    osc1.type = 'square';
+    osc1.frequency.value = 180;
+    gain1.gain.setValueAtTime(0.5, this.audioContext.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
+    osc1.start();
+    osc1.stop(this.audioContext.currentTime + 0.08);
+
+    // Second sharper click after brief pause
+    setTimeout(() => {
+      if (!this.audioContext) return;
+      const osc2 = this.audioContext.createOscillator();
+      const gain2 = this.audioContext.createGain();
+      osc2.connect(gain2);
+      gain2.connect(this.audioContext.destination);
+      osc2.type = 'square';
+      osc2.frequency.value = 350;
+      gain2.gain.setValueAtTime(0.6, this.audioContext.currentTime);
+      gain2.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.06);
+      osc2.start();
+      osc2.stop(this.audioContext.currentTime + 0.06);
+    }, 60);
+  }
+
   playCashout() {
     this.init();
     if (!this.audioContext) return;

@@ -15,10 +15,11 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
         <h3>HOW TO PLAY</h3>
         <ol>
           <li>1) BET 금액 입력 후 START</li>
-          <li>2) 챔버 선택(연출용) + 실린더 회전</li>
-          <li>3) PULL로 라운드 진행 (TX 없음)</li>
-          <li>4) 원할 때 CASH OUT</li>
-          <li>5) 서버가 settle → 결과 확정</li>
+          <li>2) 총알 넣을 챔버 선택</li>
+          <li>3) 실린더가 회전 → 총알 위치 감춰짐</li>
+          <li>4) PULL로 라운드 진행 (TX 없음)</li>
+          <li>5) 원할 때 CASH OUT</li>
+          <li>6) 서버가 settle → 결과 확정</li>
         </ol>
         <button className="mini-btn" onClick={onClose}>닫기</button>
       </div>
@@ -50,6 +51,9 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
   );
 }
 
+// Cylinder phase: selecting → spinning → ready
+type CylinderPhase = 'selecting' | 'spinning' | 'ready';
+
 export default function GameBoard() {
   const { gameState, isLoading, error, startGame, pullTrigger, settleGame, resetGame } = useGame();
   const soundRef = useRef<SoundEngine | null>(null);
@@ -59,10 +63,13 @@ export default function GameBoard() {
   const [showFlashDeath, setShowFlashDeath] = useState(false);
   const [cylinderRotation, setCylinderRotation] = useState(0);
   const [selectedChamber, setSelectedChamber] = useState<number | null>(null);
+  const [cylinderPhase, setCylinderPhase] = useState<CylinderPhase>('selecting');
   const [isReloading, setIsReloading] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
   const [showFair, setShowFair] = useState(false);
   const [actionHint, setActionHint] = useState<string>('');
+  // Whether bullet is visually visible (hidden after spin)
+  const [bulletVisible, setBulletVisible] = useState(true);
 
   useEffect(() => {
     soundRef.current = new SoundEngine();
@@ -70,28 +77,53 @@ export default function GameBoard() {
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const handleSelectChamber = (i: number) => {
+  // Step 1: Player taps a chamber → bullet loads visually
+  const handleSelectChamber = async (i: number) => {
+    if (cylinderPhase !== 'selecting') return;
+
     setSelectedChamber(i);
+    setBulletVisible(true);
     soundRef.current?.playBulletLoad();
     setActionHint(`CHAMBER ${i + 1} LOADED`);
+
+    // Brief pause to show bullet, then auto-spin
+    await sleep(600);
+
+    // Step 2: Cylinder spins fast → bullet hidden
+    setCylinderPhase('spinning');
+    setActionHint('');
+    soundRef.current?.playCylinderSpin();
+    // Big random rotation (multiple full spins + random offset)
+    setCylinderRotation(prev => prev + 1080 + Math.floor(Math.random() * 720));
+
+    // During spin, hide the bullet after a brief moment
+    await sleep(300);
+    setBulletVisible(false);
+
+    // Wait for spin to settle
+    await sleep(1200);
+
+    // Step 3: Reload click → trigger enabled
+    soundRef.current?.playReload();
+    setActionHint('LOCKED & LOADED');
+    setCylinderPhase('ready');
   };
 
   const handlePullTrigger = async () => {
     if (gameState.status !== 'active' || isLoading || isReloading) return;
-
-    if (selectedChamber === null) {
-      setActionHint('CHOOSE A CHAMBER FIRST');
-      return;
-    }
+    if (cylinderPhase !== 'ready') return;
 
     try {
       const nextRounds = gameState.roundsSurvived + 1;
 
       setIsReloading(true);
-      soundRef.current?.playCylinderSpin();
-      setCylinderRotation(prev => prev + 420 + Math.floor(Math.random() * 120));
+      setActionHint('');
 
-      await sleep(500);
+      // Small spin for each pull (chamber advancing)
+      soundRef.current?.playCylinderSpin();
+      setCylinderRotation(prev => prev + 60 + Math.floor(Math.random() * 30));
+      await sleep(400);
+
       soundRef.current?.playTrigger();
       await sleep(180);
 
@@ -102,7 +134,7 @@ export default function GameBoard() {
       await sleep(220);
       setIsReloading(false);
 
-      // Max rounds reached -> auto settle
+      // Max rounds → auto settle
       if (nextRounds >= 5) {
         await sleep(500);
         await handleCashOut();
@@ -131,6 +163,8 @@ export default function GameBoard() {
     setCylinderRotation(0);
     setShakeScreen(false);
     setSelectedChamber(null);
+    setCylinderPhase('selecting');
+    setBulletVisible(true);
     setIsReloading(false);
     setActionHint('');
   };
@@ -139,6 +173,7 @@ export default function GameBoard() {
     if (gameState.status === 'lost') {
       setShowFlashDeath(true);
       setShakeScreen(true);
+      setBulletVisible(true); // reveal bullet on death
       soundRef.current?.playGunshot();
       setTimeout(() => setShakeScreen(false), 400);
     } else if (gameState.status === 'won') {
@@ -160,6 +195,9 @@ export default function GameBoard() {
   const isSettling = gameState.status === 'settling';
   const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
 
+  // Whether the trigger button should be enabled
+  const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
+
   const chamberPositions = [
     { x: 150, y: 50 },
     { x: 236.6, y: 100 },
@@ -168,6 +206,22 @@ export default function GameBoard() {
     { x: 63.4, y: 200 },
     { x: 63.4, y: 100 },
   ];
+
+  // Determine the active instruction text
+  const getInstruction = () => {
+    if (!isActive) return null;
+    if (cylinderPhase === 'selecting') return '>>> LOAD THE BULLET <<<';
+    if (cylinderPhase === 'spinning') return '>>> SPINNING... <<<';
+    if (isReloading) return '>>> RELOADING <<<';
+    return '>>> PULL THE TRIGGER <<<';
+  };
+
+  // Cylinder spin transition: slower easing for the initial big spin, faster for pulls
+  const spinTransition = cylinderPhase === 'spinning'
+    ? 'transform 1.4s cubic-bezier(0.12, 0.8, 0.1, 1.0)'
+    : cylinderRotation === 0
+      ? 'none'
+      : 'transform 0.6s cubic-bezier(0.2, 0.9, 0.15, 1.0)';
 
   return (
     <div className="game-content">
@@ -211,11 +265,11 @@ export default function GameBoard() {
         <div className="cylinder-container depth">
           <div className="hammer-fixed">▼</div>
           <svg
-            className="cylinder-svg"
+            className={`cylinder-svg ${cylinderPhase === 'spinning' ? 'cylinder-blur' : ''}`}
             viewBox="0 0 300 300"
             style={{
-              transition: cylinderRotation === 0 ? 'none' : 'transform 0.95s cubic-bezier(0.2, 0.9, 0.15, 1.0)',
-              transform: `perspective(900px) rotateX(8deg) rotate(${cylinderRotation}deg)`
+              transition: spinTransition,
+              transform: `perspective(900px) rotateX(8deg) rotate(${cylinderRotation}deg)`,
             }}
           >
             <defs>
@@ -230,16 +284,20 @@ export default function GameBoard() {
             <circle cx="150" cy="150" r="130" fill="url(#cylMetal)" />
 
             {chamberPositions.map((pos, i) => {
+              const isBulletHere = selectedChamber === i;
               const isFired = gameState.bulletPosition !== null && i === gameState.bulletPosition;
-              const isCurrentChamber = i === gameState.roundsSurvived && isActive;
-              const isSelected = selectedChamber === i;
+              const isCurrentChamber = i === gameState.roundsSurvived && isActive && cylinderPhase === 'ready';
+              const canSelect = isActive && cylinderPhase === 'selecting' && gameState.roundsSurvived === 0;
+
+              // Show bullet only if visible (before spin) or on death
+              const showBullet = isBulletHere && bulletVisible;
 
               return (
                 <g
                   key={i}
                   transform={`translate(${pos.x}, ${pos.y})`}
-                  onClick={() => isActive && gameState.roundsSurvived === 0 && handleSelectChamber(i)}
-                  style={{ cursor: isActive && gameState.roundsSurvived === 0 ? 'pointer' : 'default' }}
+                  onClick={() => canSelect && handleSelectChamber(i)}
+                  style={{ cursor: canSelect ? 'pointer' : 'default' }}
                 >
                   <circle
                     cx="0"
@@ -247,16 +305,37 @@ export default function GameBoard() {
                     r="28"
                     className="chamber-circle"
                     fill={isFired ? 'rgba(239, 68, 68, 0.35)' : '#0d0d0d'}
-                    stroke={isCurrentChamber ? '#a3e635' : isSelected ? '#f59e0b' : '#3f3f46'}
-                    strokeWidth={isCurrentChamber || isSelected ? 3 : 2}
+                    stroke={
+                      isCurrentChamber ? '#a3e635'
+                      : (canSelect && selectedChamber === null) ? '#525263'
+                      : isBulletHere && bulletVisible ? '#f59e0b'
+                      : '#3f3f46'
+                    }
+                    strokeWidth={isCurrentChamber || (isBulletHere && bulletVisible) ? 3 : 2}
                   />
+                  {/* Bullet indicator */}
                   <circle
                     cx="0"
                     cy="0"
                     r="9"
-                    fill="#ef4444"
-                    style={{ opacity: isFired ? 1 : 0 }}
+                    fill={isFired ? '#ef4444' : '#f59e0b'}
+                    style={{
+                      opacity: showBullet || isFired ? 1 : 0,
+                      transition: 'opacity 0.2s',
+                    }}
                   />
+                  {/* Hover ring for selectable chambers */}
+                  {canSelect && (
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="28"
+                      fill="transparent"
+                      stroke="transparent"
+                      strokeWidth="4"
+                      className="chamber-hover"
+                    />
+                  )}
                 </g>
               );
             })}
@@ -270,16 +349,22 @@ export default function GameBoard() {
 
         {isActive && (
           <>
-            <p className="game-instruction">{isReloading ? '>>> RELOADING <<<' : '>>> PULL THE TRIGGER <<<'}</p>
+            <p className="game-instruction">{getInstruction()}</p>
             <div className="button-group">
               <button
                 onClick={handlePullTrigger}
-                disabled={isLoading || isReloading}
-                className={`trigger-btn ${gameState.roundsSurvived >= 3 ? 'danger' : ''}`}
+                disabled={!triggerReady}
+                className={`trigger-btn ${gameState.roundsSurvived >= 3 ? 'danger' : ''} ${!triggerReady ? 'locked' : ''}`}
               >
-                {isReloading ? 'RELOADING...' : 'TRIGGER'}
+                {cylinderPhase === 'selecting'
+                  ? 'LOAD FIRST'
+                  : cylinderPhase === 'spinning'
+                    ? 'SPINNING...'
+                    : isReloading
+                      ? 'RELOADING...'
+                      : 'PULL TRIGGER'}
               </button>
-              {gameState.roundsSurvived >= 1 && (
+              {gameState.roundsSurvived >= 1 && cylinderPhase === 'ready' && (
                 <button
                   onClick={handleCashOut}
                   disabled={isLoading || isReloading}
@@ -340,6 +425,7 @@ export default function GameBoard() {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.55rem;
           text-shadow: 0 0 8px var(--accent-glow);
+          min-height: 1.2em;
         }
 
         .multiplier-table {
@@ -366,6 +452,19 @@ export default function GameBoard() {
           border-color: var(--accent);
           color: var(--accent);
           box-shadow: 0 0 12px rgba(163,230,53,0.2);
+        }
+
+        .cylinder-svg.cylinder-blur {
+          filter: blur(1.5px);
+        }
+
+        .chamber-hover:hover {
+          stroke: rgba(163, 230, 53, 0.4) !important;
+        }
+
+        .trigger-btn.locked {
+          opacity: 0.4;
+          cursor: not-allowed;
         }
 
         .sub-actions {
