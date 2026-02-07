@@ -9,12 +9,23 @@ interface LeaderboardEntry {
 }
 
 export default function Leaderboard() {
-  const [scores, setScores] = useState<LeaderboardEntry[]>([]);
+  // Default dummy data matching reference HTML
+  const defaultScores: LeaderboardEntry[] = [
+    { address: 'Anonymous', multiplier: 10.0, timestamp: Date.now() },
+    { address: 'Anonymous', multiplier: 10.0, timestamp: Date.now() },
+    { address: 'Anonymous', multiplier: 5.0, timestamp: Date.now() },
+    { address: 'Anonymous', multiplier: 3.0, timestamp: Date.now() },
+    { address: 'Anonymous', multiplier: 3.0, timestamp: Date.now() },
+  ];
+
+  const [scores, setScores] = useState<LeaderboardEntry[]>(defaultScores);
 
   useEffect(() => {
     const loadScores = () => {
       const data = JSON.parse(localStorage.getItem('degen_leaderboard') || '[]');
-      setScores(data);
+      if (data.length > 0) {
+        setScores(data);
+      }
     };
 
     loadScores();
@@ -40,7 +51,7 @@ export default function Leaderboard() {
           const entry = scores[i];
           return (
             <li key={i} className="leaderboard-item">
-              <span className="leaderboard-rank">#{i + 1}</span>
+              <span className="leaderboard-rank">{i + 1}</span>
               <span className="leaderboard-address">
                 {entry ? shortAddress(entry.address) : 'Anon'}
               </span>

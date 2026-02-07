@@ -925,23 +925,44 @@ body.shake {
 
 /* Solana Wallet Adapter Styles */
 .wallet-adapter-button {
-    background-color: transparent;
-    border: none;
-    color: #fff;
+    background-color: var(--accent);
+    border: 3px solid var(--accent-dim);
+    color: var(--bg-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
-    font-family: 'DM Sans', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    height: 48px;
-    line-height: 48px;
-    padding: 0 24px;
-    border-radius: 4px;
+    font-family: var(--pixel-font);
+    font-size: 0.6rem;
+    font-weight: 400;
+    height: auto;
+    line-height: normal;
+    padding: 0.7rem 1rem;
+    border-radius: 0;
+    text-transform: uppercase;
+    box-shadow: 4px 4px 0 var(--bg-primary);
+    transition: all 0.1s;
+}
+
+.wallet-adapter-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--bg-primary);
 }
 
 .wallet-adapter-button-trigger {
-    background-color: #512da8;
+    background-color: var(--accent);
+    border: 3px solid var(--accent-dim);
+    color: var(--bg-primary);
+    font-family: var(--pixel-font);
+    font-size: 0.6rem;
+    padding: 0.7rem 1rem;
+    box-shadow: 4px 4px 0 var(--bg-primary);
+    border-radius: 0;
+    text-transform: uppercase;
+}
+
+.wallet-adapter-button-trigger:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--bg-primary);
 }
 
 .wallet-adapter-button:not([disabled]):focus-visible {

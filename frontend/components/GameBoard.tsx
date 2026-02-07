@@ -134,20 +134,12 @@ export default function GameBoard() {
         <div className="fixed inset-0 bg-[#ff3b3b] opacity-30 pointer-events-none" style={{ zIndex: 999 }} />
       )}
 
-      <div className="text-center">
-        <h1 className="font-pixel text-[1.4rem] text-accent text-glow-strong tracking-[0.1em]">
-          DEGEN ROULETTE
-        </h1>
-        <p className="font-pixel text-[0.5rem] text-text-muted mt-2 tracking-[0.05em]">
-          1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?
-        </p>
-      </div>
+      <h1 className="game-title">DEGEN ROULETTE</h1>
+      <p className="game-subtitle">1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?</p>
 
       {/* Cylinder */}
-      <div className="relative w-[280px] h-[280px]">
-        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-10 font-pixel text-[16px] text-accent animate-hammer-pulse">
-          ▼
-        </div>
+      <div className="cylinder-container">
+        <div className="hammer-fixed">▼</div>
 
         <svg
           className="w-full h-full transition-transform duration-[1500ms] ease-in-out"
