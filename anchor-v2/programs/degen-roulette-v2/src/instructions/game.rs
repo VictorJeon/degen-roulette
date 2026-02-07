@@ -184,7 +184,7 @@ pub struct SettleGame<'info> {
     #[account(
         mut,
         seeds = [PlayerStats::SEEDS, player.key().as_ref()],
-        bump = player_stats.bump
+        bump
     )]
     pub player_stats: Account<'info, PlayerStats>,
 
