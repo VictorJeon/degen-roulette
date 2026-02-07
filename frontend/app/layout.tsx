@@ -2,12 +2,7 @@ import type { Metadata } from "next";
 import { Press_Start_2P, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/components/WalletProvider";
-
-// Polyfill Buffer for Solana wallet adapter
-import { Buffer } from 'buffer';
-if (typeof window !== 'undefined') {
-  (window as any).Buffer = Buffer;
-}
+import { BufferPolyfill } from "@/components/BufferPolyfill";
 
 const pressStart2P = Press_Start_2P({
   weight: "400",
@@ -33,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${pressStart2P.variable} ${spaceGrotesk.variable}`}>
+        <BufferPolyfill />
         <WalletProvider>
           {children}
         </WalletProvider>
