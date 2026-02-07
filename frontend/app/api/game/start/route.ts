@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js';
 import { sql } from '@vercel/postgres';
 import { ensureGamesSchema } from '@/lib/db';
 import { generateServerSeed } from '@/lib/game-server';
+import { logServerError } from '@/lib/server-error-reporter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -60,6 +61,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
   } catch (error) {
     console.error('POST /api/game/start error:', error);
+    await logServerError('api/game/start', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

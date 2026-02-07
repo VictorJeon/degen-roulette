@@ -31,6 +31,24 @@ export async function ensureSchema(): Promise<void> {
   `;
 }
 
+export async function ensureErrorsSchema(): Promise<void> {
+  await sql`
+    CREATE TABLE IF NOT EXISTS error_logs (
+      id SERIAL PRIMARY KEY,
+      source TEXT NOT NULL DEFAULT 'client',
+      message TEXT NOT NULL,
+      stack TEXT,
+      url TEXT,
+      user_agent TEXT,
+      wallet TEXT,
+      extra JSONB,
+      resolved BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+  await sql`CREATE INDEX IF NOT EXISTS idx_errors_resolved ON error_logs(resolved, created_at DESC)`;
+}
+
 export async function ensureGamesSchema(): Promise<void> {
   await sql`
     CREATE TABLE IF NOT EXISTS games (

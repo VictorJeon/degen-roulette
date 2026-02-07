@@ -3,6 +3,7 @@ import { Press_Start_2P, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { WalletProviderWrapper } from "@/components/WalletProviderWrapper";
 import { BufferPolyfill } from "@/components/BufferPolyfill";
+import { ErrorReporterInit } from "@/components/ErrorReporterInit";
 
 const pressStart2P = Press_Start_2P({
   weight: "400",
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className={`${pressStart2P.variable} ${spaceGrotesk.variable}`}>
         <BufferPolyfill />
         <WalletProviderWrapper>
+          <ErrorReporterInit />
           {children}
         </WalletProviderWrapper>
       </body>

@@ -3,6 +3,7 @@ import { sql } from '@vercel/postgres';
 import { SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { ensureGamesSchema, ensureSchema } from '@/lib/db';
 import { getHouseProgram, derivePDAs } from '@/lib/game-server';
+import { logServerError } from '@/lib/server-error-reporter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -117,6 +118,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
   } catch (error: any) {
     console.error('POST /api/game/settle error:', error);
+    await logServerError('api/game/settle', error, { gameId: undefined });
     return NextResponse.json(
       { error: error.message || 'Settlement failed' },
       { status: 500 }
