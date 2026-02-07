@@ -3,6 +3,12 @@ import { Press_Start_2P, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/components/WalletProvider";
 
+// Polyfill Buffer for Solana wallet adapter
+import { Buffer } from 'buffer';
+if (typeof window !== 'undefined') {
+  (window as any).Buffer = Buffer;
+}
+
 const pressStart2P = Press_Start_2P({
   weight: "400",
   subsets: ["latin"],
