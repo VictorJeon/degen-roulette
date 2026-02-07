@@ -113,13 +113,15 @@ export default function GameBoard() {
   ];
 
   return (
-    <>
+    <div className="game-content">
       {/* Flash overlays */}
       <div className={`flash-overlay success ${showFlashSuccess ? 'active' : ''}`} />
       <div className={`flash-overlay death ${showFlashDeath ? 'active' : ''}`} />
 
-      <h1 className="game-title">DEGEN ROULETTE</h1>
-      <p className="game-subtitle">1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?</p>
+      {/* Main game section */}
+      <div className="game-main">
+        <h1 className="game-title">DEGEN ROULETTE</h1>
+        <p className="game-subtitle">1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?</p>
 
       {/* Cylinder - matches reference HTML exactly */}
       <div className="cylinder-container">
@@ -206,30 +208,31 @@ export default function GameBoard() {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="button-group">
-        {isActive ? (
-          <>
-            <button
-              onClick={handlePullTrigger}
-              disabled={betLoading}
-              className={`trigger-btn ${chambers <= 2 ? 'danger' : ''}`}
-              id="shotBtn"
-            >
-              SHOT
-            </button>
-            {currentRound >= 1 && (
+        {/* Action Buttons */}
+        <div className="button-group">
+          {isActive ? (
+            <>
               <button
-                onClick={handleCashOut}
+                onClick={handlePullTrigger}
                 disabled={betLoading}
-                className="cashout-btn visible"
-                id="cashoutBtn"
+                className={`trigger-btn ${chambers <= 2 ? 'danger' : ''}`}
+                id="shotBtn"
               >
-                TAKE THE BAG
+                SHOT
               </button>
-            )}
-          </>
-        ) : null}
+              {currentRound >= 1 && (
+                <button
+                  onClick={handleCashOut}
+                  disabled={betLoading}
+                  className="cashout-btn visible"
+                  id="cashoutBtn"
+                >
+                  TAKE THE BAG
+                </button>
+              )}
+            </>
+          ) : null}
+        </div>
       </div>
 
       {/* Bottom section - instruction and badge */}
@@ -277,6 +280,6 @@ export default function GameBoard() {
 
       {/* Load Popup */}
       <div className="load-popup" id="loadPopup">● LOADED</div>
-    </>
+    </div>
   );
 }
