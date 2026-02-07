@@ -232,16 +232,19 @@ export default function GameBoard() {
         ) : null}
       </div>
 
-      <p className="game-instruction" id="gameInstruction">
-        {isActive ? '>>> PULL THE TRIGGER <<<' : '>>> PLACE YOUR BET <<<'}
-      </p>
+      {/* Bottom section - instruction and badge */}
+      <div className="game-bottom">
+        <p className="game-instruction" id="gameInstruction">
+          {isActive ? '>>> PULL THE TRIGGER <<<' : '>>> PLACE YOUR BET <<<'}
+        </p>
 
-      {/* Provably Fair Badge */}
-      <div className="fair-badge">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-        </svg>
-        Provably Fair
+        {/* Provably Fair Badge */}
+        <div className="fair-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+          </svg>
+          Provably Fair
+        </div>
       </div>
 
       {/* Death Overlay */}
