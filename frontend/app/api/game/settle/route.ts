@@ -9,8 +9,11 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request): Promise<NextResponse> {
+  let gameId: number | null = null;
   try {
-    const { gameId, roundsSurvived } = await request.json();
+    const body = await request.json();
+    gameId = body.gameId ?? null;
+    const roundsSurvived = body.roundsSurvived;
 
     if (!gameId || !roundsSurvived) {
       return NextResponse.json({ error: 'Missing gameId or roundsSurvived' }, { status: 400 });
@@ -43,6 +46,45 @@ export async function POST(request: Request): Promise<NextResponse> {
       game.player_wallet,
       program.programId
     );
+
+    // Check on-chain status first (idempotent settle)
+    const onchain = await (program.account as any).gameState.fetch(gamePda);
+    const status = onchain.status || {};
+    const isActive = 'active' in status;
+    const isWon = 'won' in status;
+    const isLost = 'lost' in status;
+    const isCancelled = 'cancelled' in status;
+
+    if (!isActive && (isWon || isLost || isCancelled)) {
+      const payout = Number(onchain.payout || 0);
+      const bulletPosition = onchain.bulletPosition;
+      const rounds = onchain.roundsSurvived || 0;
+      const won = isWon;
+
+      await sql`
+        UPDATE games
+        SET status = 'settled',
+            rounds_survived = ${rounds},
+            bullet_position = ${bulletPosition},
+            won = ${won},
+            payout = ${payout},
+            settled_at = NOW()
+        WHERE id = ${gameId}
+      `;
+
+      return NextResponse.json({
+        won,
+        cancelled: isCancelled,
+        bulletPosition,
+        roundsSurvived: rounds,
+        payout,
+        betAmount: Number(game.bet_amount || 0),
+        serverSeed: game.server_seed,
+        seedHash: game.seed_hash,
+        txSignature: game.settle_tx || null,
+        alreadySettled: true,
+      });
+    }
 
     // Convert server seed hex to bytes
     const serverSeedBytes = Buffer.from(game.server_seed, 'hex');
@@ -118,7 +160,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
   } catch (error: any) {
     console.error('POST /api/game/settle error:', error);
-    await logServerError('api/game/settle', error, { gameId: undefined });
+    await logServerError('api/game/settle', error, { gameId });
     return NextResponse.json(
       { error: error.message || 'Settlement failed' },
       { status: 500 }

@@ -167,9 +167,11 @@ export function useGame() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Settlement failed');
 
+      const resolvedStatus = data.cancelled ? 'lost' : (data.won ? 'won' : 'lost');
       setGameState(prev => ({
         ...prev,
-        status: data.won ? 'won' : 'lost',
+        status: resolvedStatus,
+        roundsSurvived: data.roundsSurvived ?? prev.roundsSurvived,
         bulletPosition: data.bulletPosition,
         payout: data.payout / LAMPORTS_PER_SOL,
         serverSeed: data.serverSeed,
