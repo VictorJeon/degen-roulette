@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { useProgram } from './useProgram';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 export interface LeaderboardEntry {
   player: string;
@@ -17,48 +15,39 @@ export interface LeaderboardEntry {
 export function useLeaderboard() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { program } = useProgram();
   const wallet = useAnchorWallet();
 
   const fetchLeaderboard = useCallback(async () => {
-    if (!program) return;
-
     setIsLoading(true);
     try {
-      const accounts = await (program.account as any).playerStats.all();
+      const res = await fetch('/api/leaderboard');
+      if (!res.ok) {
+        throw new Error('Failed to fetch leaderboard');
+      }
 
-      const entries: LeaderboardEntry[] = accounts
-        .map((acc: any) => {
-          const playerAddr = acc.account.player.toBase58();
-          const shortPlayer = playerAddr.slice(0, 4) + '...' + playerAddr.slice(-4);
-          const totalProfit = Number(acc.account.totalProfit) / LAMPORTS_PER_SOL;
-          const gamesPlayed = Number(acc.account.totalGames);
-          const totalWon = Number(acc.account.totalWon);
-          const totalWagered = Number(acc.account.totalWagered);
+      const data = await res.json();
 
-          const winRate = totalWagered > 0
-            ? ((totalWon / totalWagered) * 100)
-            : 0;
+      const entries: LeaderboardEntry[] = data.leaderboard.map((item: any) => {
+        const shortWallet = item.wallet.slice(0, 4) + '...' + item.wallet.slice(-4);
 
-          return {
-            player: shortPlayer,
-            fullAddress: playerAddr,
-            totalProfit,
-            gamesPlayed,
-            winRate,
-            isCurrentUser: wallet ? playerAddr === wallet.publicKey.toBase58() : false,
-          };
-        })
-        .sort((a: LeaderboardEntry, b: LeaderboardEntry) => b.totalProfit - a.totalProfit)
-        .slice(0, 20);
+        return {
+          player: shortWallet,
+          fullAddress: item.wallet,
+          totalProfit: item.profitSol,
+          gamesPlayed: item.totalGames,
+          winRate: 0, // API doesn't provide winRate calculation
+          isCurrentUser: wallet ? item.wallet === wallet.publicKey.toBase58() : false,
+        };
+      });
 
       setLeaderboard(entries);
     } catch (err) {
       console.error('Leaderboard fetch error:', err);
+      setLeaderboard([]); // Graceful degradation
     } finally {
       setIsLoading(false);
     }
-  }, [program, wallet]);
+  }, [wallet]);
 
   useEffect(() => {
     fetchLeaderboard();

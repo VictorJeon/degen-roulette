@@ -185,6 +185,18 @@ export function useGame() {
 
       console.log('settle_game TX:', tx);
 
+      // Update leaderboard via API (fire-and-forget)
+      fetch('/api/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          wallet: wallet.publicKey.toBase58(),
+          txSignature: tx,
+        }),
+      }).catch(err => {
+        console.warn('Leaderboard API update failed:', err);
+      });
+
       await new Promise(resolve => setTimeout(resolve, 2000));
       const gameAccount = await (program.account as any).gameState.fetch(gamePda);
 
