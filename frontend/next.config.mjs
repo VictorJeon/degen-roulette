@@ -7,6 +7,11 @@ const nextConfig = {
     '@solana/wallet-adapter-react-ui',
     '@solana/wallet-adapter-wallets',
   ],
+
+  // Enable Turbopack (default in Next.js 16)
+  turbopack: {},
+
+  // Webpack config for fallback compatibility
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -24,7 +29,6 @@ const nextConfig = {
       };
     }
 
-    // Add externals for Solana
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
 
     return config;

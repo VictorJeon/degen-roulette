@@ -41,8 +41,8 @@ export default function RecentPlays() {
 
   return (
     <div className="bg-bg-secondary border-[3px] border-border p-4">
-      <div className="font-pixel text-[0.6rem] text-accent mb-4 text-center tracking-wider">
-        📡 RECENT PLAYS
+      <div className="font-pixel text-[0.55rem] text-accent mb-4 uppercase text-shadow-[0_0_8px_var(--accent-glow)]">
+        LIVE FEED
       </div>
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
         {plays.map((play, i) => {

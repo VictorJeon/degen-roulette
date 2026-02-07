@@ -34,8 +34,8 @@ export default function Leaderboard() {
 
   return (
     <div className="bg-bg-secondary border-[3px] border-border p-4">
-      <div className="font-pixel text-[0.6rem] text-accent mb-4 text-center tracking-wider">
-        🏆 LEADERBOARD
+      <div className="font-pixel text-[0.55rem] text-accent mb-4 uppercase text-shadow-[0_0_8px_var(--accent-glow)]">
+        HALL OF DEGENS
       </div>
       <div className="space-y-2">
         {[...Array(10)].map((_, i) => {

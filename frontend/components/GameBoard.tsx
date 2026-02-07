@@ -135,18 +135,18 @@ export default function GameBoard() {
       )}
 
       <div className="text-center">
-        <h1 className="font-pixel text-[1.4rem] text-accent text-glow-strong tracking-wider">
+        <h1 className="font-pixel text-[1.4rem] text-accent text-glow-strong tracking-[0.1em]">
           DEGEN ROULETTE
         </h1>
-        <p className="font-pixel text-[0.5rem] text-text-muted mt-2 tracking-wider">
-          PULL THE TRIGGER OR CASH OUT
+        <p className="font-pixel text-[0.5rem] text-text-muted mt-2 tracking-[0.05em]">
+          1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?
         </p>
       </div>
 
       {/* Cylinder */}
       <div className="relative w-[280px] h-[280px]">
-        <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-10 text-3xl animate-pulse">
-          🔨
+        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-10 font-pixel text-[16px] text-accent animate-hammer-pulse">
+          ▼
         </div>
 
         <svg
@@ -199,7 +199,7 @@ export default function GameBoard() {
           </div>
         </div>
         <div className="text-center min-w-[100px]">
-          <div className="font-pixel text-[0.45rem] text-text-muted uppercase mb-1">Odds</div>
+          <div className="font-pixel text-[0.45rem] text-text-muted uppercase mb-1">Death Odds</div>
           <div className="font-pixel text-[0.9rem] text-text-secondary">1 in {chambers}</div>
         </div>
       </div>
@@ -224,7 +224,7 @@ export default function GameBoard() {
               disabled={betLoading}
               className="font-pixel text-[0.55rem] px-6 py-3 bg-transparent border-[3px] border-success text-success uppercase shadow-[4px_4px_0_#000] text-glow-success hover:bg-success hover:text-bg-primary hover:shadow-[2px_2px_0_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
             >
-              CASH OUT
+TAKE THE BAG
             </button>
           )}
         </div>
