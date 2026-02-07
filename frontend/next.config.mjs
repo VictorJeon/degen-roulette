@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Transpile Solana packages for proper module resolution
   transpilePackages: [
     '@solana/wallet-adapter-base',
@@ -30,8 +29,6 @@ const nextConfig: NextConfig = {
 
     return config;
   },
-  // Disable turbopack for production stability with Solana packages
-  turbopack: {},
 };
 
 export default nextConfig;
