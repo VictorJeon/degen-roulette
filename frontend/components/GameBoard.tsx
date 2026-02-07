@@ -183,38 +183,32 @@ export default function GameBoard() {
       </div>
 
       {/* Stats */}
-      <div className="flex gap-8 flex-wrap justify-center">
-        <div className="text-center min-w-[100px]">
-          <div className="font-pixel text-[0.45rem] text-text-muted uppercase mb-1">Bet</div>
-          <div className="font-pixel text-[0.9rem] text-text-primary">{betAmount.toFixed(2)} SOL</div>
+      <div className="game-stats">
+        <div className="stat-item">
+          <div className="stat-label">Bet</div>
+          <div className="stat-value">{betAmount.toFixed(2)} SOL</div>
         </div>
-        <div className="text-center min-w-[100px]">
-          <div className="font-pixel text-[0.45rem] text-text-muted uppercase mb-1">Multiplier</div>
-          <div className="font-pixel text-[0.9rem] text-accent text-glow">{multiplier.toFixed(1)}x</div>
+        <div className="stat-item">
+          <div className="stat-label">Multiplier</div>
+          <div className="stat-value accent">{multiplier.toFixed(1)}x</div>
         </div>
-        <div className="text-center min-w-[100px]">
-          <div className="font-pixel text-[0.45rem] text-text-muted uppercase mb-1">Potential</div>
-          <div className="font-pixel text-[0.9rem] text-success text-glow-success">
-            {(betAmount * multiplier).toFixed(4)} SOL
-          </div>
+        <div className="stat-item">
+          <div className="stat-label">Potential</div>
+          <div className="stat-value">{(betAmount * multiplier).toFixed(4)} SOL</div>
         </div>
-        <div className="text-center min-w-[100px]">
-          <div className="font-pixel text-[0.45rem] text-text-muted uppercase mb-1">Death Odds</div>
-          <div className="font-pixel text-[0.9rem] text-text-secondary">1 in {chambers}</div>
+        <div className="stat-item">
+          <div className="stat-label">Death Odds</div>
+          <div className="stat-value">1 in {chambers}</div>
         </div>
       </div>
 
       {/* Playing UI */}
       {isActive && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 items-center">
           <button
             onClick={handlePullTrigger}
             disabled={betLoading}
-            className={`font-pixel text-[0.7rem] px-8 py-4 uppercase tracking-wider shadow-[6px_6px_0_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_#000] active:translate-x-1.5 active:translate-y-1.5 active:shadow-[0_0_0_#000] disabled:opacity-50 transition-all ${
-              chambers <= 2
-                ? 'bg-danger border-[4px] border-[#aa0000] text-white animate-pulse'
-                : 'bg-accent border-[4px] border-accent-dim text-bg-primary'
-            }`}
+            className={`trigger-btn ${chambers <= 2 ? 'danger' : ''}`}
           >
             SHOT
           </button>
@@ -222,13 +216,21 @@ export default function GameBoard() {
             <button
               onClick={handleCashOut}
               disabled={betLoading}
-              className="font-pixel text-[0.55rem] px-6 py-3 bg-transparent border-[3px] border-success text-success uppercase shadow-[4px_4px_0_#000] text-glow-success hover:bg-success hover:text-bg-primary hover:shadow-[2px_2px_0_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
+              className="cashout-btn"
             >
-TAKE THE BAG
+              TAKE THE BAG
             </button>
           )}
         </div>
       )}
+
+      {/* Provably Fair Badge */}
+      <div className="fair-badge">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path>
+        </svg>
+        Provably Fair
+      </div>
 
       {/* Death overlay */}
       {showDeathOverlay && (

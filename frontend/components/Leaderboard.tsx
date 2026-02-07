@@ -33,31 +33,24 @@ export default function Leaderboard() {
   };
 
   return (
-    <div className="bg-bg-secondary border-[3px] border-border p-4">
-      <div className="font-pixel text-[0.55rem] text-accent mb-4 uppercase text-shadow-[0_0_8px_var(--accent-glow)]">
-        HALL OF DEGENS
-      </div>
-      <div className="space-y-2">
+    <div className="panel">
+      <h3 className="panel-title">HALL OF DEGENS</h3>
+      <ul className="leaderboard-list">
         {[...Array(10)].map((_, i) => {
           const entry = scores[i];
           return (
-            <div
-              key={i}
-              className="flex justify-between items-center py-2 border-b border-border last:border-0"
-            >
-              <span className="font-pixel text-[0.45rem] text-text-secondary">
-                #{i + 1}
+            <li key={i} className="leaderboard-item">
+              <span className="leaderboard-rank">#{i + 1}</span>
+              <span className="leaderboard-address">
+                {entry ? shortAddress(entry.address) : 'Anon'}
               </span>
-              <span className="font-pixel text-[0.5rem] text-text-primary flex-1 ml-2">
-                {entry ? shortAddress(entry.address) : '---'}
-              </span>
-              <span className="font-pixel text-[0.5rem] text-accent text-glow">
+              <span className="leaderboard-multiplier">
                 {entry ? `${entry.multiplier.toFixed(1)}x` : '-'}
               </span>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 }
