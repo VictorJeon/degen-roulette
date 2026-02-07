@@ -1,8 +1,7 @@
 import Header from "@/components/Header";
 import Leaderboard from "@/components/Leaderboard";
 import GameBoard from "@/components/GameBoard";
-import BetPanel from "@/components/BetPanel";
-import RecentPlays from "@/components/RecentPlays";
+import { LiveFeed } from "@/components/LiveFeed";
 
 export default function Home() {
   return (
@@ -18,12 +17,11 @@ export default function Home() {
         {/* Game Area */}
         <section className="game-area">
           <GameBoard />
-          <BetPanel />
         </section>
 
         {/* Right Sidebar */}
         <aside className="sidebar">
-          <RecentPlays />
+          <LiveFeed />
         </aside>
       </main>
     </div>

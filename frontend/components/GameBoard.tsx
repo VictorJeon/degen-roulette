@@ -2,20 +2,20 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useBet } from '@/hooks/useBet';
-import { useGameState } from '@/hooks/useGameState';
+import { useGame } from '@/hooks/useGame';
 import { SoundEngine } from '@/lib/sound';
+import BetPanel from './BetPanel';
+import { StatsBar } from './StatsBar';
+import { ResultOverlay } from './ResultOverlay';
+import { MULTIPLIERS } from '@/lib/constants';
 
 export default function GameBoard() {
   const { publicKey } = useWallet();
-  const { pullTrigger, cashOut, loading: betLoading } = useBet();
-  const { gameState, loading: stateLoading } = useGameState();
+  const { gameState, isLoading, pullTrigger, settleGame, resetGame } = useGame();
   const soundRef = useRef<SoundEngine | null>(null);
   const [shakeScreen, setShakeScreen] = useState(false);
   const [showFlashSuccess, setShowFlashSuccess] = useState(false);
   const [showFlashDeath, setShowFlashDeath] = useState(false);
-  const [showDeathOverlay, setShowDeathOverlay] = useState(false);
-  const [showWinOverlay, setShowWinOverlay] = useState(false);
   const [cylinderRotation, setCylinderRotation] = useState(0);
 
   useEffect(() => {
@@ -46,32 +46,32 @@ export default function GameBoard() {
   };
 
   const handlePullTrigger = async () => {
-    if (!gameState || betLoading) return;
+    if (gameState.status !== 'active' || isLoading) return;
 
     try {
       playSound('trigger');
+      setCylinderRotation(prev => prev + 60);
       await sleep(500);
-      await pullTrigger();
-      await sleep(1000);
+      pullTrigger();
+      playSound('empty');
+      await sleep(500);
     } catch (err) {
       console.error('Pull trigger failed:', err);
     }
   };
 
   const handleCashOut = async () => {
-    if (!gameState || betLoading) return;
+    if (gameState.status !== 'active' || isLoading) return;
 
     try {
-      await cashOut();
-      setShowWinOverlay(true);
+      await settleGame();
     } catch (err) {
       console.error('Cash out failed:', err);
     }
   };
 
-  const resetGame = () => {
-    setShowDeathOverlay(false);
-    setShowWinOverlay(false);
+  const handleNewGame = () => {
+    resetGame();
     setShowFlashDeath(false);
     setShowFlashSuccess(false);
     setCylinderRotation(0);
@@ -79,199 +79,183 @@ export default function GameBoard() {
   };
 
   useEffect(() => {
-    if (!gameState) return;
-
-    const status = gameState.status;
-
-    if ('lost' in status) {
+    if (gameState.status === 'lost') {
       setShowFlashDeath(true);
       setShakeScreen(true);
+      playSound('gunshot');
       setTimeout(() => setShakeScreen(false), 400);
-      setTimeout(() => setShowDeathOverlay(true), 500);
-    } else if ('won' in status) {
+    } else if (gameState.status === 'won') {
       setShowFlashSuccess(true);
       setTimeout(() => setShowFlashSuccess(false), 500);
     }
-  }, [gameState]);
+  }, [gameState.status]);
 
-  const multipliers = [1.0, 1.2, 1.5, 2.0, 3.0, 6.0];
-  const currentRound = gameState?.currentRound || 0;
-  const multiplier = multipliers[currentRound] || 1.0;
-  const chambers = 6 - currentRound;
-  const betAmount = gameState?.betAmount ? Number(gameState.betAmount) / 1e9 : 1;
+  const isActive = gameState.status === 'active';
+  const isSettling = gameState.status === 'settling';
+  const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
 
-  const isActive = gameState && 'active' in gameState.status;
-
-  // Fixed chamber positions matching reference HTML exactly
   const chamberPositions = [
-    { x: 150, y: 50 },    // chamber-0: top
-    { x: 236.6, y: 100 }, // chamber-1: top-right
-    { x: 236.6, y: 200 }, // chamber-2: bottom-right
-    { x: 150, y: 250 },   // chamber-3: bottom
-    { x: 63.4, y: 200 },  // chamber-4: bottom-left
-    { x: 63.4, y: 100 },  // chamber-5: top-left
+    { x: 150, y: 50 },
+    { x: 236.6, y: 100 },
+    { x: 236.6, y: 200 },
+    { x: 150, y: 250 },
+    { x: 63.4, y: 200 },
+    { x: 63.4, y: 100 },
   ];
 
   return (
     <div className="game-content">
-      {/* Flash overlays */}
       <div className={`flash-overlay success ${showFlashSuccess ? 'active' : ''}`} />
       <div className={`flash-overlay death ${showFlashDeath ? 'active' : ''}`} />
 
-      {/* Main game section */}
       <div className="game-main">
         <h1 className="game-title">DEGEN ROULETTE</h1>
         <p className="game-subtitle">1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?</p>
 
-      {/* Cylinder - matches reference HTML exactly */}
-      <div className="cylinder-container">
-        <div className="hammer-fixed">▼</div>
+        {isActive && gameState.betAmount && (
+          <StatsBar
+            betAmount={gameState.betAmount}
+            currentMultiplier={gameState.currentMultiplier}
+            potentialWin={gameState.potentialWin}
+            roundsSurvived={gameState.roundsSurvived}
+          />
+        )}
 
-        <svg
-          className="cylinder-svg"
-          id="cylinder"
-          viewBox="0 0 300 300"
-          style={{
-            transition: cylinderRotation === 0 ? 'none' : 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-            transform: `rotate(${cylinderRotation}deg)`
-          }}
-        >
-          <defs>
-            <radialGradient id="cylinderGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#2a2a2a" />
-              <stop offset="100%" stopColor="#1a1a1a" />
-            </radialGradient>
-          </defs>
+        <div className="cylinder-container">
+          <div className="hammer-fixed">▼</div>
 
-          {/* Outer ring */}
-          <circle cx="150" cy="150" r="140" fill="none" stroke="#27272a" strokeWidth="2" />
+          <svg
+            className="cylinder-svg"
+            id="cylinder"
+            viewBox="0 0 300 300"
+            style={{
+              transition: cylinderRotation === 0 ? 'none' : 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+              transform: `rotate(${cylinderRotation}deg)`
+            }}
+          >
+            <defs>
+              <radialGradient id="cylinderGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#2a2a2a" />
+                <stop offset="100%" stopColor="#1a1a1a" />
+              </radialGradient>
+            </defs>
 
-          {/* Cylinder body */}
-          <circle cx="150" cy="150" r="130" fill="url(#cylinderGrad)" />
+            <circle cx="150" cy="150" r="140" fill="none" stroke="#27272a" strokeWidth="2" />
+            <circle cx="150" cy="150" r="130" fill="url(#cylinderGrad)" />
 
-          {/* Chambers */}
-          {chamberPositions.map((pos, i) => {
-            const isFired = i < currentRound;
-            const isCurrentChamber = i === currentRound && isActive;
+            {chamberPositions.map((pos, i) => {
+              const isFired = gameState.bulletPosition !== null && i === gameState.bulletPosition;
+              const isCurrentChamber = i === gameState.roundsSurvived && isActive;
 
-            return (
-              <g
-                key={i}
-                id={`chamber-${i}`}
-                transform={`translate(${pos.x}, ${pos.y})`}
-                style={{ cursor: 'pointer' }}
-              >
-                <circle
-                  cx="0"
-                  cy="0"
-                  r="28"
-                  className="chamber-circle"
-                  fill={isFired ? 'rgba(239, 68, 68, 0.3)' : '#0d0d0d'}
-                  stroke={isCurrentChamber ? '#a3e635' : '#3f3f46'}
-                  strokeWidth={isCurrentChamber ? 3 : 2}
-                />
-                <circle
-                  cx="0"
-                  cy="0"
-                  r="8"
-                  className="bullet-indicator"
-                  fill="#ef4444"
-                  style={{ opacity: 0 }}
-                />
-              </g>
-            );
-          })}
+              return (
+                <g
+                  key={i}
+                  id={`chamber-${i}`}
+                  transform={`translate(${pos.x}, ${pos.y})`}
+                >
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="28"
+                    className="chamber-circle"
+                    fill={isFired ? 'rgba(239, 68, 68, 0.3)' : '#0d0d0d'}
+                    stroke={isCurrentChamber ? '#a3e635' : '#3f3f46'}
+                    strokeWidth={isCurrentChamber ? 3 : 2}
+                  />
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="8"
+                    className="bullet-indicator"
+                    fill="#ef4444"
+                    style={{ opacity: isFired ? 1 : 0 }}
+                  />
+                </g>
+              );
+            })}
 
-          {/* Center pieces */}
-          <circle cx="150" cy="150" r="35" fill="#1a1a1a" stroke="#3f3f46" strokeWidth="2" />
-          <circle cx="150" cy="150" r="15" fill="#0d0d0d" stroke="#a3e635" strokeWidth="2" />
-        </svg>
-      </div>
-
-      {/* Stats */}
-      <div className="game-stats">
-        <div className="stat-item">
-          <div className="stat-label">Bet</div>
-          <div className="stat-value" id="betDisplay">{betAmount} SOL</div>
+            <circle cx="150" cy="150" r="35" fill="#1a1a1a" stroke="#3f3f46" strokeWidth="2" />
+            <circle cx="150" cy="150" r="15" fill="#0d0d0d" stroke="#a3e635" strokeWidth="2" />
+          </svg>
         </div>
-        <div className="stat-item">
-          <div className="stat-label">Multiplier</div>
-          <div className="stat-value accent" id="multiplierDisplay">{multiplier.toFixed(1)}x</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-label">Potential</div>
-          <div className="stat-value" id="potentialDisplay">{(betAmount * multiplier).toFixed(4)} SOL</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-label">Death Odds</div>
-          <div className="stat-value" id="oddsDisplay">1 in {chambers}</div>
-        </div>
-      </div>
 
-        {/* Action Buttons */}
-        <div className="button-group">
-          {isActive ? (
-            <>
+        {gameState.status === 'idle' && <BetPanel />}
+
+        {isActive && (
+          <>
+            <p className="game-instruction">
+              {'>>> PULL THE TRIGGER <<<'}
+            </p>
+            <div className="button-group">
               <button
                 onClick={handlePullTrigger}
-                disabled={betLoading}
-                className={`trigger-btn ${chambers <= 2 ? 'danger' : ''}`}
-                id="shotBtn"
+                disabled={isLoading}
+                className={`trigger-btn ${gameState.roundsSurvived >= 3 ? 'danger' : ''}`}
               >
-                SHOT
+                PULL TRIGGER
               </button>
-              {currentRound >= 1 && (
+              {gameState.roundsSurvived >= 1 && (
                 <button
                   onClick={handleCashOut}
-                  disabled={betLoading}
+                  disabled={isLoading}
                   className="cashout-btn visible"
-                  id="cashoutBtn"
                 >
-                  TAKE THE BAG
+                  CASH OUT
                 </button>
               )}
-            </>
-          ) : null}
-        </div>
+            </div>
+          </>
+        )}
+
+        {isSettling && (
+          <div className="settling-state">
+            <div className="spinner"></div>
+            <p>SETTLING...</p>
+          </div>
+        )}
       </div>
 
-      {/* Instruction - only show when game is active */}
-      {isActive && (
-        <p className="game-instruction" id="gameInstruction">
-          {'>>> PULL THE TRIGGER <<<'}
-        </p>
+      {isGameOver && gameState.betAmount && (
+        <ResultOverlay
+          won={gameState.status === 'won'}
+          betAmount={gameState.betAmount}
+          payout={gameState.payout || 0}
+          multiplier={MULTIPLIERS[gameState.roundsSurvived]}
+          roundsSurvived={gameState.roundsSurvived}
+          onNewGame={handleNewGame}
+        />
       )}
 
-      {/* Death Overlay */}
-      <div className={`result-overlay ${showDeathOverlay ? 'active' : ''}`} id="deathOverlay">
-        <h2 className="result-title death">REKT</h2>
-        <div className="result-stats">
-          FINAL MULTI: <span id="deathMultiplier">{multiplier.toFixed(1)}x</span><br />
-          SURVIVED: <span id="deathSurvived">{currentRound}</span> SHOTS
-        </div>
-        <button className="result-btn" id="retryBtn" onClick={resetGame}>
-          RUN IT BACK
-        </button>
-      </div>
+      <style jsx>{`
+        .settling-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          margin-top: 2rem;
+        }
 
-      {/* Win Overlay */}
-      <div className={`result-overlay ${showWinOverlay ? 'active' : ''}`} id="winOverlay">
-        <h2 className="result-title win">ESCAPED</h2>
-        <div className="result-stats">
-          SECURED: <span id="winAmount">{(betAmount * multiplier).toFixed(4)} SOL</span><br />
-          MULTIPLIER: <span id="winMultiplier">{multiplier.toFixed(1)}x</span><br />
-          PROFIT: <span id="winProfit">{((betAmount * multiplier) - betAmount).toFixed(4)} SOL</span>
-        </div>
-        <button className="result-btn" id="newGameBtn" onClick={resetGame}>
-          AGAIN
-        </button>
-      </div>
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 4px solid rgba(163, 230, 53, 0.2);
+          border-top-color: var(--accent);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
 
-      {/* Multiplier Popup */}
-      <div className="multiplier-popup" id="multiplierPopup">{multiplier.toFixed(1)}x</div>
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
 
-      {/* Load Popup */}
-      <div className="load-popup" id="loadPopup">● LOADED</div>
+        .settling-state p {
+          font-family: 'Press Start 2P', monospace;
+          color: var(--accent);
+          text-shadow: 0 0 10px var(--accent);
+        }
+      `}</style>
     </div>
   );
 }

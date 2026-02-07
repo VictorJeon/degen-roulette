@@ -2,21 +2,16 @@
 
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useBet } from '@/hooks/useBet';
-import { useGameState } from '@/hooks/useGameState';
-
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { useGame } from '@/hooks/useGame';
 
 export default function BetPanel() {
   const { publicKey } = useWallet();
-  const { initGame, loading } = useBet();
-  const { gameState, refresh } = useGameState();
+  const { startGame, isLoading } = useGame();
   const [betAmount, setBetAmount] = useState(0.01);
   const [selectedBet, setSelectedBet] = useState(0.01);
   const [shakeBetting, setShakeBetting] = useState(false);
   const [instruction, setInstruction] = useState('');
 
-  // House vault ~0.16 SOL, maxBetPct 10% = max 0.016 SOL
   const quickBets = [0.005, 0.01, 0.015];
 
   const handleStartGame = async () => {
@@ -25,7 +20,7 @@ export default function BetPanel() {
       return;
     }
 
-    if (betAmount < 0.01) {
+    if (betAmount < 0.005) {
       setInstruction('>>> SELECT YOUR BET <<<');
       setShakeBetting(true);
       setTimeout(() => setShakeBetting(false), 300);
@@ -35,22 +30,12 @@ export default function BetPanel() {
     setInstruction('');
 
     try {
-      await initGame(betAmount);
-      // Wait for transaction to confirm, then refresh state
-      await sleep(2000);
-      await refresh();
+      await startGame(betAmount);
       setInstruction('>>> GAME STARTED <<<');
     } catch (err: any) {
       setInstruction(`>>> ERROR: ${err.message} <<<`);
     }
   };
-
-  const isGameActive = gameState && 'active' in gameState.status;
-
-  // Hide bet panel if game is active
-  if (isGameActive) {
-    return null;
-  }
 
   return (
     <>
@@ -60,7 +45,7 @@ export default function BetPanel() {
         </div>
       )}
 
-      {!instruction && !gameState && (
+      {!instruction && (
         <div className="game-instruction">
           &gt;&gt;&gt; SELECT YOUR BET &lt;&lt;&lt;
         </div>
@@ -72,9 +57,9 @@ export default function BetPanel() {
             type="number"
             value={betAmount}
             onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
-            step="0.1"
-            min="0.01"
-            disabled={loading}
+            step="0.001"
+            min="0.005"
+            disabled={isLoading}
             className="bet-input-inline"
           />
           <span className="bet-currency">SOL</span>
@@ -88,7 +73,7 @@ export default function BetPanel() {
                 setBetAmount(amount);
                 setSelectedBet(amount);
               }}
-              disabled={loading}
+              disabled={isLoading}
               className={`quick-btn-inline ${selectedBet === amount ? 'selected' : ''}`}
             >
               {amount}
@@ -98,18 +83,17 @@ export default function BetPanel() {
 
         <button
           onClick={handleStartGame}
-          disabled={loading}
+          disabled={isLoading}
           className="trigger-btn"
         >
-          {loading ? 'LOADING...' : 'START'}
+          {isLoading ? 'LOADING...' : 'START'}
         </button>
 
-        {/* Provably Fair Badge */}
         <div className="fair-badge">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
           </svg>
-          Provably Fair
+          Provably Fair (VRF)
         </div>
       </div>
     </>
