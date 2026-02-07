@@ -586,6 +586,15 @@ export const IDL: Idl = {
         {
           "name": "bet_amount",
           "type": "u64"
+        },
+        {
+          "name": "vrf_seed",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
         }
       ]
     },

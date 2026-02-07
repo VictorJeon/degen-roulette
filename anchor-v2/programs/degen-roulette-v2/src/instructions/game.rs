@@ -59,7 +59,7 @@ pub struct StartGame<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn start_game(ctx: Context<StartGame>, bet_amount: u64) -> Result<()> {
+pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) -> Result<()> {
     let house_config = &ctx.accounts.house_config;
     let game = &mut ctx.accounts.game;
     let clock = Clock::get()?;
@@ -67,6 +67,7 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64) -> Result<()> {
     // Validation
     require!(!house_config.paused, DegenRouletteError::HousePaused);
     require!(bet_amount >= house_config.min_bet, DegenRouletteError::BetTooLow);
+    require!(vrf_seed != [0u8; 32], DegenRouletteError::ArithmeticOverflow); // seed must be non-zero
 
     // Check if game is not already active
     require!(game.status != GameStatus::Active, DegenRouletteError::GameAlreadyActive);
@@ -99,25 +100,6 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64) -> Result<()> {
         },
     );
     transfer(cpi_context, bet_amount)?;
-
-    // Generate VRF seed
-    let player_key = ctx.accounts.player.key();
-    let slot_bytes = clock.slot.to_le_bytes();
-    let game_count_bytes = house_config.total_games.to_le_bytes();
-    let seed_data: [&[u8]; 4] = [
-        b"degen-roulette".as_ref(),
-        player_key.as_ref(),
-        slot_bytes.as_ref(),
-        game_count_bytes.as_ref(),
-    ];
-    let seed_hash = hashv(&seed_data);
-    let mut vrf_seed = [0u8; 32];
-    vrf_seed.copy_from_slice(&seed_hash.to_bytes());
-
-    // Ensure seed is non-zero
-    if vrf_seed == [0u8; 32] {
-        vrf_seed[0] = 1;
-    }
 
     // Request VRF (if VRF program is executable, i.e., not localnet)
     if ctx.accounts.vrf.executable {

@@ -103,7 +103,7 @@ export function useGame() {
       const tempRandomPda = getRandomnessPda(tempSeed);
 
       const tx = await program.methods
-        .startGame(betAmountLamports)
+        .startGame(betAmountLamports, Array.from(tempSeed))
         .accounts({
           player: wallet.publicKey,
           game: gamePda,
