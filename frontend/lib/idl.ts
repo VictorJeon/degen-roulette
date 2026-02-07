@@ -1067,6 +1067,9 @@ export const IDL: Idl = {
         "kind": "enum",
         "variants": [
           {
+            "name": "Idle"
+          },
+          {
             "name": "Active"
           },
           {
