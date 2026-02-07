@@ -8,16 +8,16 @@
   },
   "instructions": [
     {
-      "name": "cash_out",
+      "name": "force_settle",
       "discriminator": [
-        1,
-        110,
-        57,
-        58,
-        159,
-        157,
-        243,
-        192
+        201,
+        10,
+        239,
+        245,
+        47,
+        198,
+        225,
+        204
       ],
       "accounts": [
         {
@@ -45,28 +45,12 @@
           }
         },
         {
-          "name": "house_vault",
+          "name": "authority",
           "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  104,
-                  111,
-                  117,
-                  115,
-                  101,
-                  95,
-                  118,
-                  97,
-                  117,
-                  108,
-                  116
-                ]
-              }
-            ]
-          }
+          "signer": true,
+          "relations": [
+            "house_config"
+          ]
         },
         {
           "name": "game",
@@ -90,16 +74,36 @@
           }
         },
         {
-          "name": "player",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "game"
-          ]
+          "name": "player"
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
+          "name": "player_stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
         }
       ],
       "args": []
@@ -178,105 +182,6 @@
       "args": [
         {
           "name": "amount",
-          "type": "u64"
-        }
-      ]
-    },
-    {
-      "name": "init_game",
-      "discriminator": [
-        251,
-        46,
-        12,
-        208,
-        184,
-        148,
-        157,
-        73
-      ],
-      "accounts": [
-        {
-          "name": "house_config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  104,
-                  111,
-                  117,
-                  115,
-                  101,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "house_vault",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  104,
-                  111,
-                  117,
-                  115,
-                  101,
-                  95,
-                  118,
-                  97,
-                  117,
-                  108,
-                  116
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "game",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  97,
-                  109,
-                  101
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "player"
-              }
-            ]
-          }
-        },
-        {
-          "name": "player",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "bet_amount",
           "type": "u64"
         }
       ]
@@ -404,41 +309,25 @@
       "args": []
     },
     {
-      "name": "pull_trigger",
+      "name": "settle_game",
       "discriminator": [
-        117,
-        91,
-        127,
-        197,
-        236,
-        221,
-        236,
-        6
+        96,
+        54,
+        24,
+        189,
+        239,
+        198,
+        86,
+        29
       ],
       "accounts": [
         {
-          "name": "house_config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  104,
-                  111,
-                  117,
-                  115,
-                  101,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
+          "name": "player",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "game"
+          ]
         },
         {
           "name": "game",
@@ -462,14 +351,241 @@
           }
         },
         {
-          "name": "player",
-          "signer": true,
-          "relations": [
-            "game"
-          ]
+          "name": "house_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "house_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "random"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "rounds_survived",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "start_game",
+      "discriminator": [
+        249,
+        47,
+        252,
+        172,
+        184,
+        162,
+        245,
+        14
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "game",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "house_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vrf_config",
+          "writable": true
+        },
+        {
+          "name": "vrf_treasury",
+          "writable": true
+        },
+        {
+          "name": "random",
+          "writable": true
+        },
+        {
+          "name": "vrf"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "bet_amount",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "unpause",
@@ -711,6 +827,47 @@
         39,
         135
       ]
+    },
+    {
+      "name": "PlayerStats",
+      "discriminator": [
+        169,
+        146,
+        242,
+        176,
+        102,
+        118,
+        231,
+        172
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "GameSettled",
+      "discriminator": [
+        63,
+        109,
+        128,
+        85,
+        229,
+        63,
+        167,
+        176
+      ]
+    },
+    {
+      "name": "GameStarted",
+      "discriminator": [
+        222,
+        247,
+        78,
+        255,
+        61,
+        184,
+        156,
+        41
+      ]
     }
   ],
   "errors": [
@@ -741,26 +898,106 @@
     },
     {
       "code": 6005,
-      "name": "GameNotWon",
-      "msg": "Game is not won"
-    },
-    {
-      "code": 6006,
       "name": "InvalidGameStatus",
       "msg": "Invalid game status"
     },
     {
-      "code": 6007,
+      "code": 6006,
       "name": "InvalidConfig",
       "msg": "Invalid configuration parameter"
     },
     {
-      "code": 6008,
+      "code": 6007,
       "name": "ArithmeticOverflow",
       "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidRoundsSurvived",
+      "msg": "Invalid rounds survived (must be 1-5)"
+    },
+    {
+      "code": 6009,
+      "name": "VrfNotFulfilled",
+      "msg": "VRF not yet fulfilled"
+    },
+    {
+      "code": 6010,
+      "name": "GameAlreadySettled",
+      "msg": "Game already settled"
+    },
+    {
+      "code": 6011,
+      "name": "GameExpired",
+      "msg": "Game expired (24h+ elapsed)"
+    },
+    {
+      "code": 6012,
+      "name": "GameAlreadyActive",
+      "msg": "Game already active"
     }
   ],
   "types": [
+    {
+      "name": "GameSettled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "bet_amount",
+            "type": "u64"
+          },
+          {
+            "name": "rounds_survived",
+            "type": "u8"
+          },
+          {
+            "name": "bullet_position",
+            "type": "u8"
+          },
+          {
+            "name": "won",
+            "type": "bool"
+          },
+          {
+            "name": "payout",
+            "type": "u64"
+          },
+          {
+            "name": "multiplier",
+            "type": "u16"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameStarted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "bet_amount",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
     {
       "name": "GameState",
       "type": {
@@ -775,11 +1012,20 @@
             "type": "u64"
           },
           {
-            "name": "bullet_position",
+            "name": "vrf_seed",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "rounds_survived",
             "type": "u8"
           },
           {
-            "name": "current_round",
+            "name": "bullet_position",
             "type": "u8"
           },
           {
@@ -791,7 +1037,19 @@
             }
           },
           {
+            "name": "result_multiplier",
+            "type": "u16"
+          },
+          {
+            "name": "payout",
+            "type": "u64"
+          },
+          {
             "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "settled_at",
             "type": "i64"
           },
           {
@@ -806,12 +1064,6 @@
       "type": {
         "kind": "enum",
         "variants": [
-          {
-            "name": "Idle"
-          },
-          {
-            "name": "WaitingVrf"
-          },
           {
             "name": "Active"
           },
@@ -850,6 +1102,14 @@
             "type": "bool"
           },
           {
+            "name": "total_games",
+            "type": "u64"
+          },
+          {
+            "name": "total_volume",
+            "type": "u64"
+          },
+          {
             "name": "bump",
             "type": "u8"
           }
@@ -861,6 +1121,42 @@
       "type": {
         "kind": "struct",
         "fields": []
+      }
+    },
+    {
+      "name": "PlayerStats",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_games",
+            "type": "u64"
+          },
+          {
+            "name": "total_wagered",
+            "type": "u64"
+          },
+          {
+            "name": "total_won",
+            "type": "u64"
+          },
+          {
+            "name": "total_profit",
+            "type": "i64"
+          },
+          {
+            "name": "best_streak",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
       }
     }
   ]
