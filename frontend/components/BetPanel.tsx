@@ -9,12 +9,13 @@ export default function BetPanel() {
   const { publicKey } = useWallet();
   const { initGame, loading } = useBet();
   const { gameState } = useGameState();
-  const [betAmount, setBetAmount] = useState(1);
-  const [selectedBet, setSelectedBet] = useState(1);
+  const [betAmount, setBetAmount] = useState(0.01);
+  const [selectedBet, setSelectedBet] = useState(0.01);
   const [shakeBetting, setShakeBetting] = useState(false);
   const [instruction, setInstruction] = useState('');
 
-  const quickBets = [0.1, 0.5, 1, 5, 10];
+  // House vault ~0.16 SOL, maxBetPct 10% = max 0.016 SOL
+  const quickBets = [0.005, 0.01, 0.015];
 
   const handleStartGame = async () => {
     if (!publicKey) {
