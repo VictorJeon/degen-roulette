@@ -130,17 +130,19 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) 
     game.settled_at = 0;
     game.bump = ctx.bumps.game;
 
-    // Initialize PlayerStats if needed
-    if ctx.accounts.player_stats.to_account_info().data_is_empty() {
-        let player_stats = &mut ctx.accounts.player_stats;
+    // Initialize PlayerStats if needed (check player == default since init_if_needed
+    // already writes discriminator, making data_is_empty() unreliable)
+    let player_stats = &mut ctx.accounts.player_stats;
+    if player_stats.player == Pubkey::default() {
         player_stats.player = ctx.accounts.player.key();
         player_stats.total_games = 0;
         player_stats.total_wagered = 0;
         player_stats.total_won = 0;
         player_stats.total_profit = 0;
         player_stats.best_streak = 0;
-        player_stats.bump = ctx.bumps.player_stats;
     }
+    // Always set bump (init_if_needed zeroes it; re-setting on repeat games is harmless)
+    player_stats.bump = ctx.bumps.player_stats;
 
     // Emit event
     emit!(GameStarted {
