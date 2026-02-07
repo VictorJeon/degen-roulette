@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
+import { Press_Start_2P, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/components/WalletProvider";
+
+const pressStart2P = Press_Start_2P({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-pixel",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
 
 export const metadata: Metadata = {
   title: "DEGEN ROULETTE",
@@ -14,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${pressStart2P.variable} ${spaceGrotesk.variable}`}>
         <WalletProvider>
           {children}
         </WalletProvider>
