@@ -16,6 +16,16 @@ export default function Header() {
       </div>
 
       <div className="header-right">
+        <a
+          href="https://x.com"
+          target="_blank"
+          rel="noreferrer"
+          className="x-link"
+          aria-label="Open X"
+        >
+          X
+        </a>
+
         <div className="stats-badge">
           Total Plays: <span>{totalPlays.toLocaleString()}</span>
         </div>

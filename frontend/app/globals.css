@@ -70,9 +70,9 @@ body::after {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-secondary);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #252a30;
+    background: #0f1218;
 }
 
 .logo {
@@ -94,16 +94,32 @@ body::after {
 .header-right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+}
+
+.x-link {
+    font-family: var(--pixel-font);
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border: 1px solid #3b4048;
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+}
+
+.x-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
 }
 
 .stats-badge {
     font-family: var(--pixel-font);
-    font-size: 0.6rem;
+    font-size: 0.56rem;
     color: var(--text-secondary);
-    padding: 0.6rem 1rem;
-    background: var(--bg-tertiary);
-    border: 2px solid var(--border);
+    padding: 0.55rem 0.9rem;
+    background: #13161d;
+    border: 1px solid #2e343c;
+    border-radius: 8px;
 }
 
 .stats-badge span {
@@ -146,10 +162,10 @@ body::after {
 /* Main Layout */
 .main {
     display: grid;
-    grid-template-columns: 280px 1fr 280px;
-    gap: 2rem;
-    padding: 2rem;
-    max-width: 1400px;
+    grid-template-columns: 290px 1fr 290px;
+    gap: 16px;
+    padding: 16px;
+    max-width: 1560px;
     margin: 0 auto;
     min-height: calc(100vh - 70px);
 }
@@ -169,19 +185,20 @@ body::after {
 }
 
 .panel {
-    background: var(--bg-secondary);
-    border: 3px solid var(--border);
-    border-radius: 0;
-    padding: 1rem;
+    background: #0f1116;
+    border: 1px solid #2f3338;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .panel-title {
     font-family: var(--pixel-font);
-    font-size: 0.55rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 1rem;
-    text-shadow: 0 0 8px var(--accent-glow);
+    margin-bottom: 0.9rem;
+    text-shadow: 0 0 10px var(--accent-glow);
 }
 
 /* Leaderboard */
@@ -417,27 +434,34 @@ body::after {
 
 .trigger-btn {
     font-family: var(--pixel-font);
-    font-size: 0.7rem;
-    padding: 1rem 2rem;
+    font-size: 0.68rem;
+    padding: 1rem 1.8rem;
     background: var(--accent);
-    border: 4px solid var(--accent-dim);
-    border-radius: 0;
+    border: 2px solid #84cc16;
+    border-radius: 10px;
     color: var(--bg-primary);
     cursor: pointer;
-    transition: all 0.1s;
+    transition: all 0.15s;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    box-shadow: 6px 6px 0 #000;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0 0 transparent;
+}
+
+.trigger-btn-start {
+    width: 100%;
+    max-width: 320px;
+    font-size: 0.8rem;
+    padding: 1rem 1.6rem;
 }
 
 .trigger-btn:hover:not(:disabled) {
-    transform: translate(2px, 2px);
-    box-shadow: 4px 4px 0 #000;
+    transform: translateY(-1px);
+    box-shadow: 0 0 24px rgba(163,230,53,0.35);
 }
 
 .trigger-btn:active:not(:disabled) {
-    transform: translate(6px, 6px);
-    box-shadow: 0 0 0 #000;
+    transform: translateY(0);
+    box-shadow: 0 0 12px rgba(163,230,53,0.25);
 }
 
 .trigger-btn:disabled {
@@ -459,15 +483,14 @@ body::after {
 .cashout-btn {
     font-family: var(--pixel-font);
     font-size: 0.55rem;
-    padding: 0.8rem 1.5rem;
+    padding: 0.8rem 1.4rem;
     background: transparent;
-    border: 3px solid var(--success);
-    border-radius: 0;
+    border: 1px solid var(--success);
+    border-radius: 10px;
     color: var(--success);
     cursor: pointer;
-    transition: all 0.1s;
+    transition: all 0.12s;
     text-transform: uppercase;
-    box-shadow: 4px 4px 0 #000;
     text-shadow: 0 0 8px var(--success);
 }
 
@@ -480,11 +503,10 @@ body::after {
 }
 
 .cashout-btn:hover {
-    background: var(--success);
-    color: var(--bg-primary);
+    background: rgba(0, 255, 136, 0.14);
+    color: #dcfce7;
     text-shadow: none;
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 #000;
+    transform: translateY(-1px);
 }
 
 /* Betting Screen */
@@ -817,7 +839,9 @@ body.shake {
     flex-direction: column;
     align-items: center;
     gap: 0.75rem;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
+    width: 100%;
+    max-width: 360px;
 }
 
 .inline-betting .trigger-btn {
@@ -837,11 +861,11 @@ body.shake {
 .bet-input-inline {
     font-family: var(--pixel-font);
     font-size: 1rem;
-    width: 120px;
-    padding: 0.6rem 0.8rem;
+    width: 180px;
+    padding: 0.65rem 0.8rem;
     background: var(--bg-tertiary);
-    border: 3px solid var(--border);
-    border-radius: 0;
+    border: 1px solid #3a3f47;
+    border-radius: 10px;
     color: var(--accent);
     text-align: center;
 }
@@ -868,13 +892,13 @@ body.shake {
 .quick-btn-inline {
     font-family: var(--pixel-font);
     font-size: 0.45rem;
-    padding: 0.5rem 0.7rem;
+    padding: 0.55rem 0.75rem;
     background: var(--bg-tertiary);
-    border: 2px solid var(--border);
-    border-radius: 0;
+    border: 1px solid #3b4048;
+    border-radius: 8px;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.1s;
+    transition: all 0.12s;
 }
 
 .quick-btn-inline:hover {
@@ -884,8 +908,9 @@ body.shake {
 
 .quick-btn-inline.selected {
     border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(163, 230, 53, 0.15);
+    color: #ecfccb;
+    background: rgba(163, 230, 53, 0.2);
+    box-shadow: 0 0 12px rgba(163,230,53,0.18);
 }
 
 @keyframes shake {

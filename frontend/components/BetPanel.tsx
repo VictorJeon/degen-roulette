@@ -2,17 +2,20 @@
 
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useGame } from '@/hooks/useGame';
 
-export default function BetPanel() {
+interface BetPanelProps {
+  startGame: (betAmount: number) => Promise<void>;
+  isLoading: boolean;
+}
+
+export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
   const { publicKey } = useWallet();
-  const { startGame, isLoading } = useGame();
   const [betAmount, setBetAmount] = useState(0.01);
   const [selectedBet, setSelectedBet] = useState(0.01);
   const [shakeBetting, setShakeBetting] = useState(false);
   const [instruction, setInstruction] = useState('');
 
-  const quickBets = [0.005, 0.01, 0.015];
+  const quickBets = [0.005, 0.01, 0.015, 0.03];
 
   const handleStartGame = async () => {
     if (!publicKey) {
@@ -33,22 +36,16 @@ export default function BetPanel() {
       await startGame(betAmount);
       setInstruction('>>> GAME STARTED <<<');
     } catch (err: any) {
-      setInstruction(`>>> ERROR: ${err.message} <<<`);
+      setInstruction(`>>> ${err.message || 'ERROR'} <<<`);
     }
   };
 
   return (
     <>
-      {instruction && (
-        <div className="game-instruction">
-          {instruction}
-        </div>
-      )}
-
-      {!instruction && (
-        <div className="game-instruction">
-          &gt;&gt;&gt; SELECT YOUR BET &lt;&lt;&lt;
-        </div>
+      {instruction ? (
+        <div className="game-instruction">{instruction}</div>
+      ) : (
+        <div className="game-instruction">&gt;&gt;&gt; SELECT YOUR BET &lt;&lt;&lt;</div>
       )}
 
       <div className={`inline-betting ${shakeBetting ? 'animate-shake' : ''}`}>
@@ -60,6 +57,7 @@ export default function BetPanel() {
             step="0.001"
             min="0.005"
             disabled={isLoading}
+            aria-label="Bet amount in SOL"
             className="bet-input-inline"
           />
           <span className="bet-currency">SOL</span>
@@ -84,9 +82,9 @@ export default function BetPanel() {
         <button
           onClick={handleStartGame}
           disabled={isLoading}
-          className="trigger-btn"
+          className="trigger-btn trigger-btn-start"
         >
-          {isLoading ? 'LOADING...' : 'START'}
+          {isLoading ? 'SIGNING...' : 'START'}
         </button>
 
         <div className="fair-badge">

@@ -10,15 +10,15 @@ export class SoundEngine {
 
   playCylinderSpin() {
     this.init();
-    const clicks = 12;
+    const clicks = 14;
     for (let i = 0; i < clicks; i++) {
-      setTimeout(() => this.playClick(100 + i * 50, 0.02, 0.3), i * 66);
+      setTimeout(() => this.playClick(90 + i * 38, 0.02, 0.28), i * 58);
     }
   }
 
   playClick(freq: number, dur: number, vol = 0.5) {
-    if (!this.audioContext) return;
     this.init();
+    if (!this.audioContext) return;
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     osc.connect(gain);
@@ -32,69 +32,62 @@ export class SoundEngine {
   }
 
   playTrigger() {
-    if (!this.audioContext) return;
     this.init();
+    if (!this.audioContext) return;
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     osc.connect(gain);
     gain.connect(this.audioContext.destination);
-    osc.frequency.value = 150;
+    osc.frequency.value = 140;
     osc.type = 'square';
-    gain.gain.setValueAtTime(0.6, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.55, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
     osc.start();
     osc.stop(this.audioContext.currentTime + 0.05);
   }
 
   playEmptyChamber() {
-    if (!this.audioContext) return;
     this.init();
+    if (!this.audioContext) return;
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     osc.connect(gain);
     gain.connect(this.audioContext.destination);
-    osc.frequency.value = 200;
-    osc.type = 'square';
-    gain.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+    osc.frequency.value = 220;
+    osc.type = 'triangle';
+    gain.gain.setValueAtTime(0.42, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
     osc.start();
     osc.stop(this.audioContext.currentTime + 0.08);
   }
 
   playBulletLoad() {
-    if (!this.audioContext) return;
     this.init();
-    // Metallic click for loading bullet
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    osc.frequency.value = 400;
-    osc.type = 'square';
-    gain.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
-    osc.start();
-    osc.stop(this.audioContext.currentTime + 0.15);
+    if (!this.audioContext) return;
 
-    // Second click
-    setTimeout(() => {
-      if (!this.audioContext) return;
-      const osc2 = this.audioContext.createOscillator();
-      const gain2 = this.audioContext.createGain();
-      osc2.connect(gain2);
-      gain2.connect(this.audioContext.destination);
-      osc2.frequency.value = 300;
-      osc2.type = 'square';
-      gain2.gain.setValueAtTime(0.4, this.audioContext.currentTime);
-      gain2.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
-      osc2.start();
-      osc2.stop(this.audioContext.currentTime + 0.1);
-    }, 80);
+    const click = (freq: number, delay: number, vol = 0.28, dur = 0.1) => {
+      setTimeout(() => {
+        if (!this.audioContext) return;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.frequency.value = freq;
+        osc.type = 'square';
+        gain.gain.setValueAtTime(vol, this.audioContext!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext!.currentTime + dur);
+        osc.start();
+        osc.stop(this.audioContext!.currentTime + dur);
+      }, delay);
+    };
+
+    click(420, 0, 0.24, 0.09);
+    click(300, 80, 0.34, 0.11);
   }
 
   playGunshot() {
-    if (!this.audioContext) return;
     this.init();
+    if (!this.audioContext) return;
     const bufferSize = this.audioContext.sampleRate * 0.5;
     const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
     const data = buffer.getChannelData(0);
@@ -124,5 +117,49 @@ export class SoundEngine {
     boomGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
     boom.start();
     boom.stop(this.audioContext.currentTime + 0.3);
+  }
+
+  playCashout() {
+    this.init();
+    if (!this.audioContext) return;
+
+    const notes = [520, 660, 880];
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        if (!this.audioContext) return;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.22, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.12);
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.12);
+      }, i * 80);
+    });
+  }
+
+  playWinJingle() {
+    this.init();
+    if (!this.audioContext) return;
+
+    const notes = [440, 554, 659, 880];
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        if (!this.audioContext) return;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.16);
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.16);
+      }, i * 95);
+    });
   }
 }
