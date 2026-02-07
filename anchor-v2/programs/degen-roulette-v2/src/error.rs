@@ -29,14 +29,14 @@ pub enum DegenRouletteError {
     #[msg("Invalid rounds survived (must be 1-5)")]
     InvalidRoundsSurvived,
 
-    #[msg("VRF not yet fulfilled")]
-    VrfNotFulfilled,
+    #[msg("Server seed does not match committed hash")]
+    InvalidServerSeed,
 
     #[msg("Game already settled")]
     GameAlreadySettled,
 
-    #[msg("Game expired (24h+ elapsed)")]
-    GameExpired,
+    #[msg("Game has not expired yet (1h timeout required)")]
+    GameNotExpired,
 
     #[msg("Game already active")]
     GameAlreadyActive,

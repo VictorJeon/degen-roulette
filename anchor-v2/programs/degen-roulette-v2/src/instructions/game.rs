@@ -1,8 +1,12 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program::{transfer, Transfer};
-use anchor_lang::solana_program::hash::hashv;
+use anchor_lang::solana_program::hash::hash;
 use crate::error::DegenRouletteError;
 use crate::state::{GameState, GameStatus, HouseConfig, HouseVault, PlayerStats};
+
+// ============================================================
+// StartGame — player signs, commits seed_hash
+// ============================================================
 
 #[derive(Accounts)]
 pub struct StartGame<'info> {
@@ -41,25 +45,10 @@ pub struct StartGame<'info> {
     )]
     pub player_stats: Account<'info, PlayerStats>,
 
-    /// CHECK: Orao VRF config (network state PDA)
-    #[account(mut)]
-    pub vrf_config: UncheckedAccount<'info>,
-
-    /// CHECK: Orao VRF treasury
-    #[account(mut)]
-    pub vrf_treasury: UncheckedAccount<'info>,
-
-    /// CHECK: Orao VRF randomness PDA
-    #[account(mut)]
-    pub random: UncheckedAccount<'info>,
-
-    /// CHECK: Orao VRF program
-    pub vrf: UncheckedAccount<'info>,
-
     pub system_program: Program<'info, System>,
 }
 
-pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) -> Result<()> {
+pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, seed_hash: [u8; 32]) -> Result<()> {
     let house_config = &ctx.accounts.house_config;
     let game = &mut ctx.accounts.game;
     let clock = Clock::get()?;
@@ -67,7 +56,7 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) 
     // Validation
     require!(!house_config.paused, DegenRouletteError::HousePaused);
     require!(bet_amount >= house_config.min_bet, DegenRouletteError::BetTooLow);
-    require!(vrf_seed != [0u8; 32], DegenRouletteError::ArithmeticOverflow); // seed must be non-zero
+    require!(seed_hash != [0u8; 32], DegenRouletteError::InvalidServerSeed);
 
     // Check if game is not already active
     require!(game.status != GameStatus::Active, DegenRouletteError::GameAlreadyActive);
@@ -101,26 +90,10 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) 
     );
     transfer(cpi_context, bet_amount)?;
 
-    // Request VRF (if VRF program is executable, i.e., not localnet)
-    if ctx.accounts.vrf.executable {
-        let cpi_program = ctx.accounts.vrf.to_account_info();
-        let cpi_accounts = orao_solana_vrf::cpi::accounts::RequestV2 {
-            payer: ctx.accounts.player.to_account_info(),
-            network_state: ctx.accounts.vrf_config.to_account_info(),
-            treasury: ctx.accounts.vrf_treasury.to_account_info(),
-            request: ctx.accounts.random.to_account_info(),
-            system_program: ctx.accounts.system_program.to_account_info(),
-        };
-        orao_solana_vrf::cpi::request_v2(
-            CpiContext::new(cpi_program, cpi_accounts),
-            vrf_seed,
-        )?;
-    }
-
     // Initialize GameState
     game.player = ctx.accounts.player.key();
     game.bet_amount = bet_amount;
-    game.vrf_seed = vrf_seed;
+    game.seed_hash = seed_hash;
     game.rounds_survived = 0;
     game.bullet_position = 0;
     game.status = GameStatus::Active;
@@ -130,8 +103,7 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) 
     game.settled_at = 0;
     game.bump = ctx.bumps.game;
 
-    // Initialize PlayerStats if needed (check player == default since init_if_needed
-    // already writes discriminator, making data_is_empty() unreliable)
+    // Initialize PlayerStats if needed
     let player_stats = &mut ctx.accounts.player_stats;
     if player_stats.player == Pubkey::default() {
         player_stats.player = ctx.accounts.player.key();
@@ -141,7 +113,6 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) 
         player_stats.total_profit = 0;
         player_stats.best_streak = 0;
     }
-    // Always set bump (init_if_needed zeroes it; re-setting on repeat games is harmless)
     player_stats.bump = ctx.bumps.player_stats;
 
     // Emit event
@@ -154,23 +125,21 @@ pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) 
     Ok(())
 }
 
+// ============================================================
+// SettleGame — house authority signs, reveals server_seed
+// ============================================================
+
 #[derive(Accounts)]
 pub struct SettleGame<'info> {
+    /// House authority — must match house_config.authority
     #[account(mut)]
-    pub player: Signer<'info>,
-
-    #[account(
-        mut,
-        seeds = [GameState::SEEDS, player.key().as_ref()],
-        bump = game.bump,
-        has_one = player
-    )]
-    pub game: Account<'info, GameState>,
+    pub authority: Signer<'info>,
 
     #[account(
         mut,
         seeds = [HouseConfig::SEEDS],
-        bump = house_config.bump
+        bump = house_config.bump,
+        has_one = authority
     )]
     pub house_config: Account<'info, HouseConfig>,
 
@@ -183,18 +152,26 @@ pub struct SettleGame<'info> {
 
     #[account(
         mut,
+        seeds = [GameState::SEEDS, player.key().as_ref()],
+        bump = game.bump,
+    )]
+    pub game: Account<'info, GameState>,
+
+    /// CHECK: Player account — for PDA derivation and payout transfer
+    #[account(mut)]
+    pub player: UncheckedAccount<'info>,
+
+    #[account(
+        mut,
         seeds = [PlayerStats::SEEDS, player.key().as_ref()],
         bump
     )]
     pub player_stats: Account<'info, PlayerStats>,
 
-    /// CHECK: Orao VRF randomness PDA
-    pub random: UncheckedAccount<'info>,
-
     pub system_program: Program<'info, System>,
 }
 
-pub fn settle_game(ctx: Context<SettleGame>, rounds_survived: u8) -> Result<()> {
+pub fn settle_game(ctx: Context<SettleGame>, rounds_survived: u8, server_seed: [u8; 32]) -> Result<()> {
     let game = &mut ctx.accounts.game;
     let clock = Clock::get()?;
 
@@ -205,32 +182,15 @@ pub fn settle_game(ctx: Context<SettleGame>, rounds_survived: u8) -> Result<()> 
         DegenRouletteError::InvalidRoundsSurvived
     );
 
-    // Get bullet position from VRF or fallback
-    let bullet_position = if ctx.accounts.random.data_is_empty() {
-        // Localnet fallback - deterministic randomness
-        let player_key = ctx.accounts.player.key();
-        let created_at_bytes = game.created_at.to_le_bytes();
-        let seed_data: [&[u8]; 4] = [
-            b"test-rng".as_ref(),
-            player_key.as_ref(),
-            created_at_bytes.as_ref(),
-            &[rounds_survived],
-        ];
-        let hash = hashv(&seed_data);
-        hash.to_bytes()[0] % GameState::CHAMBERS
-    } else {
-        // Orao VRF - read fulfilled randomness (RandomnessV2)
-        let randomness_data = ctx.accounts.random.try_borrow_data()?;
-        let mut data: &[u8] = &randomness_data;
-        let randomness_account = orao_solana_vrf::state::RandomnessV2::try_deserialize(&mut data)?;
+    // Verify server seed matches committed hash
+    let computed_hash = hash(&server_seed);
+    require!(
+        computed_hash.to_bytes() == game.seed_hash,
+        DegenRouletteError::InvalidServerSeed
+    );
 
-        let fulfilled = randomness_account
-            .fulfilled()
-            .ok_or(DegenRouletteError::VrfNotFulfilled)?;
-
-        let randomness = fulfilled.randomness;
-        randomness[0] % GameState::CHAMBERS
-    };
+    // Derive bullet position from server seed
+    let bullet_position = server_seed[0] % GameState::CHAMBERS;
 
     // Determine outcome
     let won = bullet_position >= rounds_survived;
@@ -296,6 +256,10 @@ pub fn settle_game(ctx: Context<SettleGame>, rounds_survived: u8) -> Result<()> 
 
     Ok(())
 }
+
+// ============================================================
+// Events
+// ============================================================
 
 #[event]
 pub struct GameStarted {

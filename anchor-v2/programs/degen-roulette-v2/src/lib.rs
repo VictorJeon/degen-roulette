@@ -47,11 +47,11 @@ pub mod degen_roulette_v2 {
     }
 
     // Game instructions
-    pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, vrf_seed: [u8; 32]) -> Result<()> {
-        instructions::game::start_game(ctx, bet_amount, vrf_seed)
+    pub fn start_game(ctx: Context<StartGame>, bet_amount: u64, seed_hash: [u8; 32]) -> Result<()> {
+        instructions::game::start_game(ctx, bet_amount, seed_hash)
     }
 
-    pub fn settle_game(ctx: Context<SettleGame>, rounds_survived: u8) -> Result<()> {
-        instructions::game::settle_game(ctx, rounds_survived)
+    pub fn settle_game(ctx: Context<SettleGame>, rounds_survived: u8, server_seed: [u8; 32]) -> Result<()> {
+        instructions::game::settle_game(ctx, rounds_survived, server_seed)
     }
 }

@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 pub struct GameState {
     pub player: Pubkey,
     pub bet_amount: u64,
-    pub vrf_seed: [u8; 32],
+    pub seed_hash: [u8; 32],      // sha256(server_seed) — committed at start
     pub rounds_survived: u8,
     pub bullet_position: u8,
     pub status: GameStatus,
@@ -29,4 +29,5 @@ pub enum GameStatus {
     Active,
     Won,
     Lost,
+    Cancelled,
 }

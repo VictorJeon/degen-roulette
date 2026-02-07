@@ -180,34 +180,46 @@ pub fn unpause(ctx: Context<Unpause>) -> Result<()> {
     Ok(())
 }
 
+// ============================================================
+// ForceSettle — player-callable after 1h timeout → refund bet
+// ============================================================
+
 #[derive(Accounts)]
 pub struct ForceSettle<'info> {
-    #[account(
-        seeds = [HouseConfig::SEEDS],
-        bump = house_config.bump,
-        has_one = authority
-    )]
-    pub house_config: Account<'info, HouseConfig>,
-
+    /// Player who started the game
     #[account(mut)]
-    pub authority: Signer<'info>,
+    pub player: Signer<'info>,
 
     #[account(
         mut,
         seeds = [GameState::SEEDS, player.key().as_ref()],
-        bump = game.bump
+        bump = game.bump,
+        has_one = player
     )]
     pub game: Account<'info, GameState>,
 
-    /// CHECK: Player account (not signer)
-    pub player: UncheckedAccount<'info>,
+    #[account(
+        mut,
+        seeds = [HouseVault::SEEDS],
+        bump
+    )]
+    pub house_vault: Account<'info, HouseVault>,
+
+    #[account(
+        mut,
+        seeds = [HouseConfig::SEEDS],
+        bump = house_config.bump
+    )]
+    pub house_config: Account<'info, HouseConfig>,
 
     #[account(
         mut,
         seeds = [PlayerStats::SEEDS, player.key().as_ref()],
-        bump = player_stats.bump
+        bump
     )]
     pub player_stats: Account<'info, PlayerStats>,
+
+    pub system_program: Program<'info, System>,
 }
 
 pub fn force_settle(ctx: Context<ForceSettle>) -> Result<()> {
@@ -216,28 +228,20 @@ pub fn force_settle(ctx: Context<ForceSettle>) -> Result<()> {
 
     require!(game.status == GameStatus::Active, DegenRouletteError::GameNotActive);
     require!(
-        clock.unix_timestamp - game.created_at >= 86400,
-        DegenRouletteError::GameExpired
+        clock.unix_timestamp - game.created_at >= 3600, // 1 hour
+        DegenRouletteError::GameNotExpired
     );
 
-    // Force loss with rounds_survived = 0
-    game.status = GameStatus::Lost;
-    game.rounds_survived = 0;
-    game.bullet_position = 0;
-    game.result_multiplier = 0;
-    game.payout = 0;
+    // Refund bet to player
+    **ctx.accounts.house_vault.to_account_info().try_borrow_mut_lamports()? -= game.bet_amount;
+    **ctx.accounts.player.to_account_info().try_borrow_mut_lamports()? += game.bet_amount;
+
+    // Mark as cancelled
+    game.status = GameStatus::Cancelled;
     game.settled_at = clock.unix_timestamp;
+    game.payout = game.bet_amount; // refund amount
 
-    // Update PlayerStats
-    let player_stats = &mut ctx.accounts.player_stats;
-    player_stats.total_games = player_stats.total_games.checked_add(1).unwrap();
-    player_stats.total_wagered = player_stats.total_wagered.checked_add(game.bet_amount).unwrap();
-    player_stats.total_profit = player_stats.total_profit.checked_sub(game.bet_amount as i64).unwrap();
-
-    // Update HouseConfig
-    let house_config = &mut ctx.accounts.house_config;
-    house_config.total_games = house_config.total_games.checked_add(1).unwrap();
-    house_config.total_volume = house_config.total_volume.checked_add(game.bet_amount).unwrap();
+    // Do NOT update PlayerStats (game was cancelled, not played)
 
     Ok(())
 }
