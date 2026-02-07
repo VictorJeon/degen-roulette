@@ -1,7 +1,7 @@
 import { PublicKey } from '@solana/web3.js';
 
 // Program ID from IDL v2
-export const PROGRAM_ID = new PublicKey('DoyhYB794FiGVpJrhJsSaUeWieWHBHmJRUYeiPwfwwx7');
+export const PROGRAM_ID = new PublicKey('BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz');
 
 // Orao VRF Program
 export const ORAO_VRF_PROGRAM_ID = new PublicKey('VRFzZoJdhFWL8rkvu87LpKM3RbcVezpMEc6X5GVDr7y');
