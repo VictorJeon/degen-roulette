@@ -235,20 +235,12 @@ export default function GameBoard() {
         </div>
       </div>
 
-      {/* Bottom section - instruction and badge */}
-      <div className="game-bottom">
+      {/* Instruction - only show when game is active */}
+      {isActive && (
         <p className="game-instruction" id="gameInstruction">
-          {isActive ? '>>> PULL THE TRIGGER <<<' : '>>> PLACE YOUR BET <<<'}
+          {'>>> PULL THE TRIGGER <<<'}
         </p>
-
-        {/* Provably Fair Badge */}
-        <div className="fair-badge">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-          </svg>
-          Provably Fair
-        </div>
-      </div>
+      )}
 
       {/* Death Overlay */}
       <div className={`result-overlay ${showDeathOverlay ? 'active' : ''}`} id="deathOverlay">
