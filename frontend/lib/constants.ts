@@ -3,12 +3,6 @@ import { PublicKey } from '@solana/web3.js';
 // Program ID from IDL v2
 export const PROGRAM_ID = new PublicKey('BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz');
 
-// Orao VRF Program
-export const ORAO_VRF_PROGRAM_ID = new PublicKey('VRFzZoJdhFWL8rkvu87LpKM3RbcVezpMEc6X5GVDr7y');
-
-// Orao VRF Treasury (devnet)
-export const ORAO_VRF_TREASURY = new PublicKey('9ZTHWWZDpB36UFe1vszf2KEpt83vwi27jDqtHQ7NSXyR');
-
 // Game constants
 export const CHAMBERS = 6;
 export const MULTIPLIERS = [1.16, 1.45, 1.94, 2.91, 5.82];

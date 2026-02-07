@@ -1,4 +1,4 @@
-import type { Idl } from '@coral-xyz/anchor';
+import type { Idl } from "@coral-xyz/anchor";
 
 export const IDL: Idl = {
   "address": "BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz",
@@ -23,35 +23,14 @@ export const IDL: Idl = {
       ],
       "accounts": [
         {
-          "name": "house_config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  104,
-                  111,
-                  117,
-                  115,
-                  101,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "authority",
+          "name": "player",
+          "docs": [
+            "Player who started the game"
+          ],
           "writable": true,
           "signer": true,
           "relations": [
-            "house_config"
+            "game"
           ]
         },
         {
@@ -76,7 +55,53 @@ export const IDL: Idl = {
           }
         },
         {
-          "name": "player"
+          "name": "house_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "house_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
         },
         {
           "name": "player_stats",
@@ -106,6 +131,10 @@ export const IDL: Idl = {
               }
             ]
           }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
@@ -324,33 +353,15 @@ export const IDL: Idl = {
       ],
       "accounts": [
         {
-          "name": "player",
+          "name": "authority",
+          "docs": [
+            "House authority — must match house_config.authority"
+          ],
           "writable": true,
           "signer": true,
           "relations": [
-            "game"
+            "house_config"
           ]
-        },
-        {
-          "name": "game",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  97,
-                  109,
-                  101
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "player"
-              }
-            ]
-          }
         },
         {
           "name": "house_config",
@@ -402,6 +413,31 @@ export const IDL: Idl = {
           }
         },
         {
+          "name": "game",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
           "name": "player_stats",
           "writable": true,
           "pda": {
@@ -431,9 +467,6 @@ export const IDL: Idl = {
           }
         },
         {
-          "name": "random"
-        },
-        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -442,6 +475,15 @@ export const IDL: Idl = {
         {
           "name": "rounds_survived",
           "type": "u8"
+        },
+        {
+          "name": "server_seed",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
         }
       ]
     },
@@ -563,21 +605,6 @@ export const IDL: Idl = {
           }
         },
         {
-          "name": "vrf_config",
-          "writable": true
-        },
-        {
-          "name": "vrf_treasury",
-          "writable": true
-        },
-        {
-          "name": "random",
-          "writable": true
-        },
-        {
-          "name": "vrf"
-        },
-        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -588,7 +615,7 @@ export const IDL: Idl = {
           "type": "u64"
         },
         {
-          "name": "vrf_seed",
+          "name": "seed_hash",
           "type": {
             "array": [
               "u8",
@@ -929,8 +956,8 @@ export const IDL: Idl = {
     },
     {
       "code": 6009,
-      "name": "VrfNotFulfilled",
-      "msg": "VRF not yet fulfilled"
+      "name": "InvalidServerSeed",
+      "msg": "Server seed does not match committed hash"
     },
     {
       "code": 6010,
@@ -939,8 +966,8 @@ export const IDL: Idl = {
     },
     {
       "code": 6011,
-      "name": "GameExpired",
-      "msg": "Game expired (24h+ elapsed)"
+      "name": "GameNotExpired",
+      "msg": "Game has not expired yet (1h timeout required)"
     },
     {
       "code": 6012,
@@ -1023,7 +1050,7 @@ export const IDL: Idl = {
             "type": "u64"
           },
           {
-            "name": "vrf_seed",
+            "name": "seed_hash",
             "type": {
               "array": [
                 "u8",
@@ -1086,6 +1113,9 @@ export const IDL: Idl = {
           },
           {
             "name": "Lost"
+          },
+          {
+            "name": "Cancelled"
           }
         ]
       }
@@ -1174,4 +1204,4 @@ export const IDL: Idl = {
       }
     }
   ]
-} as any;
+};

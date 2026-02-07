@@ -5,12 +5,7 @@ import { useProgram } from './useProgram';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { PublicKey, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { BN } from '@coral-xyz/anchor';
-import {
-  ORAO_VRF_PROGRAM_ID,
-  ORAO_VRF_TREASURY,
-  MULTIPLIERS,
-  CHAMBERS
-} from '@/lib/constants';
+import { MULTIPLIERS, CHAMBERS } from '@/lib/constants';
 
 interface GameState {
   status: 'idle' | 'waiting_start' | 'active' | 'settling' | 'won' | 'lost';
@@ -20,7 +15,8 @@ interface GameState {
   potentialWin: number;
   bulletPosition: number | null;
   payout: number | null;
-  vrfSeed: Uint8Array | null;
+  gameId: number | null;
+  serverSeed: string | null;
 }
 
 export function useGame() {
@@ -32,7 +28,8 @@ export function useGame() {
     potentialWin: 0,
     bulletPosition: null,
     payout: null,
-    vrfSeed: null,
+    gameId: null,
+    serverSeed: null,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,23 +69,9 @@ export function useGame() {
     )[0];
   }, [wallet, program]);
 
-  const vrfConfigPda = useMemo(() => {
-    return PublicKey.findProgramAddressSync(
-      [Buffer.from('orao-vrf-network-configuration')],
-      ORAO_VRF_PROGRAM_ID
-    )[0];
-  }, []);
-
-  const getRandomnessPda = useCallback((seed: Uint8Array) => {
-    return PublicKey.findProgramAddressSync(
-      [Buffer.from('orao-vrf-randomness-request'), seed],
-      ORAO_VRF_PROGRAM_ID
-    )[0];
-  }, []);
-
   const startGame = useCallback(async (betAmount: number) => {
     if (!wallet || !gamePda || !program || !houseConfigPda || !houseVaultPda || !playerStatsPda) {
-      throw new Error('Wallet not connected or PDAs not initialized');
+      throw new Error('Wallet not connected');
     }
 
     setIsLoading(true);
@@ -96,39 +79,45 @@ export function useGame() {
     setGameState(prev => ({ ...prev, status: 'waiting_start', betAmount }));
 
     try {
-      const betAmountLamports = new BN(betAmount * LAMPORTS_PER_SOL);
+      // Step 1: Get server seed hash from API
+      const seedRes = await fetch('/api/game/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerWallet: wallet.publicKey.toBase58() }),
+      });
+      const seedData = await seedRes.json();
+      if (!seedRes.ok) throw new Error(seedData.error || 'Failed to get seed');
 
-      const tempSeed = new Uint8Array(32);
-      crypto.getRandomValues(tempSeed);
-      const tempRandomPda = getRandomnessPda(tempSeed);
+      const { gameId, seedHashBytes } = seedData;
+
+      // Step 2: Send start_game TX with seed_hash
+      const betAmountLamports = new BN(Math.round(betAmount * LAMPORTS_PER_SOL));
 
       const tx = await program.methods
-        .startGame(betAmountLamports, Array.from(tempSeed))
+        .startGame(betAmountLamports, seedHashBytes)
         .accounts({
           player: wallet.publicKey,
           game: gamePda,
           houseConfig: houseConfigPda,
           houseVault: houseVaultPda,
           playerStats: playerStatsPda,
-          vrfConfig: vrfConfigPda,
-          vrfTreasury: ORAO_VRF_TREASURY,
-          random: tempRandomPda,
-          vrf: ORAO_VRF_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
         })
         .rpc();
 
       console.log('start_game TX:', tx);
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      const gameAccount = await (program.account as any).gameState.fetch(gamePda);
-      const vrfSeed = new Uint8Array(gameAccount.vrfSeed as any);
+      // Step 3: Confirm TX with API
+      fetch('/api/game/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameId, txSignature: tx }),
+      }).catch(err => console.warn('confirm API error:', err));
 
       setGameState(prev => ({
         ...prev,
         status: 'active',
-        vrfSeed,
+        gameId,
         roundsSurvived: 0,
         currentMultiplier: MULTIPLIERS[0],
         potentialWin: betAmount * MULTIPLIERS[0],
@@ -141,13 +130,12 @@ export function useGame() {
     } finally {
       setIsLoading(false);
     }
-  }, [wallet, program, gamePda, houseConfigPda, houseVaultPda, playerStatsPda, vrfConfigPda, getRandomnessPda]);
+  }, [wallet, program, gamePda, houseConfigPda, houseVaultPda, playerStatsPda]);
 
   const pullTrigger = useCallback(() => {
     setGameState(prev => {
       const newRounds = prev.roundsSurvived + 1;
       if (newRounds > 5) return prev;
-
       const mult = MULTIPLIERS[newRounds - 1];
       return {
         ...prev,
@@ -159,8 +147,8 @@ export function useGame() {
   }, []);
 
   const settleGame = useCallback(async () => {
-    if (!wallet || !gamePda || !program || !gameState.vrfSeed || !houseConfigPda || !houseVaultPda || !playerStatsPda) {
-      throw new Error('Cannot settle: missing required data');
+    if (!gameState.gameId || gameState.roundsSurvived < 1) {
+      throw new Error('Cannot settle: no active game or no pulls');
     }
 
     setIsLoading(true);
@@ -168,58 +156,33 @@ export function useGame() {
     setGameState(prev => ({ ...prev, status: 'settling' }));
 
     try {
-      const randomPda = getRandomnessPda(gameState.vrfSeed);
-
-      const tx = await program.methods
-        .settleGame(gameState.roundsSurvived)
-        .accounts({
-          player: wallet.publicKey,
-          game: gamePda,
-          houseConfig: houseConfigPda,
-          houseVault: houseVaultPda,
-          playerStats: playerStatsPda,
-          random: randomPda,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
-
-      console.log('settle_game TX:', tx);
-
-      // Update leaderboard via API (fire-and-forget)
-      fetch('/api/leaderboard', {
+      const res = await fetch('/api/game/settle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          wallet: wallet.publicKey.toBase58(),
-          txSignature: tx,
+          gameId: gameState.gameId,
+          roundsSurvived: gameState.roundsSurvived,
         }),
-      }).catch(err => {
-        console.warn('Leaderboard API update failed:', err);
       });
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      const gameAccount = await (program.account as any).gameState.fetch(gamePda);
-
-      const won = 'won' in gameAccount.status;
-      const bulletPosition = gameAccount.bulletPosition;
-      const payout = gameAccount.payout ? Number(gameAccount.payout) / LAMPORTS_PER_SOL : 0;
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Settlement failed');
 
       setGameState(prev => ({
         ...prev,
-        status: won ? 'won' : 'lost',
-        bulletPosition,
-        payout,
+        status: data.won ? 'won' : 'lost',
+        bulletPosition: data.bulletPosition,
+        payout: data.payout / LAMPORTS_PER_SOL,
+        serverSeed: data.serverSeed,
       }));
     } catch (err: any) {
-      console.error('settle_game error:', err);
+      console.error('settle error:', err);
       setError(err.message || 'Failed to settle game');
-      // Keep status as 'active' so user can retry Cash Out (game is still Active on-chain)
       setGameState(prev => ({ ...prev, status: 'active' }));
       throw err;
     } finally {
       setIsLoading(false);
     }
-  }, [wallet, program, gamePda, gameState.vrfSeed, gameState.roundsSurvived, houseConfigPda, houseVaultPda, playerStatsPda, getRandomnessPda]);
+  }, [gameState.gameId, gameState.roundsSurvived]);
 
   const resetGame = useCallback(() => {
     setGameState({
@@ -230,41 +193,36 @@ export function useGame() {
       potentialWin: 0,
       bulletPosition: null,
       payout: null,
-      vrfSeed: null,
+      gameId: null,
+      serverSeed: null,
     });
     setError(null);
   }, []);
 
+  // Check for existing active game on page load
   useEffect(() => {
-    if (!program || !gamePda) return;
-
-    const checkExistingGame = async () => {
+    if (!wallet) return;
+    const checkActive = async () => {
       try {
-        const gameAccount = await (program.account as any).gameState.fetch(gamePda);
-        if ('active' in gameAccount.status) {
-          const vrfSeed = new Uint8Array(gameAccount.vrfSeed as any);
-          const betAmount = Number(gameAccount.betAmount) / LAMPORTS_PER_SOL;
-          const roundsSurvived = Number(gameAccount.roundsSurvived);
-          const mult = roundsSurvived >= 1 ? MULTIPLIERS[roundsSurvived - 1] : MULTIPLIERS[0];
-
-          setGameState({
+        const res = await fetch(`/api/game/active/${wallet.publicKey.toBase58()}`);
+        const data = await res.json();
+        if (data.hasActiveGame) {
+          setGameState(prev => ({
+            ...prev,
             status: 'active',
-            betAmount,
-            roundsSurvived,
-            currentMultiplier: mult,
-            potentialWin: betAmount * mult,
-            bulletPosition: null,
-            payout: null,
-            vrfSeed,
-          });
+            gameId: data.gameId,
+            betAmount: data.betAmount / LAMPORTS_PER_SOL,
+            roundsSurvived: 0,
+            currentMultiplier: MULTIPLIERS[0],
+            potentialWin: (data.betAmount / LAMPORTS_PER_SOL) * MULTIPLIERS[0],
+          }));
         }
-      } catch (err) {
-        // No active game
+      } catch {
+        // No active game or API unavailable
       }
     };
-
-    checkExistingGame();
-  }, [program, gamePda]);
+    checkActive();
+  }, [wallet]);
 
   return {
     gameState,
