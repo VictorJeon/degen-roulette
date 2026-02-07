@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)http://localhost:8080/index-v2.html?v=2 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEGEN ROULETTE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./DEGEN ROULETTE_files/css2" rel="stylesheet">
+    <!-- Solana Web3.js -->
+    <script src="./DEGEN ROULETTE_files/index.iife.min.js"></script><script src="chrome-extension://idnnbdplmphpflfnlkomgpfbpcgelopg/inpage.js" id="xverse-wallet-provider" data-is-priority="true"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --accent: #a3e635;
+            --accent-dim: #65a30d;
+            --accent-glow: rgba(163, 230, 53, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
+            --danger: #ff3b3b;
+            --success: #00ff88;
+            --border: #333333;
+            --pixel-font: 'Press Start 2P', monospace;
+            --body-font: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Scanlines overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* CRT vignette */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .logo {
+            font-family: var(--pixel-font);
+            font-size: 0.9rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .logo svg {
+            width: 24px;
+            height: 24px;
+            filter: drop-shadow(0 0 6px var(--accent-glow));
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stats-badge {
+            font-family: var(--pixel-font);
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            padding: 0.6rem 1rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+        }
+
+        .stats-badge span {
+            color: var(--accent);
+        }
+
+        .wallet-btn {
+            font-family: var(--pixel-font);
+            font-size: 0.6rem;
+            padding: 0.7rem 1rem;
+            background: var(--accent);
+            border: 3px solid var(--accent-dim);
+            border-radius: 0;
+            color: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            box-shadow: 4px 4px 0 var(--bg-primary);
+        }
+
+        .wallet-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--bg-primary);
+        }
+
+        .wallet-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0 var(--bg-primary);
+        }
+
+        .wallet-btn.connected {
+            background: var(--bg-tertiary);
+            color: var(--accent);
+            border-color: var(--border);
+        }
+
+        /* Main Layout */
+        .main {
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 70px);
+        }
+
+        @media (max-width: 1200px) {
+            .main {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .panel {
+            background: var(--bg-secondary);
+            border: 3px solid var(--border);
+            border-radius: 0;
+            padding: 1rem;
+        }
+
+        .panel-title {
+            font-family: var(--pixel-font);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* Leaderboard */
+        .leaderboard-list {
+            list-style: none;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            font-family: var(--pixel-font);
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            width: 24px;
+        }
+
+        .leaderboard-address {
+            font-family: var(--pixel-font);
+            font-size: 0.45rem;
+            color: var(--text-secondary);
+            flex: 1;
+            margin-left: 0.5rem;
+        }
+
+        .leaderboard-multiplier {
+            font-family: var(--pixel-font);
+            font-size: 0.5rem;
+            color: var(--accent);
+            text-shadow: 0 0 6px var(--accent-glow);
+        }
+
+        /* Recent Plays */
+        .recent-plays {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .play-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .play-item:last-child {
+            border-bottom: none;
+        }
+
+        .play-address {
+            font-family: var(--pixel-font);
+            font-size: 0.4rem;
+            color: var(--text-secondary);
+        }
+
+        .play-result {
+            font-family: var(--pixel-font);
+            font-size: 0.45rem;
+            margin-left: auto;
+        }
+
+        .play-result.win {
+            color: var(--success);
+            text-shadow: 0 0 6px var(--success);
+        }
+
+        .play-result.lose {
+            color: var(--danger);
+        }
+
+        .play-time {
+            font-family: var(--pixel-font);
+            font-size: 0.35rem;
+            color: var(--text-muted);
+        }
+
+        /* Game Area */
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .game-title {
+            font-family: var(--pixel-font);
+            font-size: 1.4rem;
+            text-align: center;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent-glow), 0 4px 0 var(--accent-dim);
+            letter-spacing: 0.1em;
+        }
+
+        .game-subtitle {
+            font-family: var(--pixel-font);
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            margin-top: -0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Cylinder */
+        .cylinder-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .hammer-fixed {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--pixel-font);
+            font-size: 16px;
+            color: var(--accent);
+            z-index: 10;
+            text-shadow: 0 0 15px var(--accent-glow);
+            animation: hammerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes hammerPulse {
+            0%, 100% { text-shadow: 0 0 15px var(--accent-glow); }
+            50% { text-shadow: 0 0 25px var(--accent-glow), 0 0 40px var(--accent-glow); }
+        }
+
+        .cylinder-svg {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .chamber-circle {
+            transition: all 0.3s ease;
+        }
+
+        .chamber-circle.active {
+            stroke: var(--accent) !important;
+            stroke-width: 3 !important;
+        }
+
+        .chamber-circle.selected {
+            stroke: var(--danger) !important;
+            stroke-width: 3 !important;
+            filter: drop-shadow(0 0 8px var(--danger));
+        }
+
+        .chamber-circle.fired {
+            fill: rgba(239, 68, 68, 0.3) !important;
+        }
+        
+        /* Clickable chambers in loading phase */
+        .cylinder-svg g[id^="chamber-"]:hover .chamber-circle {
+            stroke: var(--text-secondary) !important;
+            stroke-width: 2 !important;
+        }
+
+        .bullet-indicator {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .bullet-indicator.visible {
+            opacity: 1;
+        }
+
+        /* Stats */
+        .game-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-label {
+            font-family: var(--pixel-font);
+            font-size: 0.45rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-family: var(--pixel-font);
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .stat-value.accent {
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .trigger-btn {
+            font-family: var(--pixel-font);
+            font-size: 0.7rem;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            border: 4px solid var(--accent-dim);
+            border-radius: 0;
+            color: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 6px 6px 0 #000;
+        }
+
+        .trigger-btn:hover:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .trigger-btn:active:not(:disabled) {
+            transform: translate(6px, 6px);
+            box-shadow: 0 0 0 #000;
+        }
+
+        .trigger-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .trigger-btn.danger {
+            background: var(--danger);
+            border-color: #aa0000;
+            animation: dangerBlink 0.5s step-end infinite;
+        }
+
+        @keyframes dangerBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .cashout-btn {
+            font-family: var(--pixel-font);
+            font-size: 0.55rem;
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: 3px solid var(--success);
+            border-radius: 0;
+            color: var(--success);
+            cursor: pointer;
+            transition: all 0.1s;
+            display: none;
+            text-transform: uppercase;
+            box-shadow: 4px 4px 0 #000;
+            text-shadow: 0 0 8px var(--success);
+        }
+
+        .cashout-btn.visible {
+            display: block;
+        }
+
+        .cashout-btn:hover {
+            background: var(--success);
+            color: var(--bg-primary);
+            text-shadow: none;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* Betting Screen */
+        .betting-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .betting-overlay.hidden {
+            display: none;
+        }
+
+        .betting-card {
+            background: var(--bg-secondary);
+            border: 4px solid var(--accent);
+            border-radius: 0;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 8px 8px 0 #000;
+        }
+
+        .betting-title {
+            font-family: var(--pixel-font);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .bet-input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .bet-label {
+            font-family: var(--pixel-font);
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .bet-input {
+            font-family: var(--pixel-font);
+            font-size: 1rem;
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 3px solid var(--border);
+            border-radius: 0;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .bet-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-btn {
+            font-family: var(--pixel-font);
+            font-size: 0.5rem;
+            padding: 0.6rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 0;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .quick-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(163, 230, 53, 0.1);
+        }
+
+        .start-btn {
+            font-family: var(--pixel-font);
+            font-size: 0.7rem;
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            border: 4px solid var(--accent-dim);
+            border-radius: 0;
+            color: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .start-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* Result Screens */
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .result-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .result-title {
+            font-family: var(--pixel-font);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .result-title.death {
+            color: var(--danger);
+            text-shadow: 0 0 30px var(--danger), 0 4px 0 #aa0000;
+            animation: deathFlicker 0.3s step-end 3;
+        }
+
+        @keyframes deathFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .result-title.win {
+            color: var(--success);
+            text-shadow: 0 0 30px var(--success), 0 4px 0 #00aa66;
+        }
+
+        .result-stats {
+            font-family: var(--pixel-font);
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 2;
+        }
+
+        .result-stats span {
+            color: var(--text-primary);
+        }
+
+        .result-btn {
+            font-family: var(--pixel-font);
+            font-size: 0.6rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--accent);
+            border: 3px solid var(--accent-dim);
+            border-radius: 0;
+            color: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .result-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* Multiplier Popup */
+        .multiplier-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-family: var(--pixel-font);
+            font-size: 2rem;
+            color: var(--accent);
+            z-index: 101;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            text-shadow: 0 0 30px var(--accent-glow), 0 4px 0 var(--accent-dim);
+        }
+
+        .multiplier-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        /* Loading Animation */
+        .load-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--pixel-font);
+            font-size: 0.9rem;
+            color: var(--danger);
+            z-index: 101;
+            pointer-events: none;
+            opacity: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 20px var(--danger);
+            transition: opacity 0.3s;
+        }
+
+        .load-popup.show {
+            opacity: 1;
+            animation: loadPulse 0.2s step-end 2;
+        }
+
+        @keyframes loadPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .bullet-indicator.loading {
+            animation: bulletLoad 0.3s ease-out forwards;
+        }
+
+        @keyframes bulletLoad {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Flash Effects */
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .flash-overlay.success {
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent);
+        }
+
+        .flash-overlay.death {
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.5), var(--bg-primary));
+        }
+
+        .flash-overlay.active {
+            opacity: 1;
+        }
+
+        /* Screen Shake */
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(3px, -3px); }
+            60% { transform: translate(-3px, -3px); }
+            80% { transform: translate(3px, 3px); }
+        }
+
+        body.shake {
+            animation: screenShake 0.4s ease-in-out;
+        }
+
+        /* Provably Fair Badge */
+        .fair-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--pixel-font);
+            font-size: 0.4rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            text-transform: uppercase;
+        }
+
+        .fair-badge svg {
+            width: 14px;
+            height: 14px;
+            color: var(--accent);
+        }
+
+        /* Game instruction */
+        .game-instruction {
+            font-family: var(--pixel-font);
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .game-instruction.big {
+            font-size: 1rem;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent-glow), 0 2px 0 var(--accent-dim);
+            animation: instructionPulse 1.5s ease-in-out infinite;
+            margin: 1rem 0;
+        }
+
+        @keyframes instructionPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        /* Inline Betting */
+        .inline-betting {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .inline-betting .trigger-btn {
+            margin-top: 0.5rem;
+        }
+
+        .inline-betting.hidden {
+            display: none;
+        }
+
+        .bet-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bet-input-inline {
+            font-family: var(--pixel-font);
+            font-size: 1rem;
+            width: 120px;
+            padding: 0.6rem 0.8rem;
+            background: var(--bg-tertiary);
+            border: 3px solid var(--border);
+            border-radius: 0;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .bet-input-inline:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .bet-currency {
+            font-family: var(--pixel-font);
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        .quick-amounts-inline {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .quick-btn-inline {
+            font-family: var(--pixel-font);
+            font-size: 0.45rem;
+            padding: 0.5rem 0.7rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 0;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .quick-btn-inline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .quick-btn-inline.selected {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(163, 230, 53, 0.15);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .stats-badge {
+                display: none;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .game-title {
+                font-size: 1.75rem;
+            }
+            
+            .cylinder-container {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .game-stats {
+                gap: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 102;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
+            </svg>
+            DEGEN ROULETTE
+        </div>
+        <div class="header-right">
+            <div class="stats-badge">
+                Total Plays: <span id="totalPlays">12,847</span>
+            </div>
+            <button class="wallet-btn" id="walletBtn">Connect Wallet</button>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="panel">
+                <h3 class="panel-title">HALL OF DEGENS</h3>
+                <ul class="leaderboard-list" id="leaderboard">
+                    <li class="leaderboard-item">
+                        <span class="leaderboard-rank">1</span>
+                        <span class="leaderboard-address">Anon</span>
+                        <span class="leaderboard-multiplier">10.0x</span>
+                    </li>
+                    <li class="leaderboard-item">
+                        <span class="leaderboard-rank">2</span>
+                        <span class="leaderboard-address">Anon</span>
+                        <span class="leaderboard-multiplier">10.0x</span>
+                    </li>
+                    <li class="leaderboard-item">
+                        <span class="leaderboard-rank">3</span>
+                        <span class="leaderboard-address">Anon</span>
+                        <span class="leaderboard-multiplier">5.0x</span>
+                    </li>
+                    <li class="leaderboard-item">
+                        <span class="leaderboard-rank">4</span>
+                        <span class="leaderboard-address">Anon</span>
+                        <span class="leaderboard-multiplier">3.0x</span>
+                    </li>
+                    <li class="leaderboard-item">
+                        <span class="leaderboard-rank">5</span>
+                        <span class="leaderboard-address">Anon</span>
+                        <span class="leaderboard-multiplier">3.0x</span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Game Area -->
+        <section class="game-area">
+            <h1 class="game-title">DEGEN ROULETTE</h1>
+            <p class="game-subtitle">1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?</p>
+
+            <div class="cylinder-container">
+                <!-- 해머 (고정, 실린더 밖) -->
+                <div class="hammer-fixed">▼</div>
+                <svg class="cylinder-svg" id="cylinder" viewBox="0 0 300 300" style="transition: none; transform: rotate(0deg);">
+                    <defs>
+                        <radialgradient id="cylinderGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#2a2a2a"></stop>
+                            <stop offset="100%" stop-color="#1a1a1a"></stop>
+                        </radialgradient>
+                    </defs>
+                    
+                    <!-- Outer ring -->
+                    <circle cx="150" cy="150" r="140" fill="none" stroke="#27272a" stroke-width="2"></circle>
+                    
+                    <!-- Main body -->
+                    <circle cx="150" cy="150" r="130" fill="url(#cylinderGrad)"></circle>
+                    
+                    <!-- Chambers -->
+                    <g id="chamber-0" transform="translate(150, 50)" style="cursor: pointer;">
+                        <circle cx="0" cy="0" r="28" class="chamber-circle" fill="#0d0d0d" stroke="#3f3f46" stroke-width="2"></circle>
+                        <circle cx="0" cy="0" r="8" class="bullet-indicator" fill="#ef4444" style="opacity: 0;"></circle>
+                    </g>
+                    <g id="chamber-1" transform="translate(236.6, 100)" style="cursor: pointer;">
+                        <circle cx="0" cy="0" r="28" class="chamber-circle" fill="#0d0d0d" stroke="#3f3f46" stroke-width="2"></circle>
+                        <circle cx="0" cy="0" r="8" class="bullet-indicator" fill="#ef4444" style="opacity: 0;"></circle>
+                    </g>
+                    <g id="chamber-2" transform="translate(236.6, 200)" style="cursor: pointer;">
+                        <circle cx="0" cy="0" r="28" class="chamber-circle" fill="#0d0d0d" stroke="#3f3f46" stroke-width="2"></circle>
+                        <circle cx="0" cy="0" r="8" class="bullet-indicator" fill="#ef4444" style="opacity: 0;"></circle>
+                    </g>
+                    <g id="chamber-3" transform="translate(150, 250)" style="cursor: pointer;">
+                        <circle cx="0" cy="0" r="28" class="chamber-circle" fill="#0d0d0d" stroke="#3f3f46" stroke-width="2"></circle>
+                        <circle cx="0" cy="0" r="8" class="bullet-indicator" fill="#ef4444" style="opacity: 0;"></circle>
+                    </g>
+                    <g id="chamber-4" transform="translate(63.4, 200)" style="cursor: pointer;">
+                        <circle cx="0" cy="0" r="28" class="chamber-circle" fill="#0d0d0d" stroke="#3f3f46" stroke-width="2"></circle>
+                        <circle cx="0" cy="0" r="8" class="bullet-indicator" fill="#ef4444" style="opacity: 0;"></circle>
+                    </g>
+                    <g id="chamber-5" transform="translate(63.4, 100)" style="cursor: pointer;">
+                        <circle cx="0" cy="0" r="28" class="chamber-circle" fill="#0d0d0d" stroke="#3f3f46" stroke-width="2"></circle>
+                        <circle cx="0" cy="0" r="8" class="bullet-indicator" fill="#ef4444" style="opacity: 0;"></circle>
+                    </g>
+                    
+                    <!-- Center -->
+                    <circle cx="150" cy="150" r="35" fill="#1a1a1a" stroke="#3f3f46" stroke-width="2"></circle>
+                    <circle cx="150" cy="150" r="15" fill="#0d0d0d" stroke="#a3e635" stroke-width="2"></circle>
+                </svg>
+            </div>
+
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Bet</div>
+                    <div class="stat-value" id="betDisplay">0.1 SOL</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Multiplier</div>
+                    <div class="stat-value accent" id="multiplierDisplay">1.0x</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Potential</div>
+                    <div class="stat-value" id="potentialDisplay">0.1000 SOL</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Death Odds</div>
+                    <div class="stat-value" id="oddsDisplay">1 in 6</div>
+                </div>
+            </div>
+
+            <!-- Inline Betting -->
+            <div class="inline-betting" id="inlineBetting">
+                <div class="bet-row">
+                    <input type="number" class="bet-input-inline" id="betInputInline" value="1" min="0.01" step="0.01">
+                    <span class="bet-currency">SOL</span>
+                </div>
+                <div class="quick-amounts-inline">
+                    <button class="quick-btn-inline selected" data-amount="0.1">0.1</button>
+                    <button class="quick-btn-inline" data-amount="0.5">0.5</button>
+                    <button class="quick-btn-inline" data-amount="1">1</button>
+                    <button class="quick-btn-inline" data-amount="5">5</button>
+                    <button class="quick-btn-inline" data-amount="10">10</button>
+                </div>
+                <button class="trigger-btn" id="startBtn">START</button>
+            </div>
+
+            <div class="button-group">
+                <button class="trigger-btn" id="spinBtn" style="display: none;">SPIN IT</button>
+                <button class="trigger-btn" id="shotBtn" style="display: none;">SHOT</button>
+                <button class="cashout-btn" id="cashoutBtn">TAKE THE BAG</button>
+            </div>
+            
+            <p class="game-instruction" id="gameInstruction"></p>
+
+            <div class="fair-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path>
+                </svg>
+                Provably Fair
+            </div>
+        </section>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            <div class="panel">
+                <h3 class="panel-title">LIVE FEED</h3>
+                <div class="recent-plays" id="recentPlays">
+                        <div class="play-item">
+                            <span class="play-address">2daf...5780</span>
+                            <span class="play-result win">
+                                +7.40 SOL
+                            </span>
+                            <span class="play-time">2s ago</span>
+                        </div>
+                    
+                        <div class="play-item">
+                            <span class="play-address">7051...0038</span>
+                            <span class="play-result lose">
+                                -4.17 SOL
+                            </span>
+                            <span class="play-time">15s ago</span>
+                        </div>
+                    
+                        <div class="play-item">
+                            <span class="play-address">a3ee...9256</span>
+                            <span class="play-result win">
+                                +8.82 SOL
+                            </span>
+                            <span class="play-time">32s ago</span>
+                        </div>
+                    
+                        <div class="play-item">
+                            <span class="play-address">22ff...9246</span>
+                            <span class="play-result lose">
+                                -3.78 SOL
+                            </span>
+                            <span class="play-time">1m ago</span>
+                        </div>
+                    
+                        <div class="play-item">
+                            <span class="play-address">da0d...5f66</span>
+                            <span class="play-result lose">
+                                -2.19 SOL
+                            </span>
+                            <span class="play-time">2m ago</span>
+                        </div>
+                    
+                        <div class="play-item">
+                            <span class="play-address">4b68...fb4f</span>
+                            <span class="play-result win">
+                                +9.50 SOL
+                            </span>
+                            <span class="play-time">3m ago</span>
+                        </div>
+                    
+                        <div class="play-item">
+                            <span class="play-address">b49f...d87d</span>
+                            <span class="play-result lose">
+                                -0.45 SOL
+                            </span>
+                            <span class="play-time">5m ago</span>
+                        </div>
+                    
+                        <div class="play-item">
+                            <span class="play-address">8a8e...7bc4</span>
+                            <span class="play-result lose">
+                                -3.41 SOL
+                            </span>
+                            <span class="play-time">8m ago</span>
+                        </div>
+                    </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Death Overlay -->
+    <div class="result-overlay" id="deathOverlay">
+        <h2 class="result-title death">REKT</h2>
+        <div class="result-stats">
+            FINAL MULTI: <span id="deathMultiplier">1.0x</span><br>
+            SURVIVED: <span id="deathSurvived">0</span> SHOTS
+        </div>
+        <button class="result-btn" id="retryBtn">RUN IT BACK</button>
+    </div>
+
+    <!-- Win Overlay -->
+    <div class="result-overlay" id="winOverlay">
+        <h2 class="result-title win">ESCAPED</h2>
+        <div class="result-stats">
+            SECURED: <span id="winAmount">0.1200 SOL</span><br>
+            MULTIPLIER: <span id="winMultiplier">1.2x</span><br>
+            PROFIT: <span id="winProfit">0.0200 SOL</span>
+        </div>
+        <button class="result-btn" id="newGameBtn">AGAIN</button>
+    </div>
+
+    <!-- Flash Overlays -->
+    <div class="flash-overlay success" id="flashSuccess"></div>
+    <div class="flash-overlay death" id="flashDeath"></div>
+
+    <!-- Multiplier Popup -->
+    <div class="multiplier-popup" id="multiplierPopup">1.2x</div>
+
+    <!-- Load Popup -->
+    <div class="load-popup" id="loadPopup">● LOADED</div>
+
+    <script>
+        // Sound Engine
+        class SoundEngine {
+            constructor() {
+                this.audioContext = null;
+                this.initialized = false;
+            }
+
+            init() {
+                if (this.initialized) return;
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.initialized = true;
+            }
+
+            playCylinderSpin() {
+                this.init();
+                const clicks = 12;
+                for (let i = 0; i < clicks; i++) {
+                    setTimeout(() => this.playClick(100 + i * 50, 0.02, 0.3), i * 66);
+                }
+            }
+
+            playClick(freq, dur, vol = 0.5) {
+                this.init();
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+                osc.frequency.value = freq;
+                osc.type = 'square';
+                gain.gain.setValueAtTime(vol, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + dur);
+                osc.start();
+                osc.stop(this.audioContext.currentTime + dur);
+            }
+
+            playTrigger() {
+                this.init();
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+                osc.frequency.value = 150;
+                osc.type = 'square';
+                gain.gain.setValueAtTime(0.6, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                osc.start();
+                osc.stop(this.audioContext.currentTime + 0.05);
+            }
+
+            playEmptyChamber() {
+                this.init();
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+                osc.frequency.value = 200;
+                osc.type = 'square';
+                gain.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
+                osc.start();
+                osc.stop(this.audioContext.currentTime + 0.08);
+            }
+
+            playBulletLoad() {
+                this.init();
+                // Metallic click for loading bullet
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+                osc.frequency.value = 400;
+                osc.type = 'square';
+                gain.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+                osc.start();
+                osc.stop(this.audioContext.currentTime + 0.15);
+                
+                // Second click
+                setTimeout(() => {
+                    const osc2 = this.audioContext.createOscillator();
+                    const gain2 = this.audioContext.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(this.audioContext.destination);
+                    osc2.frequency.value = 300;
+                    osc2.type = 'square';
+                    gain2.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                    osc2.start();
+                    osc2.stop(this.audioContext.currentTime + 0.1);
+                }, 80);
+            }
+
+            playGunshot() {
+                this.init();
+                const bufferSize = this.audioContext.sampleRate * 0.5;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+                const noise = this.audioContext.createBufferSource();
+                noise.buffer = buffer;
+                const noiseGain = this.audioContext.createGain();
+                const filter = this.audioContext.createBiquadFilter();
+                noise.connect(filter);
+                filter.connect(noiseGain);
+                noiseGain.connect(this.audioContext.destination);
+                filter.type = 'bandpass';
+                filter.frequency.value = 500;
+                noiseGain.gain.setValueAtTime(0.8, this.audioContext.currentTime);
+                noiseGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                noise.start();
+                noise.stop(this.audioContext.currentTime + 0.5);
+
+                const boom = this.audioContext.createOscillator();
+                const boomGain = this.audioContext.createGain();
+                boom.connect(boomGain);
+                boomGain.connect(this.audioContext.destination);
+                boom.frequency.setValueAtTime(80, this.audioContext.currentTime);
+                boom.frequency.exponentialRampToValueAtTime(20, this.audioContext.currentTime + 0.2);
+                boomGain.gain.setValueAtTime(0.6, this.audioContext.currentTime);
+                boomGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                boom.start();
+                boom.stop(this.audioContext.currentTime + 0.3);
+            }
+        }
+
+        // Solana Config
+        const PROGRAM_ID = 'GA7hkmMo4N1yAxsUeursq33nJYDch1AxbPDy8BE5iDrN';
+        const SWITCHBOARD_PROGRAM_ID = 'SW1TCH7qEPTdLsDHRgPuMQjbQxKdH2aBStViMFnt64f';
+        const SYSTEM_PROGRAM_ID = '11111111111111111111111111111111';
+        const NETWORK = 'devnet';
+        const RPC_URL = 'https://api.devnet.solana.com';
+
+        // Wallet Manager (Real Phantom)
+        class WalletManager {
+            constructor() {
+                this.connected = false;
+                this.address = null;
+                this.publicKey = null;
+                this.connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
+                this.checkPhantom();
+            }
+
+            checkPhantom() {
+                if (window.solana?.isPhantom) {
+                    window.solana.on('connect', () => this.onConnect());
+                    window.solana.on('disconnect', () => this.onDisconnect());
+                    // Auto-reconnect if previously connected
+                    if (window.solana.isConnected) {
+                        this.onConnect();
+                    }
+                }
+            }
+
+            onConnect() {
+                this.connected = true;
+                this.publicKey = window.solana.publicKey;
+                this.address = this.publicKey.toString();
+            }
+
+            onDisconnect() {
+                this.connected = false;
+                this.address = null;
+                this.publicKey = null;
+            }
+
+            async connect() {
+                if (!window.solana?.isPhantom) {
+                    window.open('https://phantom.app/', '_blank');
+                    throw new Error('Phantom not installed');
+                }
+                const resp = await window.solana.connect();
+                this.publicKey = resp.publicKey;
+                this.address = this.publicKey.toString();
+                this.connected = true;
+                return this.address;
+            }
+
+            async disconnect() {
+                if (window.solana) {
+                    await window.solana.disconnect();
+                }
+                this.connected = false;
+                this.address = null;
+                this.publicKey = null;
+            }
+
+            async getBalance() {
+                if (!this.publicKey) return 0;
+                const balance = await this.connection.getBalance(this.publicKey);
+                return balance / solanaWeb3.LAMPORTS_PER_SOL;
+            }
+
+            short() {
+                return this.address ? `${this.address.slice(0, 4)}...${this.address.slice(-4)}` : '';
+            }
+
+            // Derive GameState PDA
+            getGameStatePDA() {
+                const programId = new solanaWeb3.PublicKey(PROGRAM_ID);
+                const [pda] = solanaWeb3.PublicKey.findProgramAddressSync(
+                    [
+                        new TextEncoder().encode('game'),
+                        this.publicKey.toBytes()
+                    ],
+                    programId
+                );
+                return pda;
+            }
+
+            // Read GameState from chain
+            async getGameState() {
+                if (!this.publicKey) return null;
+
+                try {
+                    const gameStatePDA = this.getGameStatePDA();
+                    const accountInfo = await this.connection.getAccountInfo(gameStatePDA);
+
+                    if (!accountInfo || !accountInfo.data) {
+                        return null;
+                    }
+
+                    const data = accountInfo.data;
+
+                    // Deserialize GameState (matching Rust layout)
+                    const player = new solanaWeb3.PublicKey(data.slice(0, 32));
+                    const betAmount = Number(new DataView(data.buffer, data.byteOffset + 32, 8).getBigUint64(0, true));
+                    const currentRound = data[40];
+                    const bulletPosition = data[41];
+                    const isActive = data[42] !== 0;
+                    const winnings = Number(new DataView(data.buffer, data.byteOffset + 43, 8).getBigUint64(0, true));
+                    const vrfAccount = new solanaWeb3.PublicKey(data.slice(51, 83));
+                    const vrfReady = data[83] !== 0;
+
+                    return {
+                        player: player.toString(),
+                        betAmount,
+                        currentRound,
+                        bulletPosition,
+                        isActive,
+                        winnings,
+                        vrfAccount: vrfAccount.toString(),
+                        vrfReady
+                    };
+                } catch (err) {
+                    console.error('Failed to read game state:', err);
+                    return null;
+                }
+            }
+
+            // InitGame instruction (bet_amount in lamports)
+            // Accounts: [player (signer, writable), game_state (writable), vrf_account (writable), switchboard_program, system_program]
+            async initGame(betLamports) {
+                if (!this.publicKey) throw new Error('Wallet not connected');
+
+                const programId = new solanaWeb3.PublicKey(PROGRAM_ID);
+                const gameStatePDA = this.getGameStatePDA();
+                const vrfAccount = new solanaWeb3.PublicKey(SYSTEM_PROGRAM_ID); // Dummy VRF (Clock fallback)
+                const switchboardProgram = new solanaWeb3.PublicKey(SWITCHBOARD_PROGRAM_ID);
+                const systemProgram = new solanaWeb3.PublicKey(SYSTEM_PROGRAM_ID);
+
+                const data = new Uint8Array(9);
+                data[0] = 0; // instruction index
+                const view = new DataView(data.buffer);
+                view.setBigUint64(1, BigInt(betLamports), true);
+
+                const tx = new solanaWeb3.Transaction().add(
+                    new solanaWeb3.TransactionInstruction({
+                        keys: [
+                            { pubkey: this.publicKey, isSigner: true, isWritable: true },
+                            { pubkey: gameStatePDA, isSigner: false, isWritable: true },
+                            { pubkey: vrfAccount, isSigner: false, isWritable: true },
+                            { pubkey: switchboardProgram, isSigner: false, isWritable: false },
+                            { pubkey: systemProgram, isSigner: false, isWritable: false }
+                        ],
+                        programId,
+                        data
+                    })
+                );
+
+                tx.feePayer = this.publicKey;
+                tx.recentBlockhash = (await this.connection.getLatestBlockhash()).blockhash;
+
+                const signed = await window.solana.signTransaction(tx);
+                const sig = await this.connection.sendRawTransaction(signed.serialize());
+                await this.connection.confirmTransaction(sig);
+
+                return sig;
+            }
+
+            // PullTrigger instruction
+            // Accounts: [player (signer), game_state (writable), vrf_account]
+            async pullTrigger() {
+                if (!this.publicKey) throw new Error('Wallet not connected');
+
+                const programId = new solanaWeb3.PublicKey(PROGRAM_ID);
+                const gameStatePDA = this.getGameStatePDA();
+                const vrfAccount = new solanaWeb3.PublicKey(SYSTEM_PROGRAM_ID);
+
+                const data = new Uint8Array([1]);
+
+                const tx = new solanaWeb3.Transaction().add(
+                    new solanaWeb3.TransactionInstruction({
+                        keys: [
+                            { pubkey: this.publicKey, isSigner: true, isWritable: false },
+                            { pubkey: gameStatePDA, isSigner: false, isWritable: true },
+                            { pubkey: vrfAccount, isSigner: false, isWritable: false }
+                        ],
+                        programId,
+                        data
+                    })
+                );
+
+                tx.feePayer = this.publicKey;
+                tx.recentBlockhash = (await this.connection.getLatestBlockhash()).blockhash;
+
+                const signed = await window.solana.signTransaction(tx);
+                const sig = await this.connection.sendRawTransaction(signed.serialize());
+                await this.connection.confirmTransaction(sig);
+
+                return sig;
+            }
+
+            // CashOut instruction
+            // Accounts: [player (signer, writable), game_state (writable)]
+            async cashOut() {
+                if (!this.publicKey) throw new Error('Wallet not connected');
+
+                const programId = new solanaWeb3.PublicKey(PROGRAM_ID);
+                const gameStatePDA = this.getGameStatePDA();
+
+                const data = new Uint8Array([2]);
+
+                const tx = new solanaWeb3.Transaction().add(
+                    new solanaWeb3.TransactionInstruction({
+                        keys: [
+                            { pubkey: this.publicKey, isSigner: true, isWritable: true },
+                            { pubkey: gameStatePDA, isSigner: false, isWritable: true }
+                        ],
+                        programId,
+                        data
+                    })
+                );
+
+                tx.feePayer = this.publicKey;
+                tx.recentBlockhash = (await this.connection.getLatestBlockhash()).blockhash;
+
+                const signed = await window.solana.signTransaction(tx);
+                const sig = await this.connection.sendRawTransaction(signed.serialize());
+                await this.connection.confirmTransaction(sig);
+
+                return sig;
+            }
+        }
+
+        // Leaderboard Manager
+        class LeaderboardManager {
+            constructor() {
+                this.scores = JSON.parse(localStorage.getItem('degen_leaderboard') || '[]');
+            }
+
+            save() {
+                localStorage.setItem('degen_leaderboard', JSON.stringify(this.scores));
+            }
+
+            add(address, multiplier) {
+                if (multiplier < 1.5) return;
+                this.scores.push({
+                    address: address || 'Anonymous',
+                    multiplier: parseFloat(multiplier.toFixed(1)),
+                    timestamp: Date.now()
+                });
+                this.scores.sort((a, b) => b.multiplier - a.multiplier || a.timestamp - b.timestamp);
+                this.scores = this.scores.slice(0, 10);
+                this.save();
+            }
+
+            short(addr) {
+                if (!addr || addr === 'Anonymous') return 'Anon';
+                return addr.length > 8 ? `${addr.slice(0, 4)}...${addr.slice(-4)}` : addr;
+            }
+        }
+
+        // Game
+        class DegenRoulette {
+            constructor() {
+                this.chambers = 6;
+                this.bulletPos = -1; // 유저가 선택
+                this.currentChamber = 0;
+                this.multiplier = 1.0;
+                this.survived = 0;
+                this.isAnimating = false;
+                this.betAmount = 0;
+                this.gamePhase = 'betting'; // betting, loading, spinning, playing
+
+                this.sound = new SoundEngine();
+                this.wallet = new WalletManager();
+                this.leaderboard = new LeaderboardManager();
+
+                this.el = {
+                    cylinder: document.getElementById('cylinder'),
+                    spinBtn: document.getElementById('spinBtn'),
+                    shotBtn: document.getElementById('shotBtn'),
+                    startBtn: document.getElementById('startBtn'),
+                    cashoutBtn: document.getElementById('cashoutBtn'),
+                    betDisplay: document.getElementById('betDisplay'),
+                    multiplierDisplay: document.getElementById('multiplierDisplay'),
+                    potentialDisplay: document.getElementById('potentialDisplay'),
+                    oddsDisplay: document.getElementById('oddsDisplay'),
+                    inlineBetting: document.getElementById('inlineBetting'),
+                    betInputInline: document.getElementById('betInputInline'),
+                    deathOverlay: document.getElementById('deathOverlay'),
+                    deathMultiplier: document.getElementById('deathMultiplier'),
+                    deathSurvived: document.getElementById('deathSurvived'),
+                    retryBtn: document.getElementById('retryBtn'),
+                    winOverlay: document.getElementById('winOverlay'),
+                    winAmount: document.getElementById('winAmount'),
+                    winMultiplier: document.getElementById('winMultiplier'),
+                    winProfit: document.getElementById('winProfit'),
+                    newGameBtn: document.getElementById('newGameBtn'),
+                    flashSuccess: document.getElementById('flashSuccess'),
+                    flashDeath: document.getElementById('flashDeath'),
+                    multiplierPopup: document.getElementById('multiplierPopup'),
+                    loadPopup: document.getElementById('loadPopup'),
+                    walletBtn: document.getElementById('walletBtn'),
+                    leaderboardEl: document.getElementById('leaderboard'),
+                    recentPlays: document.getElementById('recentPlays'),
+                    instruction: document.getElementById('gameInstruction')
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.el.spinBtn.addEventListener('click', () => this.spinCylinder());
+                this.el.shotBtn.addEventListener('click', () => this.pullTrigger());
+                this.el.startBtn.addEventListener('click', () => this.startGame());
+                this.el.cashoutBtn.addEventListener('click', () => this.cashout());
+                this.el.retryBtn.addEventListener('click', () => this.resetGame());
+                this.el.newGameBtn.addEventListener('click', () => this.resetGame());
+                this.el.walletBtn.addEventListener('click', () => this.toggleWallet());
+
+                // 챔버 클릭 이벤트
+                for (let i = 0; i < 6; i++) {
+                    const chamber = document.getElementById(`chamber-${i}`);
+                    chamber.style.cursor = 'pointer';
+                    chamber.addEventListener('click', () => this.loadBullet(i));
+                }
+
+                // Inline quick bet buttons
+                document.querySelectorAll('.quick-btn-inline').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.quick-btn-inline').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        this.el.betInputInline.value = btn.dataset.amount;
+                        this.betAmount = parseFloat(btn.dataset.amount);
+                        this.updateDisplay();
+                    });
+                });
+
+                // Bet input change
+                this.el.betInputInline.addEventListener('input', () => {
+                    const val = parseFloat(this.el.betInputInline.value);
+                    if (!isNaN(val) && val > 0) {
+                        this.betAmount = val;
+                        this.updateDisplay();
+                        document.querySelectorAll('.quick-btn-inline').forEach(b => b.classList.remove('selected'));
+                    }
+                });
+
+                this.updateWalletUI();
+                this.updateLeaderboardUI();
+                this.generateFakePlays();
+                
+                // 시작 시 betting 페이즈, 베팅 금액 기본값 설정
+                this.betAmount = 1;
+                this.gamePhase = 'betting';
+                this.updateDisplay();
+                this.updateButtons();
+            }
+
+            async toggleWallet() {
+                try {
+                    if (this.wallet.connected) {
+                        await this.wallet.disconnect();
+                    } else {
+                        await this.wallet.connect();
+                        // Show balance
+                        const balance = await this.wallet.getBalance();
+                        console.log(`Connected! Balance: ${balance.toFixed(4)} SOL`);
+                    }
+                } catch (err) {
+                    console.error('Wallet error:', err);
+                    if (err.message?.includes('not installed')) {
+                        this.el.instruction.textContent = '>>> INSTALL PHANTOM WALLET <<<';
+                    }
+                }
+                this.updateWalletUI();
+            }
+
+            updateWalletUI() {
+                if (this.wallet.connected) {
+                    this.el.walletBtn.classList.add('connected');
+                    this.el.walletBtn.textContent = this.wallet.short();
+                } else {
+                    this.el.walletBtn.classList.remove('connected');
+                    this.el.walletBtn.textContent = 'Connect Wallet';
+                }
+            }
+
+            updateLeaderboardUI() {
+                const scores = this.leaderboard.scores;
+                const items = this.el.leaderboardEl.querySelectorAll('.leaderboard-item');
+                
+                items.forEach((item, i) => {
+                    const addr = item.querySelector('.leaderboard-address');
+                    const mult = item.querySelector('.leaderboard-multiplier');
+                    
+                    if (scores[i]) {
+                        const isYou = scores[i].address === this.wallet.address;
+                        addr.textContent = isYou ? 'You' : this.leaderboard.short(scores[i].address);
+                        mult.textContent = `${scores[i].multiplier.toFixed(1)}x`;
+                    } else {
+                        addr.textContent = '---';
+                        mult.textContent = '-';
+                    }
+                });
+            }
+
+            generateFakePlays() {
+                const results = ['won', 'lost', 'won', 'lost', 'lost', 'won', 'lost', 'lost'];
+                const times = ['2s ago', '15s ago', '32s ago', '1m ago', '2m ago', '3m ago', '5m ago', '8m ago'];
+                
+                let html = '';
+                results.forEach((result, i) => {
+                    const addr = this.randomAddr();
+                    const amount = (Math.random() * 5 + 0.1).toFixed(2);
+                    const mult = (Math.random() * 4 + 1).toFixed(1);
+                    html += `
+                        <div class="play-item">
+                            <span class="play-address">${addr}</span>
+                            <span class="play-result ${result === 'won' ? 'win' : 'lose'}">
+                                ${result === 'won' ? `+${(amount * mult - amount).toFixed(2)}` : `-${amount}`} SOL
+                            </span>
+                            <span class="play-time">${times[i]}</span>
+                        </div>
+                    `;
+                });
+                this.el.recentPlays.innerHTML = html;
+            }
+
+            randomAddr() {
+                const chars = '0123456789abcdef';
+                let addr = '';
+                for (let i = 0; i < 8; i++) addr += chars[Math.floor(Math.random() * chars.length)];
+                return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
+            }
+
+            updateInstruction() {
+                // 현재 상태에 맞는 안내 메시지
+                switch (this.gamePhase) {
+                    case 'betting':
+                        this.el.instruction.textContent = '';
+                        this.el.instruction.classList.remove('big');
+                        break;
+                    case 'loading':
+                        this.el.instruction.textContent = 'PICK YOUR DOOM';
+                        this.el.instruction.classList.add('big');
+                        break;
+                    case 'spinning':
+                        this.el.instruction.textContent = '';
+                        this.el.instruction.classList.remove('big');
+                        break;
+                    case 'playing':
+                        this.el.instruction.textContent = '';
+                        this.el.instruction.classList.remove('big');
+                        break;
+                }
+            }
+
+            updateButtons() {
+                // 게임 페이즈에 따라 버튼/UI 표시
+                this.el.spinBtn.style.display = 'none';
+                this.el.shotBtn.style.display = 'none';
+                this.el.spinBtn.disabled = false;
+                this.el.shotBtn.disabled = false;
+                this.el.inlineBetting.classList.remove('hidden');
+                this.el.cashoutBtn.classList.remove('visible');
+
+                switch (this.gamePhase) {
+                    case 'betting':
+                        // 베팅 금액 입력 + START 버튼 표시
+                        break;
+                    case 'loading':
+                        // 챔버 선택 대기
+                        this.el.inlineBetting.classList.add('hidden');
+                        break;
+                    case 'spinning':
+                        this.el.inlineBetting.classList.add('hidden');
+                        this.el.spinBtn.style.display = 'block';
+                        break;
+                    case 'playing':
+                        this.el.inlineBetting.classList.add('hidden');
+                        this.el.shotBtn.style.display = 'block';
+                        break;
+                }
+                
+                this.updateInstruction();
+            }
+
+            async startGame() {
+                // 지갑 연결 체크
+                if (!this.wallet.connected) {
+                    this.el.instruction.textContent = '>>> CONNECT WALLET FIRST <<<';
+                    return;
+                }
+
+                // 베팅 금액 체크
+                const bet = parseFloat(this.el.betInputInline.value);
+                if (!bet || isNaN(bet) || bet < 0.01) {
+                    this.el.instruction.textContent = '>>> ENTER BET AMOUNT <<<';
+                    this.el.inlineBetting.style.animation = 'none';
+                    setTimeout(() => {
+                        this.el.inlineBetting.style.animation = 'shake 0.3s ease-in-out';
+                    }, 10);
+                    return;
+                }
+
+                this.betAmount = bet;
+
+                // Solana 트랜잭션 전송
+                try {
+                    this.el.instruction.textContent = '>>> SENDING TX... <<<';
+                    const lamports = Math.floor(bet * solanaWeb3.LAMPORTS_PER_SOL);
+                    const sig = await this.wallet.initGame(lamports);
+                    console.log('InitGame tx:', sig);
+
+                    // Chain에서 bulletPosition 읽기
+                    await this.sleep(500);
+                    const gameState = await this.wallet.getGameState();
+                    if (gameState) {
+                        this.bulletPos = gameState.bulletPosition;
+                        console.log('Bullet loaded at position:', this.bulletPos);
+                    }
+
+                    this.gamePhase = 'loading';
+                    this.updateDisplay();
+                    this.updateButtons();
+                } catch (err) {
+                    console.error('InitGame failed:', err);
+                    this.el.instruction.textContent = '>>> TX FAILED - TRY AGAIN <<<';
+                }
+            }
+
+            resetGame() {
+                this.gamePhase = 'betting';
+                this.el.deathOverlay.classList.remove('active');
+                this.el.winOverlay.classList.remove('active');
+                this.el.flashDeath.classList.remove('active');
+
+                // 게임 상태 리셋
+                this.chambers = 6;
+                this.bulletPos = -1;
+                this.currentChamber = 0;
+                this.multiplier = 1.0;
+                this.survived = 0;
+                this.isAnimating = false;
+
+                // UI 리셋
+                this.el.shotBtn.classList.remove('danger');
+                document.querySelectorAll('.chamber-circle').forEach(c => {
+                    c.classList.remove('active', 'fired', 'selected');
+                });
+                document.querySelectorAll('.bullet-indicator').forEach(b => {
+                    b.classList.remove('visible', 'loading');
+                    b.style.opacity = '0';
+                });
+                this.el.cylinder.style.transition = 'none';
+                this.el.cylinder.style.transform = 'rotate(0deg)';
+                
+                // Win overlay 타이틀 복구
+                const winTitle = document.querySelector('#winOverlay .result-title');
+                winTitle.textContent = 'ESCAPED';
+
+                this.updateDisplay();
+                this.updateButtons();
+            }
+
+            async loadBullet(chamberIndex) {
+                // loading 페이즈에서만 가능
+                if (this.gamePhase !== 'loading') return;
+                if (this.isAnimating) return;
+
+                // 이전 선택 해제
+                document.querySelectorAll('.chamber-circle').forEach(c => c.classList.remove('selected'));
+                document.querySelectorAll('.bullet-indicator').forEach(b => {
+                    b.classList.remove('visible', 'loading');
+                });
+
+                // 새로 선택
+                this.bulletPos = chamberIndex;
+                const chamber = document.getElementById(`chamber-${chamberIndex}`);
+                chamber.querySelector('.chamber-circle').classList.add('selected');
+                
+                // 총알 표시 + 소리
+                const bullet = chamber.querySelector('.bullet-indicator');
+                bullet.classList.add('loading', 'visible');
+                this.sound.playBulletLoad();
+
+                await this.sleep(300);
+
+                // SPIN 버튼 활성화
+                this.gamePhase = 'spinning';
+                this.updateDisplay();
+                this.updateButtons();
+            }
+
+            async spinCylinder() {
+                if (this.gamePhase !== 'spinning' || this.isAnimating) return;
+                this.isAnimating = true;
+                this.el.spinBtn.disabled = true;
+
+                // 게임 상태 초기화
+                this.chambers = 6;
+                this.currentChamber = 0;
+                this.multiplier = 1.0;
+                this.survived = 0;
+
+                // 총알 표시된 챔버
+                const bulletChamber = document.getElementById(`chamber-${this.bulletPos}`);
+                const bulletIndicator = bulletChamber.querySelector('.bullet-indicator');
+
+                // 모든 챔버 리셋 (이전 게임 흔적 제거)
+                document.querySelectorAll('.chamber-circle').forEach(c => {
+                    c.classList.remove('active', 'fired');
+                });
+
+                // 실린더 회전 (섞기)
+                const randomSpins = 3 + Math.random() * 2; // 3~5바퀴
+                const randomOffset = Math.floor(Math.random() * 6) * 60; // 랜덤 위치
+                this.el.cylinder.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                this.el.cylinder.style.transform = `rotate(${360 * randomSpins + randomOffset}deg)`;
+                this.sound.playCylinderSpin();
+
+                await this.sleep(400);
+
+                // 총알 숨기기 (회전 중)
+                bulletIndicator.classList.remove('visible', 'loading');
+                bulletIndicator.style.opacity = '0';
+                bulletChamber.querySelector('.chamber-circle').classList.remove('selected');
+
+                await this.sleep(1100);
+
+                // 실린더 위치 리셋 (시각적으로)
+                this.el.cylinder.style.transition = 'none';
+                this.el.cylinder.style.transform = 'rotate(0deg)';
+
+                // "LOADED" 표시
+                this.el.loadPopup.classList.add('show');
+                await this.sleep(800);
+                this.el.loadPopup.classList.remove('show');
+
+                // 게임 시작!
+                this.gamePhase = 'playing';
+                this.isAnimating = false;
+                this.updateDisplay();
+                this.updateButtons();
+            }
+
+            async pullTrigger() {
+                if (this.isAnimating || this.gamePhase !== 'playing') return;
+                this.isAnimating = true;
+                this.el.shotBtn.disabled = true;
+
+                // 전통 방식: 실린더 안 돌림, 현재 챔버만 하이라이트
+                document.querySelectorAll('.chamber-circle').forEach(c => c.classList.remove('active'));
+
+                const chamberEl = document.getElementById(`chamber-${this.currentChamber}`);
+                chamberEl.querySelector('.chamber-circle').classList.add('active');
+
+                // 트리거 딸깍
+                await this.sleep(300);
+                this.sound.playTrigger();
+
+                // 클라이언트에서 판정 (TX 없음!)
+                // bulletPos는 InitGame에서 on-chain에서 읽어온 값
+                this.el.instruction.textContent = '';
+
+                // 긴장감 있는 대기
+                await this.sleep(500);
+
+                // 현재 챔버 == 총알 위치면 사망
+                const isDead = this.currentChamber === this.bulletPos;
+
+                if (isDead) {
+                    // 총알 표시 후 발사
+                    chamberEl.querySelector('.bullet-indicator').classList.add('visible');
+                    await this.sleep(200);
+                    this.sound.playGunshot();
+                    await this.sleep(100);
+                    this.death();
+                } else {
+                    // 빈 챔버 - 딸깍 소리
+                    this.sound.playEmptyChamber();
+                    chamberEl.querySelector('.chamber-circle').classList.add('fired');
+
+                    // 한 칸 전진 애니메이션 (다음 챔버로)
+                    await this.sleep(300);
+                    const nextRotation = -(this.currentChamber + 1) * 60;
+                    this.el.cylinder.style.transition = 'transform 0.3s ease-out';
+                    this.el.cylinder.style.transform = `rotate(${nextRotation}deg)`;
+
+                    this.survive();
+                }
+            }
+
+            async survive() {
+                this.el.flashSuccess.classList.add('active');
+                
+                this.survived++;
+                this.chambers--;
+                this.currentChamber++;
+
+                // 전통 방식: 확률 기반 배당
+                // Round 1: 5/6 생존 = 1.2x (6/5)
+                // Round 2: 4/5 생존 = 1.5x (6/4)
+                // Round 3: 3/4 생존 = 2.0x (6/3)
+                // Round 4: 2/3 생존 = 3.0x (6/2)
+                // Round 5: 1/2 생존 = 6.0x (6/1)
+                const mults = [1.0, 1.2, 1.5, 2.0, 3.0, 6.0];
+                this.multiplier = mults[this.survived] || this.multiplier;
+
+                this.el.multiplierPopup.textContent = `${this.multiplier}x`;
+                this.el.multiplierPopup.classList.add('show');
+
+                if (this.multiplier >= 6) {
+                    this.el.multiplierPopup.textContent = 'MAX DEGEN';
+                    document.body.classList.add('shake');
+                    setTimeout(() => document.body.classList.remove('shake'), 400);
+                }
+
+                this.updateDisplay();
+
+                await this.sleep(500);
+                this.el.flashSuccess.classList.remove('active');
+
+                await this.sleep(this.multiplier >= 3 ? 2000 : 1000);
+                this.el.multiplierPopup.classList.remove('show');
+
+                // Cash out 버튼 표시 (1회 이상 생존 시)
+                if (this.survived >= 1) {
+                    this.el.cashoutBtn.classList.add('visible');
+                }
+                // 위험 표시 (2챔버 이하)
+                if (this.chambers <= 2) {
+                    this.el.shotBtn.classList.add('danger');
+                }
+
+                this.isAnimating = false;
+
+                // 5연속 생존 = 자동 승리 (6발째는 확정 사망)
+                if (this.survived >= 5) {
+                    this.el.shotBtn.disabled = true;
+                    await this.sleep(1000);
+                    this.autoWin();
+                } else {
+                    this.el.shotBtn.disabled = false;
+                }
+            }
+
+            async death() {
+                this.createParticles();
+                document.body.classList.add('shake');
+                setTimeout(() => document.body.classList.remove('shake'), 400);
+
+                this.el.flashDeath.classList.add('active');
+                await this.sleep(300);
+
+                this.leaderboard.add(this.wallet.address, this.multiplier);
+                this.updateLeaderboardUI();
+
+                this.el.deathMultiplier.textContent = `${this.multiplier}x`;
+                this.el.deathSurvived.textContent = this.survived;
+                this.el.deathOverlay.classList.add('active');
+                this.el.cashoutBtn.classList.remove('visible');
+                this.gamePhase = 'betting';
+            }
+
+            async cashout() {
+                if (this.isAnimating || this.gamePhase !== 'playing') return;
+                
+                // Solana 트랜잭션 전송
+                try {
+                    this.el.instruction.textContent = '>>> CASHING OUT... <<<';
+                    const sig = await this.wallet.cashOut();
+                    console.log('CashOut tx:', sig);
+                } catch (err) {
+                    console.error('CashOut failed:', err);
+                    // 실패해도 UI는 진행 (데모용)
+                }
+                
+                this.gamePhase = 'betting';
+
+                const win = (this.betAmount * this.multiplier).toFixed(4);
+                const profit = (win - this.betAmount).toFixed(4);
+
+                this.leaderboard.add(this.wallet.address, this.multiplier);
+                this.updateLeaderboardUI();
+
+                this.el.winAmount.textContent = `${win} SOL`;
+                this.el.winMultiplier.textContent = `${this.multiplier.toFixed(1)}x`;
+                this.el.winProfit.textContent = `${profit} SOL`;
+                this.el.winOverlay.classList.add('active');
+                this.el.cashoutBtn.classList.remove('visible');
+            }
+
+            async autoWin() {
+                // 5연속 생존 = 자동 승리 (레전드!)
+                this.gamePhase = 'betting';
+
+                const win = (this.betAmount * this.multiplier).toFixed(4);
+                const profit = (win - this.betAmount).toFixed(4);
+
+                // 특별 이펙트
+                this.el.multiplierPopup.textContent = 'GIGACHAD';
+                this.el.multiplierPopup.classList.add('show');
+                document.body.classList.add('shake');
+                setTimeout(() => document.body.classList.remove('shake'), 400);
+
+                await this.sleep(1500);
+                this.el.multiplierPopup.classList.remove('show');
+
+                this.leaderboard.add(this.wallet.address, this.multiplier);
+                this.updateLeaderboardUI();
+
+                const winTitle = document.querySelector('#winOverlay .result-title');
+                winTitle.textContent = 'GIGACHAD';
+                this.el.winAmount.textContent = `${win} SOL`;
+                this.el.winMultiplier.textContent = `${this.multiplier.toFixed(1)}x`;
+                this.el.winProfit.textContent = `${profit} SOL`;
+                this.el.winOverlay.classList.add('active');
+                this.el.cashoutBtn.classList.remove('visible');
+            }
+
+            createParticles() {
+                const canvas = document.getElementById('particle-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const particles = [];
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                for (let i = 0; i < 30; i++) {
+                    particles.push({
+                        x: cx, y: cy,
+                        size: Math.random() * 5 + 2,
+                        speedX: (Math.random() - 0.5) * 15,
+                        speedY: (Math.random() - 0.5) * 15,
+                        color: `hsl(${Math.random() * 20}, 100%, 50%)`,
+                        life: 1
+                    });
+                }
+
+                const animate = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach((p, i) => {
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        p.life -= 0.02;
+                        if (p.life <= 0) {
+                            particles.splice(i, 1);
+                        } else {
+                            ctx.globalAlpha = p.life;
+                            ctx.fillStyle = p.color;
+                            ctx.fillRect(p.x, p.y, p.size, p.size);
+                        }
+                    });
+                    if (particles.length > 0) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                };
+                animate();
+            }
+
+            updateDisplay() {
+                this.el.betDisplay.textContent = `${this.betAmount} SOL`;
+                this.el.multiplierDisplay.textContent = `${this.multiplier.toFixed(1)}x`;
+                this.el.potentialDisplay.textContent = `${(this.betAmount * this.multiplier).toFixed(4)} SOL`;
+                // 전통 방식: 확률 표시 (남은 챔버 중 1개가 총알)
+                this.el.oddsDisplay.textContent = `1 in ${this.chambers}`;
+            }
+
+            sleep(ms) {
+                return new Promise(r => setTimeout(r, ms));
+            }
+        }
+
+        // Init
+        const game = new DegenRoulette();
+    </script>
+
+
+<div style="all: initial; position: fixed !important; display: block !important; z-index: 2147483647 !important"><template shadowrootmode="closed"></template></div></body><p871b840b-f4cb-42b4-a1ab-810ea7930356><template shadowrootmode="closed"><div id="7a30874e-dc47-488a-9739-5fa921f940e6" style="position: fixed; top: 0px; left: 0px; right: 0px; z-index: 2147483647;"></div><style>*,::backdrop,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:#6b90fa80;--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:after,:before{border:0 solid #141415;box-sizing:border-box}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;tab-size:4;-webkit-tap-highlight-color:transparent}body{line-height:inherit;margin:0}hr{border-top-width:1px;color:inherit;height:0}abbr:where([title]){text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-size:1em;font-variation-settings:normal}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:initial}sub{bottom:-.25em}sup{top:-.5em}table{border-collapse:collapse;border-color:inherit;text-indent:0}button,input,optgroup,select,textarea{color:inherit;font-family:inherit;font-feature-settings:inherit;font-size:100%;font-variation-settings:inherit;font-weight:inherit;letter-spacing:inherit;line-height:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:initial;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:initial}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{color:#9ca3af;opacity:1}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{height:auto;max-width:100%}[hidden]:where(:not([hidden=until-found])){display:none}b,strong{font-weight:600}body{background-color:#fff;color:#2a2a2d}@media{.container{max-width:1168px}}.display{font-size:1.5em;line-height:32px}.display,.heading{font-family:Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-weight:600;letter-spacing:0}.heading{font-size:1.25em;line-height:26px}.subHeading{font-weight:500}.body,.subHeading{font-size:1em;letter-spacing:0;line-height:22px}.body{font-weight:400}.subBody{font-size:.875em;line-height:20px}.caption,.subBody{font-weight:400;letter-spacing:0}.caption,.caption-medium{font-size:.75em;line-height:18px}.caption-medium{font-weight:500;letter-spacing:0}.heading-2xl{font-size:2em;line-height:40px}.heading-2xl,.heading-xl{font-family:Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-weight:600;letter-spacing:-.016em}.heading-xl{font-size:1.75em;line-height:36px}.heading-lg{font-family:Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-size:1.625em;font-weight:600;letter-spacing:-.016em;line-height:34px}.heading-md{font-size:1.5em;line-height:32px}.heading-md,.heading-sm{font-family:Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-weight:600;letter-spacing:0}.heading-sm{font-size:1.25em;line-height:26px}.body-lg{font-weight:400}.body-lg,.body-lg-medium{font-size:1.125em;letter-spacing:0;line-height:24px}.body-lg-medium{font-weight:500}.body-lg-bold{font-size:1.125em;font-weight:600;letter-spacing:0;line-height:24px}.body-md{font-weight:400}.body-md,.body-md-medium{font-size:1em;letter-spacing:0;line-height:22px}.body-md-medium{font-weight:500}.body-md-bold{font-size:1em;font-weight:600;letter-spacing:0;line-height:22px}.body-sm{font-weight:400}.body-sm,.body-sm-medium{font-size:.875em;letter-spacing:0;line-height:20px}.body-sm-medium{font-weight:500}.body-sm-bold{font-size:.875em;font-weight:600;letter-spacing:0;line-height:20px}.body-xs{font-weight:400}.body-xs,.body-xs-medium{font-size:.75em;letter-spacing:0;line-height:18px}.body-xs-medium{font-weight:500}.body-xs-bold{font-size:.75em;font-weight:600;letter-spacing:0;line-height:18px}.body-2xs{font-weight:400}.body-2xs,.body-2xs-medium{font-size:.6875em;letter-spacing:0;line-height:18px}.body-2xs-medium{font-weight:500}.body-2xs-bold{font-size:.6875em;font-weight:600;letter-spacing:0;line-height:18px}.bg-primary{background-color:#f7f7f8}.bg-secondary{background-color:#fff}.bg-tertiary{background-color:#ededed}.bg-accent{background-color:#3e5fff}.bg-accent-subtle{background-color:#f3f7fc}.bg-disabled{background-color:#c8c9cb}.bg-success{background-color:#0a8550}.bg-critical{background-color:#e02f1f}.bg-warning{background-color:#fac900}.bg-success-subtle{background-color:#ecf9ee}.bg-warning-subtle{background-color:#fff6db}.bg-critical-subtle{background-color:#fcefee}.bg-primary-active{background-color:#ededed}.bg-secondary-active{background-color:#f7f7f8}.bg-accent-active{background-color:#243dcc}.border-primary{border-color:#c8c9cb}.border-secondary{border-color:#e2e2e4}.border-input{border-color:#909192}.border-accent{border-color:#3e5fff}.border-success{border-color:#37c871}.border-warning{border-color:#fac900}.border-critical{border-color:#f29086}.border-accent-active{border-color:#243dcc}.text-primary{color:#2a2a2d}.text-secondary{color:#696a6d}.text-accent{color:#3e5fff}.text-primary-on-color{color:#fff}.text-secondary-on-color{color:#f7f7f8}.text-disabled{color:#b2b2b3}.text-success{color:#075f3c}.text-warning{color:#654a0b}.text-critical{color:#9e1c10}.text-accent-active{color:#243dcc}.text-placeholder{color:#696a6d}.stroke-primary{stroke:#c8c9cb}.dark .bg-primary{background-color:#141415}.dark .bg-secondary{background-color:#1d1e20}.dark .bg-tertiary{background-color:#2a2a2d}.dark .bg-accent{background-color:#3e5fff}.dark .bg-accent-subtle{background-color:#1a1f3d}.dark .bg-disabled{background-color:#3e3f42}.dark .bg-success{background-color:#0a8550}.dark .bg-critical{background-color:#9e1c10}.dark .bg-warning{background-color:#8e6c10}.dark .bg-success-subtle{background-color:#043420}.dark .bg-warning-subtle{background-color:#3c2a07}.dark .bg-critical-subtle{background-color:#5a0e07}.dark .bg-primary-active{background-color:#1d1e20}.dark .bg-secondary-active{background-color:#2a2a2d}.dark .bg-accent-active{background-color:#243dcc}.dark .border-primary{border-color:#4f5054}.dark .border-secondary{border-color:#3e3f42}.dark .border-input{border-color:#696a6d}.dark .border-accent{border-color:#3e5fff}.dark .border-success{border-color:#0a8550}.dark .border-warning{border-color:#8e6c10}.dark .border-critical{border-color:#e02f1f}.dark .border-accent-active{border-color:#243dcc}.dark .text-primary{color:#fff}.dark .text-secondary{color:#909192}.dark .text-accent{color:#6b90fa}.dark .text-primary-on-color{color:#fff}.dark .text-secondary-on-color{color:#f7f7f8}.dark .text-disabled{color:#4f5054}.dark .text-success{color:#37c871}.dark .text-warning{color:#fac900}.dark .text-critical{color:#f29086}.dark .text-accent-active{color:#8caef8}.dark .text-placeholder{color:#b2b2b3}.dark .stroke-primary{stroke:#4f5054}.pointer-events-none{pointer-events:none}.invisible{visibility:hidden}.inset-0{inset:0}.inset-y-0{bottom:0;top:0}.bottom-4{bottom:1em}.left-0{left:0}.left-1\/2,.left-2\/4{left:50%}.right-0{right:0}.right-1\.5{right:.375em}.top-2\/4{top:50%}.z-50{z-index:50}.z-\[1\]{z-index:1}.my-0\.5{margin-top:.125em}.mb-0\.5,.my-0\.5{margin-bottom:.125em}.ml-2{margin-left:.5em}.ml-7{margin-left:1.75em}.mr-0\.5{margin-right:.125em}.mr-4{margin-right:1em}.mt-0\.5{margin-top:.125em}.box-border{box-sizing:border-box}.contents{display:contents}.h-1\.5{height:.375em}.h-10{height:2.5em}.h-12{height:3em}.h-20{height:5em}.h-4\.5{height:1.125em}.h-\[151px\]{height:151px}.h-\[214px\]{height:214px}.h-\[40px\]{height:40px}.h-\[75\%\]{height:75%}.max-h-10{max-height:2.5em}.max-h-\[300px\]{max-height:300px}.max-h-\[500px\]{max-height:500px}.max-h-\[90vh\]{max-height:90vh}.min-h-0{min-height:0}.min-h-12{min-height:3em}.min-h-\[140px\]{min-height:140px}.min-h-full{min-height:100%}.w-1\.5{width:.375em}.w-10{width:2.5em}.w-11{width:2.75em}.w-12{width:3em}.w-20{width:5em}.w-4\.5{width:1.125em}.w-80{width:20em}.w-\[150px\]{width:150px}.w-\[198px\]{width:198px}.w-\[416px\]{width:416px}.w-\[41px\]{width:41px}.w-\[75\%\]{width:75%}.w-fit{width:-moz-fit-content;width:fit-content}.min-w-80{min-width:20em}.min-w-\[150px\]{min-width:150px}.min-w-\[230px\]{min-width:230px}.max-w-55{max-width:13.75em}.flex-shrink-0,.shrink-0{flex-shrink:0}.-translate-x-1\.5{--tw-translate-x:-.375em}.-translate-x-1\.5,.-translate-x-1\/2,.-translate-x-2\/4{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-1\/2,.-translate-x-2\/4{--tw-translate-x:-50%}.-translate-y-2\/4{--tw-translate-y:-50%}.-translate-y-2\/4,.translate-x-0{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-0{--tw-translate-x:0px}.translate-x-5{--tw-translate-x:1.25em}.-rotate-90,.translate-x-5{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-rotate-90{--tw-rotate:-90deg}.rotate-180{--tw-rotate:180deg}.rotate-180,.rotate-90{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-90{--tw-rotate:90deg}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes dash{0%{stroke-dasharray:1,300;stroke-dashoffset:0}50%{stroke-dasharray:150,300;stroke-dashoffset:-75}to{stroke-dasharray:1,300;stroke-dashoffset:-250}}.animate-connectingDash{animation:dash 1.5s ease-in-out infinite}@keyframes rotate{to{transform:rotate(1turn)}}.animate-connectingRotate{animation:rotate 1.5s linear infinite}@keyframes spin{to{transform:rotate(1turn)}}.animate-spin{animation:spin 1s linear infinite}.\!cursor-not-allowed{cursor:not-allowed!important}.\!resize-none{resize:none!important}.appearance-none{appearance:none}.flex-row{flex-direction:row}.flex-row-reverse{flex-direction:row-reverse}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.gap-2{gap:.5em}.gap-3{gap:.75em}.gap-4{gap:1em}.gap-5{gap:1.25em}.gap-6{gap:1.5em}.gap-7{gap:1.75em}.gap-8{gap:2em}.gap-x-1{column-gap:.25em}.self-start{align-self:flex-start}.overflow-y-auto{overflow-y:auto}.whitespace-nowrap{white-space:nowrap}.rounded-full{border-radius:9999px}.border-none{border-style:none;border-width:0}.border-transparent{border-color:#0000}.bg-neutral-0{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-neutral-500{--tw-bg-opacity:1;background-color:rgb(144 145 146/var(--tw-bg-opacity,1))}.bg-neutral-700{--tw-bg-opacity:1;background-color:rgb(79 80 84/var(--tw-bg-opacity,1))}.fill-current{fill:currentColor}.stroke-green-400{stroke:#37c871}.stroke-neutral-300{stroke:#c8c9cb}.p-0\.5{padding:.125em}.p-4{padding:1em}.px-1{padding-left:.25em;padding-right:.25em}.px-1\.5{padding-left:.375em;padding-right:.375em}.py-0\.5{padding-bottom:.125em;padding-top:.125em}.py-1\.5{padding-bottom:.375em;padding-top:.375em}.pl-1{padding-left:.25em}.pl-3{padding-left:.75em}.pr-2{padding-right:.5em}.pr-8{padding-right:2em}.pt-1{padding-top:.25em}.pt-2{padding-top:.5em}.text-left{text-align:left}.text-right{text-align:right}.text-justify{text-align:justify}.text-start{text-align:start}.text-end{text-align:end}.text-sm{font-size:.875em}.capitalize{text-transform:capitalize}.text-inherit{color:inherit}.text-neutral-500{--tw-text-opacity:1;color:rgb(144 145 146/var(--tw-text-opacity,1))}.opacity-0{opacity:0}.opacity-50{opacity:.5}.outline-none{outline:2px solid #0000;outline-offset:2px}.transition-colors{transition-duration:.25s;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1)}.transition-opacity{transition-duration:.25s;transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1)}.duration-fast{transition-duration:.15s}.duration-medium{transition-duration:.25s}.ease-in{transition-timing-function:cubic-bezier(.4,0,1,1)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.placeholder\:text-disabled::placeholder{color:#b2b2b3}.placeholder\:text-placeholder::placeholder{color:#696a6d}.dark .placeholder\:text-disabled::placeholder{color:#4f5054}.dark .placeholder\:text-placeholder::placeholder{color:#b2b2b3}.checked\:bg-accent:checked{background-color:#3e5fff}.checked\:border-accent:checked{border-color:#3e5fff}.dark .checked\:bg-accent:checked{background-color:#3e5fff}.dark .checked\:border-accent:checked{border-color:#3e5fff}.hover\:bg-secondary:hover{background-color:#fff}.hover\:bg-primary-active:hover{background-color:#ededed}.hover\:bg-secondary-active:hover{background-color:#f7f7f8}.hover\:bg-accent-active:hover{background-color:#243dcc}.hover\:border-accent-active:hover{border-color:#243dcc}.hover\:text-accent-active:hover{color:#243dcc}.dark .hover\:bg-primary-active:hover,.dark .hover\:bg-secondary:hover{background-color:#1d1e20}.dark .hover\:bg-secondary-active:hover{background-color:#2a2a2d}.dark .hover\:bg-accent-active:hover{background-color:#243dcc}.dark .hover\:border-accent-active:hover{border-color:#243dcc}.dark .hover\:text-accent-active:hover{color:#8caef8}.checked\:hover\:bg-accent-active:hover:checked{background-color:#243dcc}.checked\:hover\:border-accent-active:hover:checked{border-color:#243dcc}.dark .checked\:hover\:bg-accent-active:hover:checked{background-color:#243dcc}.dark .checked\:hover\:border-accent-active:hover:checked{border-color:#243dcc}.active\:bg-secondary:active{background-color:#fff}.active\:bg-accent:active{background-color:#3e5fff}.active\:bg-secondary-active:active{background-color:#f7f7f8}.active\:border-accent:active{border-color:#3e5fff}.dark .active\:bg-secondary:active{background-color:#1d1e20}.dark .active\:bg-accent:active{background-color:#3e5fff}.dark .active\:bg-secondary-active:active{background-color:#2a2a2d}.dark .active\:border-accent:active{border-color:#3e5fff}.group:hover .group-hover\:text-accent-active{color:#243dcc}.dark .group:hover .group-hover\:text-accent-active{color:#8caef8}.dark\:bg-primary:is(.dark *){background-color:#f7f7f8}.dark\:bg-secondary:is(.dark *){background-color:#fff}.dark\:bg-tertiary:is(.dark *){background-color:#ededed}.dark\:bg-accent:is(.dark *){background-color:#3e5fff}.dark\:bg-accent-subtle:is(.dark *){background-color:#f3f7fc}.dark\:bg-success:is(.dark *){background-color:#0a8550}.dark\:bg-critical:is(.dark *){background-color:#e02f1f}.dark\:bg-warning:is(.dark *){background-color:#fac900}.dark\:bg-success-subtle:is(.dark *){background-color:#ecf9ee}.dark\:bg-warning-subtle:is(.dark *){background-color:#fff6db}.dark\:bg-critical-subtle:is(.dark *){background-color:#fcefee}.dark\:bg-primary-active:is(.dark *){background-color:#ededed}.dark\:bg-secondary-active:is(.dark *){background-color:#f7f7f8}.dark\:bg-accent-active:is(.dark *){background-color:#243dcc}.dark\:border-primary:is(.dark *){border-color:#c8c9cb}.dark\:border-secondary:is(.dark *){border-color:#e2e2e4}.dark\:border-accent:is(.dark *){border-color:#3e5fff}.dark\:border-success:is(.dark *){border-color:#37c871}.dark\:border-warning:is(.dark *){border-color:#fac900}.dark\:border-critical:is(.dark *){border-color:#f29086}.dark\:border-accent-active:is(.dark *){border-color:#243dcc}.dark\:text-primary:is(.dark *){color:#2a2a2d}.dark\:text-secondary:is(.dark *){color:#696a6d}.dark\:text-accent:is(.dark *){color:#3e5fff}.dark\:text-primary-on-color:is(.dark *){color:#fff}.dark\:text-secondary-on-color:is(.dark *){color:#f7f7f8}.dark\:text-disabled:is(.dark *){color:#b2b2b3}.dark\:text-success:is(.dark *){color:#075f3c}.dark\:text-warning:is(.dark *){color:#654a0b}.dark\:text-critical:is(.dark *){color:#9e1c10}.dark\:text-accent-active:is(.dark *){color:#243dcc}.dark .dark\:bg-primary:is(.dark *){background-color:#141415}.dark .dark\:bg-secondary:is(.dark *){background-color:#1d1e20}.dark .dark\:bg-tertiary:is(.dark *){background-color:#2a2a2d}.dark .dark\:bg-accent:is(.dark *){background-color:#3e5fff}.dark .dark\:bg-accent-subtle:is(.dark *){background-color:#1a1f3d}.dark .dark\:bg-success:is(.dark *){background-color:#0a8550}.dark .dark\:bg-critical:is(.dark *){background-color:#9e1c10}.dark .dark\:bg-warning:is(.dark *){background-color:#8e6c10}.dark .dark\:bg-success-subtle:is(.dark *){background-color:#043420}.dark .dark\:bg-warning-subtle:is(.dark *){background-color:#3c2a07}.dark .dark\:bg-critical-subtle:is(.dark *){background-color:#5a0e07}.dark .dark\:bg-primary-active:is(.dark *){background-color:#1d1e20}.dark .dark\:bg-secondary-active:is(.dark *){background-color:#2a2a2d}.dark .dark\:bg-accent-active:is(.dark *){background-color:#243dcc}.dark .dark\:border-primary:is(.dark *){border-color:#4f5054}.dark .dark\:border-secondary:is(.dark *){border-color:#3e3f42}.dark .dark\:border-accent:is(.dark *){border-color:#3e5fff}.dark .dark\:border-success:is(.dark *){border-color:#0a8550}.dark .dark\:border-warning:is(.dark *){border-color:#8e6c10}.dark .dark\:border-critical:is(.dark *){border-color:#e02f1f}.dark .dark\:border-accent-active:is(.dark *){border-color:#243dcc}.dark .dark\:text-primary:is(.dark *){color:#fff}.dark .dark\:text-secondary:is(.dark *){color:#909192}.dark .dark\:text-accent:is(.dark *){color:#6b90fa}.dark .dark\:text-primary-on-color:is(.dark *){color:#fff}.dark .dark\:text-secondary-on-color:is(.dark *){color:#f7f7f8}.dark .dark\:text-disabled:is(.dark *){color:#4f5054}.dark .dark\:text-success:is(.dark *){color:#37c871}.dark .dark\:text-warning:is(.dark *){color:#fac900}.dark .dark\:text-critical:is(.dark *){color:#f29086}.dark .dark\:text-accent-active:is(.dark *){color:#8caef8}.last\:mb-0:last-child{margin-bottom:0}.focus-visible\:shadow-focus:focus-visible{--tw-shadow:0px 0px 0px 2px #fff,0px 0px 0px 4px #3e5fff;--tw-shadow-colored:0px 0px 0px 2px var(--tw-shadow-color),0px 0px 0px 4px var(--tw-shadow-color)}.focus-visible\:shadow-focus-inset:focus-visible,.focus-visible\:shadow-focus:focus-visible{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.focus-visible\:shadow-focus-inset:focus-visible{--tw-shadow:inset 0px 0px 0px 2px #3e5fff,inset 0px 0px 0 4px #fff;--tw-shadow-colored:inset 0px 0px 0px 2px var(--tw-shadow-color),inset 0px 0px 0 4px var(--tw-shadow-color)}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.peer:checked~.peer-checked\:opacity-100{opacity:1}.data-\[closed\]\:translate-y-2[data-closed]{--tw-translate-y:.5em}.data-\[closed\]\:translate-y-2[data-closed],.data-\[closed\]\:translate-y-4[data-closed]{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.data-\[closed\]\:translate-y-4[data-closed]{--tw-translate-y:1em}.data-\[closed\]\:scale-95[data-closed]{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.data-\[closed\]\:opacity-0[data-closed]{opacity:0}:where([data-headlessui-focus-visible]) .ui-focus-visible\:shadow-focus:focus{--tw-shadow:0px 0px 0px 2px #fff,0px 0px 0px 4px #3e5fff;--tw-shadow-colored:0px 0px 0px 2px var(--tw-shadow-color),0px 0px 0px 4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.\[\&_\*\]\:cursor-not-allowed *{cursor:not-allowed}.sr-only{height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;clip:rect(0,0,0,0);border-width:0;white-space:nowrap}.visible{visibility:visible}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.bottom-2{bottom:.5em}.left-1\/2{left:50%}.z-10{z-index:10}.mx-1{margin-left:.25em;margin-right:.25em}.mx-auto{margin-left:auto;margin-right:auto}.my-4{margin-bottom:1em;margin-top:1em}.my-6{margin-bottom:1.5em;margin-top:1.5em}.-mr-1{margin-right:-.25em}.-mr-1\.5{margin-right:-.375em}.mb-0{margin-bottom:0}.mb-1{margin-bottom:.25em}.mb-2{margin-bottom:.5em}.mb-3{margin-bottom:.75em}.mb-4{margin-bottom:1em}.mb-6{margin-bottom:1.5em}.mb-8{margin-bottom:2em}.ml-1{margin-left:.25em}.ml-auto{margin-left:auto}.mr-0{margin-right:0}.mr-1{margin-right:.25em}.mr-1\.5{margin-right:.375em}.mr-2{margin-right:.5em}.mr-auto{margin-right:auto}.mt-1{margin-top:.25em}.mt-1\.5{margin-top:.375em}.mt-2{margin-top:.5em}.mt-3{margin-top:.75em}.mt-4{margin-top:1em}.mt-6{margin-top:1.5em}.mt-\[1px\]{margin-top:1px}.mt-\[3px\]{margin-top:3px}.line-clamp-1{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:1}.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table-caption{display:table-caption}.hidden{display:none}.size-full{height:100%;width:100%}.h-0{height:0}.h-4{height:1em}.h-5{height:1.25em}.h-6{height:1.5em}.h-7{height:1.75em}.h-8{height:2em}.h-\[140px\]{height:140px}.h-\[180px\]{height:180px}.h-\[22px\]{height:22px}.h-\[23px\]{height:23px}.h-\[56px\]{height:56px}.h-\[80px\]{height:80px}.h-auto{height:auto}.h-full{height:100%}.max-h-\[276px\]{max-height:276px}.max-h-\[348px\]{max-height:348px}.max-h-full{max-height:100%}.min-h-\[276px\]{min-height:276px}.min-h-\[348px\]{min-height:348px}.w-4{width:1em}.w-5{width:1.25em}.w-6{width:1.5em}.w-7{width:1.75em}.w-8{width:2em}.w-\[140px\]{width:140px}.w-\[180px\]{width:180px}.w-\[220px\]{width:220px}.w-\[22px\]{width:22px}.w-\[308px\]{width:308px}.w-\[310px\]{width:310px}.w-\[400px\]{width:400px}.w-\[440px\]{width:440px}.w-\[56px\]{width:56px}.w-\[660px\]{width:660px}.w-\[80px\]{width:80px}.w-auto{width:auto}.w-full{width:100%}.max-w-\[180px\]{max-width:180px}.max-w-\[308px\]{max-width:308px}.max-w-\[704px\]{max-width:704px}.max-w-\[794px\]{max-width:794px}.flex-1{flex:1 1 0%}.flex-initial{flex:0 1 auto}.flex-none{flex:none}.flex-shrink-0{flex-shrink:0}.flex-grow,.grow{flex-grow:1}.caption-top{caption-side:top}.caption-bottom{caption-side:bottom}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-x-1\/2,.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{user-select:none}.resize{resize:both}.flex-col{flex-direction:column}.flex-nowrap{flex-wrap:nowrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25em}.gap-12{gap:3em}.space-x-0>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-left:calc(0px*(1 - var(--tw-space-x-reverse)));margin-right:calc(0px*var(--tw-space-x-reverse))}.space-x-0\.5>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-left:calc(.125em*(1 - var(--tw-space-x-reverse)));margin-right:calc(.125em*var(--tw-space-x-reverse))}.self-center{align-self:center}.self-stretch{align-self:stretch}.justify-self-center{justify-self:center}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-visible{overflow:visible}.overflow-x-hidden{overflow-x:hidden}.overflow-y-hidden{overflow-y:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-pre-line{white-space:pre-line}.rounded-md{border-radius:12px}.rounded-sm{border-radius:6px}.rounded-xs{border-radius:3px}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-0{border-bottom-width:0}.border-l{border-left-width:1px}.border-solid{border-style:solid}.border-hidden{border-style:hidden}.border-black{--tw-border-opacity:1;border-color:rgb(0 0 0/var(--tw-border-opacity))}.border-pink-400{--tw-border-opacity:1;border-color:rgb(244 114 182/var(--tw-border-opacity))}.object-cover{object-fit:cover}.object-bottom{object-position:bottom}.object-center{object-position:center}.object-left{object-position:left}.object-left-bottom{object-position:left bottom}.object-left-top{object-position:left top}.object-right{object-position:right}.object-right-bottom{object-position:right bottom}.object-right-top{object-position:right top}.object-top{object-position:top}.p-1{padding:.25em}.p-2{padding:.5em}.p-3{padding:.75em}.px-10{padding-left:2.5em;padding-right:2.5em}.px-2{padding-left:.5em;padding-right:.5em}.px-3{padding-left:.75em;padding-right:.75em}.px-4{padding-left:1em;padding-right:1em}.px-8{padding-left:2em;padding-right:2em}.py-1{padding-bottom:.25em;padding-top:.25em}.py-2{padding-bottom:.5em;padding-top:.5em}.py-2\.5{padding-bottom:.625em;padding-top:.625em}.py-3{padding-bottom:.75em;padding-top:.75em}.py-6{padding-bottom:1.5em;padding-top:1.5em}.py-8{padding-bottom:2em;padding-top:2em}.pb-3{padding-bottom:.75em}.pl-2{padding-left:.5em}.pl-4{padding-left:1em}.pl-8{padding-left:2em}.pr-1{padding-right:.25em}.pr-1\.5{padding-right:.375em}.pr-14{padding-right:3.5em}.pt-12{padding-top:3em}.text-center{text-align:center}.align-middle{vertical-align:middle}.align-bottom{vertical-align:bottom}.font-heading{font-family:Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji}.uppercase{text-transform:uppercase}.lowercase{text-transform:lowercase}.text-red-600{--tw-text-opacity:1;color:rgb(224 47 31/var(--tw-text-opacity))}.underline{text-decoration-line:underline}.shadow-bottom-sheet{--tw-shadow:0 -4px 8px 0 #00000029;--tw-shadow-colored:0 -4px 8px 0 var(--tw-shadow-color)}.shadow-bottom-sheet,.shadow-bottom-sheet-dark{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-bottom-sheet-dark{--tw-shadow:0 -4px 8px 0 #000000b3;--tw-shadow-colored:0 -4px 8px 0 var(--tw-shadow-color)}.shadow-lg{--tw-shadow:0 4px 8px 0 #00000029;--tw-shadow-colored:0 4px 8px 0 var(--tw-shadow-color)}.shadow-lg,.shadow-lg-dark{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg-dark{--tw-shadow:0 4px 8px 0 #000000b3;--tw-shadow-colored:0 4px 8px 0 var(--tw-shadow-color)}.shadow-lg-reverse{--tw-shadow:0 -4px 8px 0 #00000026;--tw-shadow-colored:0 -4px 8px 0 var(--tw-shadow-color)}.shadow-lg-reverse,.shadow-lg-reverse-dark{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg-reverse-dark{--tw-shadow:0 -4px 8px 0 #000000b3;--tw-shadow-colored:0 -4px 8px 0 var(--tw-shadow-color)}.shadow-md{--tw-shadow:0 2px 4px 0 #00000029;--tw-shadow-colored:0 2px 4px 0 var(--tw-shadow-color)}.shadow-md,.shadow-md-dark{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md-dark{--tw-shadow:0 2px 4px 0 #000000b3;--tw-shadow-colored:0 2px 4px 0 var(--tw-shadow-color)}.shadow-modal{--tw-shadow:0 4px 8px 0 #00000029;--tw-shadow-colored:0 4px 8px 0 var(--tw-shadow-color)}.shadow-modal,.shadow-modal-dark{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-modal-dark{--tw-shadow:0 4px 8px 0 #000000b3;--tw-shadow-colored:0 4px 8px 0 var(--tw-shadow-color)}.shadow-popover{--tw-shadow:0 2px 4px 0 #00000029;--tw-shadow-colored:0 2px 4px 0 var(--tw-shadow-color)}.shadow-popover,.shadow-popover-dark{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-popover-dark{--tw-shadow:0 2px 4px 0 #000000b3;--tw-shadow-colored:0 2px 4px 0 var(--tw-shadow-color)}.shadow-sm{--tw-shadow:0 1px 2px 0 #0000001a;--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.shadow-sm,.shadow-sm-dark{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm-dark{--tw-shadow:0 1px 2px 0 #000000b3;--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.outline{outline-style:solid}.blur{--tw-blur:blur(8px)}.blur,.blur-sm{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-sm{--tw-blur:blur(4px)}.drop-shadow{--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f)}.drop-shadow,.drop-shadow-lg{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-lg{--tw-drop-shadow:drop-shadow(0 10px 8px #0000000a) drop-shadow(0 4px 3px #0000001a)}.drop-shadow-md{--tw-drop-shadow:drop-shadow(0 4px 3px #00000012) drop-shadow(0 2px 2px #0000000f)}.drop-shadow-md,.drop-shadow-sm{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-sm{--tw-drop-shadow:drop-shadow(0 1px 1px #0000000d)}.invert{--tw-invert:invert(100%)}.filter,.invert{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-duration:.25s;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1)}.scrollbar-none{scrollbar-width:none}.scrollbar-none::-webkit-scrollbar{display:none}@supports (overflow-wrap:anywhere){.break-anywhere{overflow-wrap:anywhere}}@supports not (overflow-wrap:anywhere){.break-anywhere{word-break:break-word}}.placeholder-primary::placeholder{color:#696a6d}.remove-arrows::-webkit-inner-spin-button,.remove-arrows::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.remove-arrows{-moz-appearance:textfield}:host{font-size:16px!important;line-height:1.5!important;-webkit-text-size-adjust:100%!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji!important;font-feature-settings:normal!important;tab-size:4!important}.focus-visible\:outline-none:focus-visible,.focus\:outline-none:focus{outline:2px solid #0000;outline-offset:2px}.dark\:bg-black:is(.dark *){--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity))}.dark\:text-red-700:is(.dark *){--tw-text-opacity:1;color:rgb(158 28 16/var(--tw-text-opacity))}@media{.sm\:block{display:block}.sm\:inline-block{display:inline-block}.sm\:hidden{display:none}.sm\:overflow-hidden{overflow:hidden}.sm\:overflow-x-hidden{overflow-x:hidden}.sm\:overflow-y-hidden{overflow-y:hidden}.sm\:border-hidden{border-style:hidden}.md\:block{display:block}.md\:inline-block{display:inline-block}.md\:hidden{display:none}.md\:overflow-hidden{overflow:hidden}.md\:overflow-x-hidden{overflow-x:hidden}.md\:overflow-y-hidden{overflow-y:hidden}.md\:border-hidden{border-style:hidden}.lg\:block{display:block}.lg\:inline-block{display:inline-block}.lg\:hidden{display:none}.lg\:overflow-hidden{overflow:hidden}.lg\:overflow-x-hidden{overflow-x:hidden}.lg\:overflow-y-hidden{overflow-y:hidden}.lg\:border-hidden{border-style:hidden}.xl\:block{display:block}.xl\:inline-block{display:inline-block}.xl\:hidden{display:none}.xl\:overflow-hidden{overflow:hidden}.xl\:overflow-x-hidden{overflow-x:hidden}.xl\:overflow-y-hidden{overflow-y:hidden}.xl\:border-hidden{border-style:hidden}}</style></template></p871b840b-f4cb-42b4-a1ab-810ea7930356></html>
