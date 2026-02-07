@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useGame } from '@/hooks/useGame';
 import { SoundEngine } from '@/lib/sound';
 import BetPanel from './BetPanel';
@@ -16,10 +16,10 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
         <ol>
           <li>1) BET 금액 입력 후 START</li>
           <li>2) 총알 넣을 챔버 선택</li>
-          <li>3) 실린더가 회전 → 총알 위치 감춰짐</li>
-          <li>4) PULL로 라운드 진행 (TX 없음)</li>
-          <li>5) 원할 때 CASH OUT</li>
-          <li>6) 서버가 settle → 결과 확정</li>
+          <li>3) 실린더 회전 → 총알 위치 감춰짐</li>
+          <li>4) PULL → 상단 챔버 발사</li>
+          <li>5) 살았으면 실린더 한 칸 회전</li>
+          <li>6) 원할 때 CASH OUT</li>
         </ol>
         <button className="mini-btn" onClick={onClose}>닫기</button>
       </div>
@@ -34,9 +34,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
         <h3>PROVABLY FAIR</h3>
         <p>게임 시작 시 seed hash를 온체인에 commit한 뒤,
           settle 시 server seed를 공개해 검증해요.</p>
-        {gameId && (
-          <p className="mono">Game ID: {gameId}</p>
-        )}
+        {gameId && <p className="mono">Game ID: {gameId}</p>}
         {serverSeed ? (
           <>
             <p className="mono">Server Seed (revealed):</p>
@@ -51,7 +49,6 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
   );
 }
 
-// Cylinder phase: selecting → spinning → ready
 type CylinderPhase = 'selecting' | 'spinning' | 'ready';
 
 export default function GameBoard() {
@@ -61,6 +58,7 @@ export default function GameBoard() {
   const [shakeScreen, setShakeScreen] = useState(false);
   const [showFlashSuccess, setShowFlashSuccess] = useState(false);
   const [showFlashDeath, setShowFlashDeath] = useState(false);
+  // Rotation always in multiples of 60° so chambers snap to positions
   const [cylinderRotation, setCylinderRotation] = useState(0);
   const [selectedChamber, setSelectedChamber] = useState<number | null>(null);
   const [cylinderPhase, setCylinderPhase] = useState<CylinderPhase>('selecting');
@@ -68,7 +66,6 @@ export default function GameBoard() {
   const [showHowTo, setShowHowTo] = useState(false);
   const [showFair, setShowFair] = useState(false);
   const [actionHint, setActionHint] = useState<string>('');
-  // Whether bullet is visually visible (hidden after spin)
   const [bulletVisible, setBulletVisible] = useState(true);
 
   useEffect(() => {
@@ -77,7 +74,11 @@ export default function GameBoard() {
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  // Step 1: Player taps a chamber → bullet loads visually
+  // Chamber at 12 o'clock = the one whose original position, after rotation, is at top
+  // Chambers are indexed 0-5 clockwise starting from top (0°, 60°, 120°, 180°, 240°, 300°)
+  // After rotating cylinder by R degrees CW, chamber i is visually at angle (i*60 + R) % 360
+  // Chamber at top (0°): i where (i*60 + R) % 360 === 0 → i = ((360 - R%360) % 360) / 60
+
   const handleSelectChamber = async (i: number) => {
     if (cylinderPhase !== 'selecting') return;
 
@@ -86,24 +87,23 @@ export default function GameBoard() {
     soundRef.current?.playBulletLoad();
     setActionHint(`CHAMBER ${i + 1} LOADED`);
 
-    // Brief pause to show bullet, then auto-spin
     await sleep(600);
 
-    // Step 2: Cylinder spins fast → bullet hidden
+    // Spin: multiple full rotations + random offset (always 60° multiples)
     setCylinderPhase('spinning');
     setActionHint('');
     soundRef.current?.playCylinderSpin();
-    // Big random rotation (multiple full spins + random offset)
-    setCylinderRotation(prev => prev + 1080 + Math.floor(Math.random() * 720));
+    const randomSteps = Math.floor(Math.random() * 6); // 0-5 extra chambers
+    const fullSpins = 360 * 4; // 4 full rotations for drama
+    const spinAmount = fullSpins + randomSteps * 60;
+    setCylinderRotation(prev => prev + spinAmount);
 
-    // During spin, hide the bullet after a brief moment
     await sleep(300);
     setBulletVisible(false);
 
-    // Wait for spin to settle
-    await sleep(1200);
+    // Wait for spin to settle (matches CSS transition duration)
+    await sleep(1800);
 
-    // Step 3: Reload click → trigger enabled
     soundRef.current?.playReload();
     setActionHint('LOCKED & LOADED');
     setCylinderPhase('ready');
@@ -115,28 +115,27 @@ export default function GameBoard() {
 
     try {
       const nextRounds = gameState.roundsSurvived + 1;
-
       setIsReloading(true);
       setActionHint('');
 
-      // Small spin for each pull (chamber advancing)
-      soundRef.current?.playCylinderSpin();
-      setCylinderRotation(prev => prev + 60 + Math.floor(Math.random() * 30));
-      await sleep(400);
-
+      // Fire: brief pause then trigger sound
       soundRef.current?.playTrigger();
-      await sleep(180);
+      await sleep(250);
 
       pullTrigger();
       soundRef.current?.playEmptyChamber();
       setActionHint(`SURVIVED R${nextRounds}`);
 
-      await sleep(220);
+      // Advance cylinder by one chamber (60° clockwise)
+      await sleep(300);
+      soundRef.current?.playCylinderSpin();
+      setCylinderRotation(prev => prev + 60);
+
+      await sleep(500);
       setIsReloading(false);
 
-      // Max rounds → auto settle
       if (nextRounds >= 5) {
-        await sleep(500);
+        await sleep(400);
         await handleCashOut();
       }
     } catch (err) {
@@ -147,7 +146,6 @@ export default function GameBoard() {
 
   const handleCashOut = async () => {
     if (gameState.status !== 'active' || isLoading) return;
-
     try {
       await settleGame();
       soundRef.current?.playCashout();
@@ -171,9 +169,9 @@ export default function GameBoard() {
 
   useEffect(() => {
     if (gameState.status === 'lost') {
+      setBulletVisible(true);
       setShowFlashDeath(true);
       setShakeScreen(true);
-      setBulletVisible(true); // reveal bullet on death
       soundRef.current?.playGunshot();
       setTimeout(() => setShakeScreen(false), 400);
     } else if (gameState.status === 'won') {
@@ -186,7 +184,7 @@ export default function GameBoard() {
   useEffect(() => {
     if (shakeScreen) {
       document.body.classList.add('shake');
-      return () => document.body.classList.remove('shake');
+      return () => { document.body.classList.remove('shake'); };
     }
     document.body.classList.remove('shake');
   }, [shakeScreen]);
@@ -194,20 +192,19 @@ export default function GameBoard() {
   const isActive = gameState.status === 'active';
   const isSettling = gameState.status === 'settling';
   const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
-
-  // Whether the trigger button should be enabled
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
-  const chamberPositions = [
-    { x: 150, y: 50 },
-    { x: 236.6, y: 100 },
-    { x: 236.6, y: 200 },
-    { x: 150, y: 250 },
-    { x: 63.4, y: 200 },
-    { x: 63.4, y: 100 },
-  ];
+  // 6 chambers at 60° intervals, index 0 at 12 o'clock (top center)
+  const CHAMBER_RADIUS = 75; // distance from center to chamber center
+  const chamberAngles = [0, 60, 120, 180, 240, 300]; // degrees, 0 = top
+  const chamberPositions = chamberAngles.map(deg => {
+    const rad = (deg - 90) * (Math.PI / 180); // -90 because SVG 0° is right, we want 0° = top
+    return {
+      x: 150 + CHAMBER_RADIUS * Math.cos(rad),
+      y: 150 + CHAMBER_RADIUS * Math.sin(rad),
+    };
+  });
 
-  // Determine the active instruction text
   const getInstruction = () => {
     if (!isActive) return null;
     if (cylinderPhase === 'selecting') return '>>> LOAD THE BULLET <<<';
@@ -216,12 +213,12 @@ export default function GameBoard() {
     return '>>> PULL THE TRIGGER <<<';
   };
 
-  // Cylinder spin transition: slower easing for the initial big spin, faster for pulls
+  // Slower easing for initial big spin, snappy for chamber advance
   const spinTransition = cylinderPhase === 'spinning'
-    ? 'transform 1.4s cubic-bezier(0.12, 0.8, 0.1, 1.0)'
+    ? 'transform 2.0s cubic-bezier(0.08, 0.82, 0.17, 1.0)'
     : cylinderRotation === 0
       ? 'none'
-      : 'transform 0.6s cubic-bezier(0.2, 0.9, 0.15, 1.0)';
+      : 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1.0)';
 
   return (
     <div className="game-content">
@@ -239,7 +236,7 @@ export default function GameBoard() {
 
       <div className="game-main game-card">
         <h1 className="game-title">DEGEN ROULETTE</h1>
-        <p className="game-subtitle">1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?</p>
+        <p className="game-subtitle">1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?</p>
 
         {error && <p className="game-error">{error}</p>}
         {actionHint && <p className="game-hint">{actionHint}</p>}
@@ -262,77 +259,98 @@ export default function GameBoard() {
           ))}
         </div>
 
-        <div className="cylinder-container depth">
-          <div className="hammer-fixed">▼</div>
+        {/* Revolver cylinder */}
+        <div className="revolver-frame">
+          {/* Barrel / firing pin — fixed at top, does NOT rotate */}
+          <div className="barrel-indicator">
+            <svg viewBox="0 0 40 32" className="barrel-svg">
+              <path d="M20 32 L8 8 L14 8 L14 0 L26 0 L26 8 L32 8 Z" fill="#a3e635" opacity="0.9" />
+            </svg>
+          </div>
+
           <svg
             className={`cylinder-svg ${cylinderPhase === 'spinning' ? 'cylinder-blur' : ''}`}
             viewBox="0 0 300 300"
             style={{
               transition: spinTransition,
-              transform: `perspective(900px) rotateX(8deg) rotate(${cylinderRotation}deg)`,
+              transform: `rotate(${cylinderRotation}deg)`,
             }}
           >
             <defs>
-              <radialGradient id="cylMetal" cx="50%" cy="44%" r="60%">
-                <stop offset="0%" stopColor="#3a3a3a" />
-                <stop offset="40%" stopColor="#232323" />
+              <radialGradient id="cylBody" cx="50%" cy="42%" r="55%">
+                <stop offset="0%" stopColor="#404040" />
+                <stop offset="50%" stopColor="#2a2a2a" />
                 <stop offset="100%" stopColor="#151515" />
+              </radialGradient>
+              <radialGradient id="chamberHole" cx="40%" cy="35%" r="60%">
+                <stop offset="0%" stopColor="#1a1a1a" />
+                <stop offset="100%" stopColor="#080808" />
               </radialGradient>
             </defs>
 
-            <circle cx="150" cy="150" r="140" fill="none" stroke="#2b2b2f" strokeWidth="2" />
-            <circle cx="150" cy="150" r="130" fill="url(#cylMetal)" />
+            {/* Outer ring — cylinder body */}
+            <circle cx="150" cy="150" r="140" fill="none" stroke="#3a3a3a" strokeWidth="4" />
+            <circle cx="150" cy="150" r="138" fill="url(#cylBody)" />
 
+            {/* Subtle fluting lines between chambers (revolver detail) */}
+            {chamberAngles.map((deg, i) => {
+              const midDeg = deg + 30; // halfway between chambers
+              const rad = (midDeg - 90) * (Math.PI / 180);
+              const x1 = 150 + 50 * Math.cos(rad);
+              const y1 = 150 + 50 * Math.sin(rad);
+              const x2 = 150 + 130 * Math.cos(rad);
+              const y2 = 150 + 130 * Math.sin(rad);
+              return (
+                <line key={`flute-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="#1f1f1f" strokeWidth="1" opacity="0.5" />
+              );
+            })}
+
+            {/* Chambers */}
             {chamberPositions.map((pos, i) => {
               const isBulletHere = selectedChamber === i;
               const isFired = gameState.bulletPosition !== null && i === gameState.bulletPosition;
-              const isCurrentChamber = i === gameState.roundsSurvived && isActive && cylinderPhase === 'ready';
               const canSelect = isActive && cylinderPhase === 'selecting' && gameState.roundsSurvived === 0;
-
-              // Show bullet only if visible (before spin) or on death
               const showBullet = isBulletHere && bulletVisible;
 
               return (
-                <g
-                  key={i}
-                  transform={`translate(${pos.x}, ${pos.y})`}
+                <g key={i}
                   onClick={() => canSelect && handleSelectChamber(i)}
                   style={{ cursor: canSelect ? 'pointer' : 'default' }}
                 >
-                  <circle
-                    cx="0"
-                    cy="0"
-                    r="28"
-                    className="chamber-circle"
-                    fill={isFired ? 'rgba(239, 68, 68, 0.35)' : '#0d0d0d'}
-                    stroke={
-                      isCurrentChamber ? '#a3e635'
-                      : (canSelect && selectedChamber === null) ? '#525263'
-                      : isBulletHere && bulletVisible ? '#f59e0b'
-                      : '#3f3f46'
-                    }
-                    strokeWidth={isCurrentChamber || (isBulletHere && bulletVisible) ? 3 : 2}
+                  {/* Chamber rim */}
+                  <circle cx={pos.x} cy={pos.y} r="26"
+                    fill="none"
+                    stroke={isFired ? '#ef4444' : canSelect ? '#525263' : '#3f3f46'}
+                    strokeWidth="2.5"
                   />
-                  {/* Bullet indicator */}
-                  <circle
-                    cx="0"
-                    cy="0"
-                    r="9"
-                    fill={isFired ? '#ef4444' : '#f59e0b'}
+                  {/* Chamber hole */}
+                  <circle cx={pos.x} cy={pos.y} r="24"
+                    fill={isFired ? 'rgba(239, 68, 68, 0.25)' : 'url(#chamberHole)'}
+                  />
+                  {/* Inner bore ring */}
+                  <circle cx={pos.x} cy={pos.y} r="16"
+                    fill="none" stroke="#2a2a2a" strokeWidth="1"
+                  />
+                  {/* Bullet (brass colored) */}
+                  <circle cx={pos.x} cy={pos.y} r="10"
+                    fill={isFired ? '#ef4444' : '#d4a017'}
                     style={{
                       opacity: showBullet || isFired ? 1 : 0,
-                      transition: 'opacity 0.2s',
+                      transition: 'opacity 0.15s',
                     }}
                   />
-                  {/* Hover ring for selectable chambers */}
+                  {/* Bullet primer dot */}
+                  {(showBullet || isFired) && (
+                    <circle cx={pos.x} cy={pos.y} r="3.5"
+                      fill={isFired ? '#ff6b6b' : '#b8860b'}
+                      style={{ opacity: showBullet || isFired ? 1 : 0 }}
+                    />
+                  )}
+                  {/* Hover highlight for selectable */}
                   {canSelect && (
-                    <circle
-                      cx="0"
-                      cy="0"
-                      r="28"
-                      fill="transparent"
-                      stroke="transparent"
-                      strokeWidth="4"
+                    <circle cx={pos.x} cy={pos.y} r="26"
+                      fill="transparent" stroke="transparent" strokeWidth="4"
                       className="chamber-hover"
                     />
                   )}
@@ -340,8 +358,12 @@ export default function GameBoard() {
               );
             })}
 
-            <circle cx="150" cy="150" r="35" fill="#1a1a1a" stroke="#3f3f46" strokeWidth="2" />
-            <circle cx="150" cy="150" r="15" fill="#0d0d0d" stroke="#a3e635" strokeWidth="2" />
+            {/* Center pin */}
+            <circle cx="150" cy="150" r="22" fill="#1a1a1a" stroke="#3a3a3a" strokeWidth="2" />
+            <circle cx="150" cy="150" r="8" fill="#0a0a0a" stroke="#555" strokeWidth="1.5" />
+            {/* Center pin cross */}
+            <line x1="145" y1="150" x2="155" y2="150" stroke="#444" strokeWidth="1" />
+            <line x1="150" y1="145" x2="150" y2="155" stroke="#444" strokeWidth="1" />
           </svg>
         </div>
 
@@ -356,20 +378,14 @@ export default function GameBoard() {
                 disabled={!triggerReady}
                 className={`trigger-btn ${gameState.roundsSurvived >= 3 ? 'danger' : ''} ${!triggerReady ? 'locked' : ''}`}
               >
-                {cylinderPhase === 'selecting'
-                  ? 'LOAD FIRST'
-                  : cylinderPhase === 'spinning'
-                    ? 'SPINNING...'
-                    : isReloading
-                      ? 'RELOADING...'
-                      : 'PULL TRIGGER'}
+                {cylinderPhase === 'selecting' ? 'LOAD FIRST'
+                  : cylinderPhase === 'spinning' ? 'SPINNING...'
+                  : isReloading ? 'RELOADING...'
+                  : 'PULL TRIGGER'}
               </button>
               {gameState.roundsSurvived >= 1 && cylinderPhase === 'ready' && (
-                <button
-                  onClick={handleCashOut}
-                  disabled={isLoading || isReloading}
-                  className="cashout-btn visible"
-                >
+                <button onClick={handleCashOut} disabled={isLoading || isReloading}
+                  className="cashout-btn visible">
                   CASH OUT
                 </button>
               )}
@@ -412,8 +428,6 @@ export default function GameBoard() {
           max-width: 760px;
         }
 
-        .depth { filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.5)); }
-
         .game-error {
           color: var(--danger);
           font-family: 'Space Grotesk', sans-serif;
@@ -433,7 +447,7 @@ export default function GameBoard() {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
           gap: 8px;
-          margin-bottom: 8px;
+          margin-bottom: 12px;
         }
 
         .m-row {
@@ -454,12 +468,43 @@ export default function GameBoard() {
           box-shadow: 0 0 12px rgba(163,230,53,0.2);
         }
 
+        /* === Revolver frame === */
+        .revolver-frame {
+          position: relative;
+          width: 280px;
+          height: 280px;
+          margin: 0 auto 16px;
+          filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.6));
+        }
+
+        .barrel-indicator {
+          position: absolute;
+          top: -6px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10;
+          width: 28px;
+          height: 24px;
+          pointer-events: none;
+        }
+
+        .barrel-svg {
+          width: 100%;
+          height: 100%;
+          filter: drop-shadow(0 0 6px rgba(163,230,53,0.5));
+        }
+
+        .cylinder-svg {
+          width: 100%;
+          height: 100%;
+        }
+
         .cylinder-svg.cylinder-blur {
-          filter: blur(1.5px);
+          filter: blur(2px);
         }
 
         .chamber-hover:hover {
-          stroke: rgba(163, 230, 53, 0.4) !important;
+          stroke: rgba(163, 230, 53, 0.5) !important;
         }
 
         .trigger-btn.locked {
@@ -483,84 +528,29 @@ export default function GameBoard() {
           border-radius: 8px;
           cursor: pointer;
         }
-
-        .mini-btn:hover {
-          border-color: var(--accent);
-          color: var(--accent);
-        }
+        .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
 
         .modal-backdrop {
-          position: fixed;
-          inset: 0;
+          position: fixed; inset: 0;
           background: rgba(0,0,0,0.82);
           z-index: 1400;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          display: flex; align-items: center; justify-content: center;
         }
-
         .modal-card {
           width: min(620px, 92vw);
-          background: #0f1013;
-          border: 1px solid #2f3338;
-          border-radius: 12px;
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
+          background: #0f1013; border: 1px solid #2f3338;
+          border-radius: 12px; padding: 20px;
+          display: flex; flex-direction: column; gap: 12px;
         }
+        .modal-card h3 { margin: 0; font-family: 'Press Start 2P', monospace; color: var(--accent); font-size: 0.9rem; }
+        .modal-card ol { margin: 0; padding-left: 18px; color: #e4e4e7; line-height: 1.7; font-size: 0.95rem; }
+        .mono { font-family: 'Space Grotesk', monospace; font-size: 0.85rem; color: #d4d4d8; margin: 0; }
+        .seed { word-break: break-all; color: #a3e635; }
 
-        .modal-card h3 {
-          margin: 0;
-          font-family: 'Press Start 2P', monospace;
-          color: var(--accent);
-          font-size: 0.9rem;
-        }
-
-        .modal-card ol {
-          margin: 0;
-          padding-left: 18px;
-          color: #e4e4e7;
-          line-height: 1.7;
-          font-size: 0.95rem;
-        }
-
-        .mono {
-          font-family: 'Space Grotesk', monospace;
-          font-size: 0.85rem;
-          color: #d4d4d8;
-          margin: 0;
-        }
-
-        .seed {
-          word-break: break-all;
-          color: #a3e635;
-        }
-
-        .settling-state {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1rem;
-          margin-top: 1rem;
-        }
-
-        .spinner {
-          width: 40px;
-          height: 40px;
-          border: 4px solid rgba(163, 230, 53, 0.2);
-          border-top-color: var(--accent);
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
+        .settling-state { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-top: 1rem; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(163,230,53,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        .settling-state p {
-          font-family: 'Press Start 2P', monospace;
-          color: var(--accent);
-          text-shadow: 0 0 10px var(--accent);
-        }
+        .settling-state p { font-family: 'Press Start 2P', monospace; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
       `}</style>
     </div>
   );
