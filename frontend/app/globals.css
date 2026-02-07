@@ -451,7 +451,6 @@ body::after {
     color: var(--success);
     cursor: pointer;
     transition: all 0.1s;
-    display: none;
     text-transform: uppercase;
     box-shadow: 4px 4px 0 #000;
     text-shadow: 0 0 8px var(--success);
@@ -459,6 +458,10 @@ body::after {
 
 .cashout-btn.visible {
     display: block;
+}
+
+.cashout-btn:not(.visible) {
+    display: none;
 }
 
 .cashout-btn:hover {

@@ -6,8 +6,6 @@ import { useBet } from '@/hooks/useBet';
 import { useGameState } from '@/hooks/useGameState';
 import { SoundEngine } from '@/lib/sound';
 
-type GamePhase = 'idle' | 'loading' | 'active';
-
 export default function GameBoard() {
   const { publicKey } = useWallet();
   const { pullTrigger, cashOut, loading: betLoading } = useBet();
@@ -19,7 +17,6 @@ export default function GameBoard() {
   const [showDeathOverlay, setShowDeathOverlay] = useState(false);
   const [showWinOverlay, setShowWinOverlay] = useState(false);
   const [cylinderRotation, setCylinderRotation] = useState(0);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     soundRef.current = new SoundEngine();
@@ -54,14 +51,8 @@ export default function GameBoard() {
     try {
       playSound('trigger');
       await sleep(500);
-
       await pullTrigger();
-
-      // Wait for state update
       await sleep(1000);
-
-      // Check result based on updated gameState
-      // This will be handled by useGameState subscription
     } catch (err) {
       console.error('Pull trigger failed:', err);
     }
@@ -87,7 +78,6 @@ export default function GameBoard() {
     setShakeScreen(false);
   };
 
-  // Handle game state changes
   useEffect(() => {
     if (!gameState) return;
 
@@ -104,73 +94,95 @@ export default function GameBoard() {
     }
   }, [gameState]);
 
-  const getChamberPosition = (index: number) => {
-    const angle = (index * 60 - 90) * (Math.PI / 180);
-    const x = 100 + 65 * Math.cos(angle);
-    const y = 100 + 65 * Math.sin(angle);
-    return { x, y };
-  };
-
   const multipliers = [1.0, 1.2, 1.5, 2.0, 3.0, 6.0];
   const currentRound = gameState?.currentRound || 0;
   const multiplier = multipliers[currentRound] || 1.0;
   const chambers = 6 - currentRound;
-  const betAmount = gameState?.betAmount ? Number(gameState.betAmount) / 1e9 : 0;
+  const betAmount = gameState?.betAmount ? Number(gameState.betAmount) / 1e9 : 1;
 
   const isActive = gameState && 'active' in gameState.status;
 
-  return (
-    <div className={`flex flex-col items-center justify-center gap-8 relative ${shakeScreen ? 'animate-shake' : ''}`}>
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 pointer-events-none"
-        style={{ zIndex: 9999 }}
-      />
+  // Fixed chamber positions matching reference HTML exactly
+  const chamberPositions = [
+    { x: 150, y: 50 },    // chamber-0: top
+    { x: 236.6, y: 100 }, // chamber-1: top-right
+    { x: 236.6, y: 200 }, // chamber-2: bottom-right
+    { x: 150, y: 250 },   // chamber-3: bottom
+    { x: 63.4, y: 200 },  // chamber-4: bottom-left
+    { x: 63.4, y: 100 },  // chamber-5: top-left
+  ];
 
-      {showFlashSuccess && (
-        <div className="fixed inset-0 bg-[#00ff88] opacity-20 pointer-events-none" style={{ zIndex: 999 }} />
-      )}
-      {showFlashDeath && (
-        <div className="fixed inset-0 bg-[#ff3b3b] opacity-30 pointer-events-none" style={{ zIndex: 999 }} />
-      )}
+  return (
+    <>
+      {/* Flash overlays */}
+      <div className={`flash-overlay success ${showFlashSuccess ? 'active' : ''}`} />
+      <div className={`flash-overlay death ${showFlashDeath ? 'active' : ''}`} />
 
       <h1 className="game-title">DEGEN ROULETTE</h1>
       <p className="game-subtitle">1 BULLET. NO RESPAWN. HOW DEGEN ARE YOU?</p>
 
-      {/* Cylinder */}
+      {/* Cylinder - matches reference HTML exactly */}
       <div className="cylinder-container">
         <div className="hammer-fixed">▼</div>
 
         <svg
-          className="w-full h-full transition-transform duration-[1500ms] ease-in-out"
+          className="cylinder-svg"
+          id="cylinder"
+          viewBox="0 0 300 300"
           style={{
-            transform: `rotate(${cylinderRotation}deg)`,
-            transition: cylinderRotation === 0 ? 'none' : 'transform 1500ms cubic-bezier(0.25, 0.1, 0.25, 1)'
+            transition: cylinderRotation === 0 ? 'none' : 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+            transform: `rotate(${cylinderRotation}deg)`
           }}
-          viewBox="0 0 200 200"
         >
-          <circle cx="100" cy="100" r="95" fill="none" stroke="#333333" strokeWidth="2" />
-          <circle cx="100" cy="100" r="30" fill="#1a1a1a" stroke="#a3e635" strokeWidth="2" />
+          <defs>
+            <radialGradient id="cylinderGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#2a2a2a" />
+              <stop offset="100%" stopColor="#1a1a1a" />
+            </radialGradient>
+          </defs>
 
-          {[0, 1, 2, 3, 4, 5].map((i) => {
-            const { x, y } = getChamberPosition(i);
-            const isCurrentChamber = i === currentRound;
+          {/* Outer ring */}
+          <circle cx="150" cy="150" r="140" fill="none" stroke="#27272a" strokeWidth="2" />
+
+          {/* Cylinder body */}
+          <circle cx="150" cy="150" r="130" fill="url(#cylinderGrad)" />
+
+          {/* Chambers */}
+          {chamberPositions.map((pos, i) => {
             const isFired = i < currentRound;
+            const isCurrentChamber = i === currentRound && isActive;
 
             return (
-              <g key={i}>
+              <g
+                key={i}
+                id={`chamber-${i}`}
+                transform={`translate(${pos.x}, ${pos.y})`}
+                style={{ cursor: 'pointer' }}
+              >
                 <circle
-                  cx={x}
-                  cy={y}
-                  r="18"
-                  fill={isFired ? 'rgba(239, 68, 68, 0.3)' : '#0a0a0a'}
-                  stroke={isCurrentChamber && isActive ? '#a3e635' : '#333333'}
-                  strokeWidth={isCurrentChamber && isActive ? 3 : 2}
-                  className="transition-all duration-300"
+                  cx="0"
+                  cy="0"
+                  r="28"
+                  className="chamber-circle"
+                  fill={isFired ? 'rgba(239, 68, 68, 0.3)' : '#0d0d0d'}
+                  stroke={isCurrentChamber ? '#a3e635' : '#3f3f46'}
+                  strokeWidth={isCurrentChamber ? 3 : 2}
+                />
+                <circle
+                  cx="0"
+                  cy="0"
+                  r="8"
+                  className="bullet-indicator"
+                  fill="#ef4444"
+                  style={{ opacity: 0 }}
                 />
               </g>
             );
           })}
+
+          {/* Center pieces */}
+          <circle cx="150" cy="150" r="35" fill="#1a1a1a" stroke="#3f3f46" strokeWidth="2" />
+          <circle cx="150" cy="150" r="15" fill="#0d0d0d" stroke="#a3e635" strokeWidth="2" />
         </svg>
       </div>
 
@@ -178,92 +190,90 @@ export default function GameBoard() {
       <div className="game-stats">
         <div className="stat-item">
           <div className="stat-label">Bet</div>
-          <div className="stat-value">{betAmount.toFixed(2)} SOL</div>
+          <div className="stat-value" id="betDisplay">{betAmount} SOL</div>
         </div>
         <div className="stat-item">
           <div className="stat-label">Multiplier</div>
-          <div className="stat-value accent">{multiplier.toFixed(1)}x</div>
+          <div className="stat-value accent" id="multiplierDisplay">{multiplier.toFixed(1)}x</div>
         </div>
         <div className="stat-item">
           <div className="stat-label">Potential</div>
-          <div className="stat-value">{(betAmount * multiplier).toFixed(4)} SOL</div>
+          <div className="stat-value" id="potentialDisplay">{(betAmount * multiplier).toFixed(4)} SOL</div>
         </div>
         <div className="stat-item">
           <div className="stat-label">Death Odds</div>
-          <div className="stat-value">1 in {chambers}</div>
+          <div className="stat-value" id="oddsDisplay">1 in {chambers}</div>
         </div>
       </div>
 
-      {/* Playing UI */}
-      {isActive && (
-        <div className="flex flex-col gap-3 items-center">
-          <button
-            onClick={handlePullTrigger}
-            disabled={betLoading}
-            className={`trigger-btn ${chambers <= 2 ? 'danger' : ''}`}
-          >
-            SHOT
-          </button>
-          {currentRound >= 1 && (
+      {/* Action Buttons */}
+      <div className="button-group">
+        {isActive ? (
+          <>
             <button
-              onClick={handleCashOut}
+              onClick={handlePullTrigger}
               disabled={betLoading}
-              className="cashout-btn"
+              className={`trigger-btn ${chambers <= 2 ? 'danger' : ''}`}
+              id="shotBtn"
             >
-              TAKE THE BAG
+              SHOT
             </button>
-          )}
-        </div>
-      )}
+            {currentRound >= 1 && (
+              <button
+                onClick={handleCashOut}
+                disabled={betLoading}
+                className="cashout-btn visible"
+                id="cashoutBtn"
+              >
+                TAKE THE BAG
+              </button>
+            )}
+          </>
+        ) : null}
+      </div>
+
+      <p className="game-instruction" id="gameInstruction">
+        {isActive ? '>>> PULL THE TRIGGER <<<' : '>>> PLACE YOUR BET <<<'}
+      </p>
 
       {/* Provably Fair Badge */}
       <div className="fair-badge">
         <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path>
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
         </svg>
         Provably Fair
       </div>
 
-      {/* Death overlay */}
-      {showDeathOverlay && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center" style={{ zIndex: 2000 }}>
-          <div className="text-center">
-            <div className="font-pixel text-[2rem] text-danger mb-8">YOU DIED</div>
-            <div className="font-pixel text-[1rem] text-text-secondary mb-2">FINAL MULTIPLIER</div>
-            <div className="font-pixel text-[1.5rem] text-accent text-glow mb-6">{multiplier.toFixed(1)}x</div>
-            <div className="font-pixel text-[0.7rem] text-text-muted mb-8">SURVIVED {currentRound} ROUNDS</div>
-            <button
-              onClick={resetGame}
-              className="font-pixel text-[0.7rem] px-8 py-4 bg-accent border-[4px] border-accent-dim text-bg-primary uppercase tracking-wider shadow-[6px_6px_0_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_#000] active:translate-x-1.5 active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all"
-            >
-              TRY AGAIN
-            </button>
-          </div>
+      {/* Death Overlay */}
+      <div className={`result-overlay ${showDeathOverlay ? 'active' : ''}`} id="deathOverlay">
+        <h2 className="result-title death">REKT</h2>
+        <div className="result-stats">
+          FINAL MULTI: <span id="deathMultiplier">{multiplier.toFixed(1)}x</span><br />
+          SURVIVED: <span id="deathSurvived">{currentRound}</span> SHOTS
         </div>
-      )}
+        <button className="result-btn" id="retryBtn" onClick={resetGame}>
+          RUN IT BACK
+        </button>
+      </div>
 
-      {/* Win overlay */}
-      {showWinOverlay && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center" style={{ zIndex: 2000 }}>
-          <div className="text-center">
-            <div className="font-pixel text-[2rem] text-success text-glow-success mb-8">ESCAPED</div>
-            <div className="font-pixel text-[1rem] text-text-secondary mb-2">YOU WON</div>
-            <div className="font-pixel text-[1.5rem] text-accent text-glow mb-4">
-              {(betAmount * multiplier).toFixed(4)} SOL
-            </div>
-            <div className="font-pixel text-[0.8rem] text-text-muted mb-2">{multiplier.toFixed(1)}x MULTIPLIER</div>
-            <div className="font-pixel text-[0.7rem] text-success mb-8">
-              +{((betAmount * multiplier) - betAmount).toFixed(4)} SOL PROFIT
-            </div>
-            <button
-              onClick={resetGame}
-              className="font-pixel text-[0.7rem] px-8 py-4 bg-accent border-[4px] border-accent-dim text-bg-primary uppercase tracking-wider shadow-[6px_6px_0_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_#000] active:translate-x-1.5 active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all"
-            >
-              NEW GAME
-            </button>
-          </div>
+      {/* Win Overlay */}
+      <div className={`result-overlay ${showWinOverlay ? 'active' : ''}`} id="winOverlay">
+        <h2 className="result-title win">ESCAPED</h2>
+        <div className="result-stats">
+          SECURED: <span id="winAmount">{(betAmount * multiplier).toFixed(4)} SOL</span><br />
+          MULTIPLIER: <span id="winMultiplier">{multiplier.toFixed(1)}x</span><br />
+          PROFIT: <span id="winProfit">{((betAmount * multiplier) - betAmount).toFixed(4)} SOL</span>
         </div>
-      )}
-    </div>
+        <button className="result-btn" id="newGameBtn" onClick={resetGame}>
+          AGAIN
+        </button>
+      </div>
+
+      {/* Multiplier Popup */}
+      <div className="multiplier-popup" id="multiplierPopup">{multiplier.toFixed(1)}x</div>
+
+      {/* Load Popup */}
+      <div className="load-popup" id="loadPopup">● LOADED</div>
+    </>
   );
 }
