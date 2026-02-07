@@ -5,10 +5,12 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useBet } from '@/hooks/useBet';
 import { useGameState } from '@/hooks/useGameState';
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export default function BetPanel() {
   const { publicKey } = useWallet();
   const { initGame, loading } = useBet();
-  const { gameState } = useGameState();
+  const { gameState, refresh } = useGameState();
   const [betAmount, setBetAmount] = useState(0.01);
   const [selectedBet, setSelectedBet] = useState(0.01);
   const [shakeBetting, setShakeBetting] = useState(false);
@@ -34,6 +36,9 @@ export default function BetPanel() {
 
     try {
       await initGame(betAmount);
+      // Wait for transaction to confirm, then refresh state
+      await sleep(2000);
+      await refresh();
       setInstruction('>>> GAME STARTED <<<');
     } catch (err: any) {
       setInstruction(`>>> ERROR: ${err.message} <<<`);
