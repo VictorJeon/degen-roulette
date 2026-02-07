@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Press_Start_2P, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { WalletProvider } from "@/components/WalletProvider";
+import { WalletProviderWrapper } from "@/components/WalletProviderWrapper";
 import { BufferPolyfill } from "@/components/BufferPolyfill";
 
 const pressStart2P = Press_Start_2P({
@@ -29,9 +29,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${pressStart2P.variable} ${spaceGrotesk.variable}`}>
         <BufferPolyfill />
-        <WalletProvider>
+        <WalletProviderWrapper>
           {children}
-        </WalletProvider>
+        </WalletProviderWrapper>
       </body>
     </html>
   );

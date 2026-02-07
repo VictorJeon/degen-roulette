@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Transpile Solana packages for proper module resolution
+  transpilePackages: [
+    '@solana/wallet-adapter-base',
+    '@solana/wallet-adapter-react',
+    '@solana/wallet-adapter-react-ui',
+    '@solana/wallet-adapter-wallets',
+  ],
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -23,6 +30,7 @@ const nextConfig: NextConfig = {
 
     return config;
   },
+  // Disable turbopack for production stability with Solana packages
   turbopack: {},
 };
 
