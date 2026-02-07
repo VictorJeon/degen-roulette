@@ -17,9 +17,6 @@ pub enum DegenRouletteError {
     #[msg("Game is not active")]
     GameNotActive,
 
-    #[msg("Game is not won")]
-    GameNotWon,
-
     #[msg("Invalid game status")]
     InvalidGameStatus,
 
@@ -28,4 +25,19 @@ pub enum DegenRouletteError {
 
     #[msg("Arithmetic overflow")]
     ArithmeticOverflow,
+
+    #[msg("Invalid rounds survived (must be 1-5)")]
+    InvalidRoundsSurvived,
+
+    #[msg("VRF not yet fulfilled")]
+    VrfNotFulfilled,
+
+    #[msg("Game already settled")]
+    GameAlreadySettled,
+
+    #[msg("Game expired (24h+ elapsed)")]
+    GameExpired,
+
+    #[msg("Game already active")]
+    GameAlreadyActive,
 }

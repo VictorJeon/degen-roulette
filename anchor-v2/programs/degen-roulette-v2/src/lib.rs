@@ -42,16 +42,16 @@ pub mod degen_roulette_v2 {
         instructions::admin::unpause(ctx)
     }
 
+    pub fn force_settle(ctx: Context<ForceSettle>) -> Result<()> {
+        instructions::admin::force_settle(ctx)
+    }
+
     // Game instructions
-    pub fn init_game(ctx: Context<InitGame>, bet_amount: u64) -> Result<()> {
-        instructions::game::init_game(ctx, bet_amount)
+    pub fn start_game(ctx: Context<StartGame>, bet_amount: u64) -> Result<()> {
+        instructions::game::start_game(ctx, bet_amount)
     }
 
-    pub fn pull_trigger(ctx: Context<PullTrigger>) -> Result<()> {
-        instructions::game::pull_trigger(ctx)
-    }
-
-    pub fn cash_out(ctx: Context<CashOut>) -> Result<()> {
-        instructions::game::cash_out(ctx)
+    pub fn settle_game(ctx: Context<SettleGame>, rounds_survived: u8) -> Result<()> {
+        instructions::game::settle_game(ctx, rounds_survived)
     }
 }

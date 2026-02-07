@@ -84,7 +84,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "715a261c57c7679581e06f07a74fa2af874ac30f86bd8ea07cca4a7e5388a064"
 dependencies = [
  "anchor-syn",
- "bs58",
+ "bs58 0.5.1",
  "proc-macro2",
  "quote",
  "syn 1.0.109",
@@ -133,7 +133,7 @@ dependencies = [
  "anchor-lang-idl",
  "anchor-syn",
  "anyhow",
- "bs58",
+ "bs58 0.5.1",
  "heck",
  "proc-macro2",
  "quote",
@@ -247,7 +247,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5dc7a6d90cc643df0ed2744862cdf180587d1e5d28936538c18fc8908489ed67"
 dependencies = [
  "anyhow",
- "bs58",
+ "bs58 0.5.1",
  "cargo_toml",
  "heck",
  "proc-macro2",
@@ -416,6 +416,12 @@ dependencies = [
  "quote",
  "syn 1.0.109",
 ]
+
+[[package]]
+name = "bs58"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "771fe0050b883fcc3ea2359b1a96bcfbc090b7116eae7c3c512c7a083fdf23d3"
 
 [[package]]
 name = "bs58"
@@ -606,6 +612,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
+ "orao-solana-vrf",
 ]
 
 [[package]]
@@ -1003,6 +1010,17 @@ name = "opaque-debug"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
+
+[[package]]
+name = "orao-solana-vrf"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50cb8b049aa6028d2c06a6e4fbfd4ecd5d2c96fec20a19db111db4676c71401b"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "bs58 0.4.0",
+]
 
 [[package]]
 name = "parking_lot"
@@ -1778,7 +1796,7 @@ dependencies = [
  "blake3",
  "borsh 0.10.4",
  "borsh 1.6.0",
- "bs58",
+ "bs58 0.5.1",
  "bytemuck",
  "console_error_panic_hook",
  "console_log",
@@ -1960,7 +1978,7 @@ version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "86280da8b99d03560f6ab5aca9de2e38805681df34e0bb8f238e69b29433b9df"
 dependencies = [
- "bs58",
+ "bs58 0.5.1",
  "proc-macro2",
  "quote",
  "syn 2.0.114",

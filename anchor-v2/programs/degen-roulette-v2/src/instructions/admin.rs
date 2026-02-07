@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program::{transfer, Transfer};
 use crate::error::DegenRouletteError;
-use crate::state::{HouseConfig, HouseVault};
+use crate::state::{GameState, GameStatus, HouseConfig, HouseVault, PlayerStats};
 
 #[derive(Accounts)]
 pub struct InitializeHouse<'info> {
@@ -33,9 +33,11 @@ pub fn initialize_house(ctx: Context<InitializeHouse>) -> Result<()> {
     let house_config = &mut ctx.accounts.house_config;
     house_config.authority = ctx.accounts.authority.key();
     house_config.min_bet = 10_000_000; // 0.01 SOL
-    house_config.max_bet_pct = 100; // 1%
-    house_config.house_edge_bps = 200; // 2%
+    house_config.max_bet_pct = 1000; // 10%
+    house_config.house_edge_bps = 300; // 3%
     house_config.paused = false;
+    house_config.total_games = 0;
+    house_config.total_volume = 0;
     house_config.bump = ctx.bumps.house_config;
     Ok(())
 }
@@ -175,5 +177,67 @@ pub struct Unpause<'info> {
 
 pub fn unpause(ctx: Context<Unpause>) -> Result<()> {
     ctx.accounts.house_config.paused = false;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct ForceSettle<'info> {
+    #[account(
+        seeds = [HouseConfig::SEEDS],
+        bump = house_config.bump,
+        has_one = authority
+    )]
+    pub house_config: Account<'info, HouseConfig>,
+
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [GameState::SEEDS, player.key().as_ref()],
+        bump = game.bump
+    )]
+    pub game: Account<'info, GameState>,
+
+    /// CHECK: Player account (not signer)
+    pub player: UncheckedAccount<'info>,
+
+    #[account(
+        mut,
+        seeds = [PlayerStats::SEEDS, player.key().as_ref()],
+        bump = player_stats.bump
+    )]
+    pub player_stats: Account<'info, PlayerStats>,
+}
+
+pub fn force_settle(ctx: Context<ForceSettle>) -> Result<()> {
+    let game = &mut ctx.accounts.game;
+    let clock = Clock::get()?;
+
+    require!(game.status == GameStatus::Active, DegenRouletteError::GameNotActive);
+    require!(
+        clock.unix_timestamp - game.created_at >= 86400,
+        DegenRouletteError::GameExpired
+    );
+
+    // Force loss with rounds_survived = 0
+    game.status = GameStatus::Lost;
+    game.rounds_survived = 0;
+    game.bullet_position = 0;
+    game.result_multiplier = 0;
+    game.payout = 0;
+    game.settled_at = clock.unix_timestamp;
+
+    // Update PlayerStats
+    let player_stats = &mut ctx.accounts.player_stats;
+    player_stats.total_games = player_stats.total_games.checked_add(1).unwrap();
+    player_stats.total_wagered = player_stats.total_wagered.checked_add(game.bet_amount).unwrap();
+    player_stats.total_profit = player_stats.total_profit.checked_sub(game.bet_amount as i64).unwrap();
+
+    // Update HouseConfig
+    let house_config = &mut ctx.accounts.house_config;
+    house_config.total_games = house_config.total_games.checked_add(1).unwrap();
+    house_config.total_volume = house_config.total_volume.checked_add(game.bet_amount).unwrap();
+
     Ok(())
 }

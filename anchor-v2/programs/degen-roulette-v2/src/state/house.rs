@@ -7,11 +7,13 @@ pub struct HouseConfig {
     pub max_bet_pct: u16,
     pub house_edge_bps: u16,
     pub paused: bool,
+    pub total_games: u64,
+    pub total_volume: u64,
     pub bump: u8,
 }
 
 impl HouseConfig {
-    pub const LEN: usize = 8 + 32 + 8 + 2 + 2 + 1 + 1;
+    pub const LEN: usize = 8 + 32 + 8 + 2 + 2 + 1 + 8 + 8 + 1;
     pub const SEEDS: &'static [u8] = b"house_config";
 }
 
