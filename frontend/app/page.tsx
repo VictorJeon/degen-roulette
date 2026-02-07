@@ -9,28 +9,22 @@ export default function Home() {
     <div className="min-h-screen">
       <Header />
 
-      <main className="grid grid-cols-1 desktop:grid-cols-[280px_1fr_280px] gap-4 desktop:gap-[2rem] p-4 desktop:p-[2rem] max-w-[1400px] mx-auto min-h-[calc(100vh-70px)]">
-        {/* Left Sidebar - Desktop */}
-        <aside className="hidden desktop:flex flex-col gap-4">
+      <main className="main">
+        {/* Left Sidebar */}
+        <aside className="sidebar">
           <Leaderboard />
         </aside>
 
         {/* Game Area */}
-        <section className="flex flex-col items-center gap-8">
+        <section className="game-area">
           <GameBoard />
           <BetPanel />
         </section>
 
-        {/* Right Sidebar - Desktop */}
-        <aside className="hidden desktop:flex flex-col gap-4">
+        {/* Right Sidebar */}
+        <aside className="sidebar">
           <RecentPlays />
         </aside>
-
-        {/* Mobile Sidebars */}
-        <div className="desktop:hidden flex flex-col gap-4 col-span-full">
-          <Leaderboard />
-          <RecentPlays />
-        </div>
       </main>
     </div>
   );

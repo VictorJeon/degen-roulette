@@ -47,21 +47,34 @@ export default function BetPanel() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <>
       {instruction && (
-        <div className="font-pixel text-[0.6rem] text-accent animate-pulse">
+        <div className="game-instruction">
           {instruction}
         </div>
       )}
 
       {!instruction && !gameState && (
-        <div className="font-pixel text-[0.6rem] text-accent">
+        <div className="game-instruction">
           &gt;&gt;&gt; SELECT YOUR BET &lt;&lt;&lt;
         </div>
       )}
 
-      <div className={`flex flex-col gap-4 ${shakeBetting ? 'animate-shake' : ''}`}>
-        <div className="flex gap-2 flex-wrap justify-center">
+      <div className={`inline-betting ${shakeBetting ? 'animate-shake' : ''}`}>
+        <div className="bet-row">
+          <input
+            type="number"
+            value={betAmount}
+            onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
+            step="0.1"
+            min="0.01"
+            disabled={loading}
+            className="bet-input-inline"
+          />
+          <span className="bet-currency">SOL</span>
+        </div>
+
+        <div className="quick-amounts-inline">
           {quickBets.map((amount) => (
             <button
               key={amount}
@@ -70,36 +83,21 @@ export default function BetPanel() {
                 setSelectedBet(amount);
               }}
               disabled={loading}
-              className={`font-pixel text-[0.55rem] px-4 py-2 border-2 transition-all ${
-                selectedBet === amount
-                  ? 'bg-accent text-bg-primary border-accent-dim shadow-[4px_4px_0_#000]'
-                  : 'bg-bg-tertiary text-text-secondary border-border hover:border-accent'
-              }`}
+              className={`quick-btn-inline ${selectedBet === amount ? 'selected' : ''}`}
             >
               {amount}
             </button>
           ))}
         </div>
 
-        <input
-          type="number"
-          value={betAmount}
-          onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
-          step="0.1"
-          min="0.01"
-          disabled={loading}
-          className="font-pixel text-[0.7rem] px-6 py-3 bg-bg-tertiary border-[3px] border-border text-accent text-center focus:outline-none focus:border-accent"
-          placeholder="Custom amount"
-        />
-
         <button
           onClick={handleStartGame}
           disabled={loading}
-          className="font-pixel text-[0.7rem] px-8 py-4 bg-accent border-[4px] border-accent-dim text-bg-primary uppercase tracking-wider shadow-[6px_6px_0_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[4px_4px_0_#000] active:translate-x-1.5 active:translate-y-1.5 active:shadow-[0_0_0_#000] disabled:opacity-50 transition-all"
+          className="trigger-btn"
         >
           {loading ? 'LOADING...' : 'START'}
         </button>
       </div>
-    </div>
+    </>
   );
 }
