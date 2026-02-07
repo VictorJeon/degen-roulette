@@ -213,7 +213,8 @@ export function useGame() {
     } catch (err: any) {
       console.error('settle_game error:', err);
       setError(err.message || 'Failed to settle game');
-      setGameState(prev => ({ ...prev, status: 'idle' }));
+      // Keep status as 'active' so user can retry Cash Out (game is still Active on-chain)
+      setGameState(prev => ({ ...prev, status: 'active' }));
       throw err;
     } finally {
       setIsLoading(false);
