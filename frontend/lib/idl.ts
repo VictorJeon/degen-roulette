@@ -1,7 +1,7 @@
 import type { Idl } from "@coral-xyz/anchor";
 
 export const IDL: Idl = {
-  "address": "BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz",
+  "address": "98RABzywqR9v33GmioVFeFrapM1LC5RiwmJbXdEPvx59",
   "metadata": {
     "name": "degen_roulette_v2",
     "version": "0.1.0",

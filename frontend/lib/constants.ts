@@ -1,7 +1,7 @@
 import { PublicKey } from '@solana/web3.js';
 
 // Program ID from IDL v2
-export const PROGRAM_ID = new PublicKey('BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz');
+export const PROGRAM_ID = new PublicKey('98RABzywqR9v33GmioVFeFrapM1LC5RiwmJbXdEPvx59');
 
 // Game constants
 export const CHAMBERS = 6;

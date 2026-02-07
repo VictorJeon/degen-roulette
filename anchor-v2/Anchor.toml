@@ -6,10 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-degen_roulette_v2 = "BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz"
+degen_roulette_v2 = "98RABzywqR9v33GmioVFeFrapM1LC5RiwmJbXdEPvx59"
 
 [programs.devnet]
-degen_roulette_v2 = "BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz"
+degen_roulette_v2 = "98RABzywqR9v33GmioVFeFrapM1LC5RiwmJbXdEPvx59"
 
 [registry]
 url = "https://api.apr.dev"
