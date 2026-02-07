@@ -3,7 +3,7 @@ import { createHash } from "crypto";
 import fs from "fs";
 
 const PROGRAM_ID = new PublicKey("BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz");
-const RPC = "https://api.devnet.solana.com";
+const RPC = "https://devnet.helius-rpc.com/?api-key=7124a08e-c445-4648-86af-6d569f3dbbe6";
 
 // Anchor instruction discriminator: sha256("global:<name>")[0..8]
 function ixDisc(name) {

@@ -3,7 +3,7 @@ const { PublicKey, SystemProgram, LAMPORTS_PER_SOL, Keypair } = require("@solana
 const fs = require("fs");
 
 async function main() {
-  const connection = new anchor.web3.Connection("https://api.devnet.solana.com", "confirmed");
+  const connection = new anchor.web3.Connection("https://devnet.helius-rpc.com/?api-key=7124a08e-c445-4648-86af-6d569f3dbbe6", "confirmed");
   
   const walletKeypair = Keypair.fromSecretKey(
     Uint8Array.from(JSON.parse(fs.readFileSync(process.env.HOME + "/.config/solana/degen-roulette.json")))

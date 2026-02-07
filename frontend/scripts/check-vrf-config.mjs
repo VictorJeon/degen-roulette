@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 
 const ORAO_VRF_PROGRAM_ID = new PublicKey("VRFzZoJdhFWL8rkvu87LpKM3RbcVezpMEc6X5GVDr7y");
-const RPC = "https://api.devnet.solana.com";
+const RPC = "https://devnet.helius-rpc.com/?api-key=7124a08e-c445-4648-86af-6d569f3dbbe6";
 
 const vrfConfigPda = PublicKey.findProgramAddressSync(
   [Buffer.from("orao-vrf-network-configuration")],

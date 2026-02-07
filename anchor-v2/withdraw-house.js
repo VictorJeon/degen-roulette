@@ -10,7 +10,7 @@ async function main() {
   const amountSol = Number(process.argv[2] ?? "0.2");
   if (!Number.isFinite(amountSol) || amountSol <= 0) throw new Error("Invalid amountSOL");
 
-  const connection = new anchor.web3.Connection("https://api.devnet.solana.com", "confirmed");
+  const connection = new anchor.web3.Connection("https://devnet.helius-rpc.com/?api-key=7124a08e-c445-4648-86af-6d569f3dbbe6", "confirmed");
 
   const walletKeypair = Keypair.fromSecretKey(
     Uint8Array.from(

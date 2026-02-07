@@ -3,7 +3,7 @@ import fs from "fs";
 
 const PROGRAM_ID = new PublicKey("BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz");
 const PLAYER = new PublicKey("9fpynsTdxijRFifMx8HsBijF73kksrGddzAac3aFNjVx");
-const RPC = "https://api.devnet.solana.com";
+const RPC = "https://devnet.helius-rpc.com/?api-key=7124a08e-c445-4648-86af-6d569f3dbbe6";
 
 const [gamePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("game"), PLAYER.toBuffer()],

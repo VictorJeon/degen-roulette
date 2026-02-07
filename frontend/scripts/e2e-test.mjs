@@ -7,7 +7,7 @@ import fs from "fs";
 const PROGRAM_ID = new PublicKey("BA7ZDtCNiRAPWVbyCJaDXcmC1izr7e9E48n3wmGYLdnz");
 const ORAO_VRF_PROGRAM_ID = new PublicKey("VRFzZoJdhFWL8rkvu87LpKM3RbcVezpMEc6X5GVDr7y");
 const ORAO_VRF_TREASURY = new PublicKey("9ZTHWWZDpB36UFe1vszf2KEpt83vwi27jDqtHQ7NSXyR");
-const RPC = "https://api.devnet.solana.com";
+const RPC = "https://devnet.helius-rpc.com/?api-key=7124a08e-c445-4648-86af-6d569f3dbbe6";
 
 // Load IDL
 const idl = JSON.parse(fs.readFileSync("./idl/degen_roulette_v2.json", "utf-8"));
