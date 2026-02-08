@@ -431,8 +431,8 @@ export default function GameBoard() {
   const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
-  // Chamber positions for PNG overlay (calculated for circular cylinder)
-  const CHAMBER_PCT = 27; // distance from center as % of container
+  // Chamber positions for PNG overlay (R=29.6%, calibrated from top chamber at 20.4%)
+  const CHAMBER_PCT = 29.6;
   const chamberOverlayPositions = [0, 60, 120, 180, 240, 300].map(deg => {
     const rad = (deg - 90) * (Math.PI / 180);
     return {
@@ -585,8 +585,8 @@ export default function GameBoard() {
                     left: `${pos.left}%`,
                     top: `${pos.top}%`,
                     transform: 'translate(-50%, -50%)',
-                    width: '18%',
-                    height: '18%',
+                    width: '18.5%',
+                    height: '18.5%',
                     borderRadius: '50%',
                     cursor: canSelect ? 'pointer' : 'default',
                   }}
