@@ -26,7 +26,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       DELETE FROM games
       WHERE player_wallet = ${playerWallet}
         AND status = 'pending'
-        AND created_at < NOW() - INTERVAL '5 minutes'
+        AND created_at < NOW() - INTERVAL '2 minutes'
     `;
 
     // Check for existing active game

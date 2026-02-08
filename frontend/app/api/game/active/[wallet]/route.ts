@@ -26,7 +26,7 @@ export async function GET(
       SELECT id, bet_amount, seed_hash, created_at
       FROM games
       WHERE player_wallet = ${wallet}
-        AND status IN ('pending', 'started')
+        AND status = 'started'
       ORDER BY created_at DESC
       LIMIT 1
     `;
