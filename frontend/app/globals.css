@@ -359,7 +359,7 @@ body::after {
 /* ========== PANEL (shared) ========== */
 .panel {
     background:
-        linear-gradient(180deg, rgba(12, 25, 12, 0.92) 0%, rgba(8, 18, 8, 0.95) 100%);
+        linear-gradient(180deg, rgba(18, 35, 18, 0.95) 0%, rgba(12, 25, 12, 0.97) 100%);
     border: 1px solid var(--border-neon-bright);
     border-radius: 6px;
     padding: 14px;
@@ -367,8 +367,8 @@ body::after {
     box-shadow:
         0 0 15px var(--neon-glow-soft),
         0 0 30px var(--neon-glow-subtle),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05),
-        inset 0 0 40px rgba(0, 255, 65, 0.04);
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 40px rgba(0, 255, 65, 0.06);
 }
 
 /* Panel corner accents */
@@ -672,46 +672,14 @@ body::after {
     filter: blur(8px) brightness(1.3);
 }
 
-/* Revolver frame with multi-layer glow */
+/* Revolver frame */
 .revolver-frame {
     position: relative;
     width: 300px;
     height: 300px;
     margin: 0 auto 10px;
-    border-radius: 50%;
-
-    /* Multi-layer neon glow - intensified */
-    box-shadow:
-        inset 0 0 40px var(--neon-glow-soft),
-        inset 0 0 80px var(--neon-glow-subtle),
-        0 0 30px var(--neon-glow-soft),
-        0 0 60px var(--neon-glow-soft),
-        0 0 100px var(--neon-glow-subtle),
-        0 0 140px var(--neon-glow-subtle);
-
-    animation: cylinderGlow 3s ease-in-out infinite;
 }
 
-@keyframes cylinderGlow {
-    0%, 100% {
-        box-shadow:
-            inset 0 0 40px var(--neon-glow-soft),
-            inset 0 0 80px var(--neon-glow-subtle),
-            0 0 30px var(--neon-glow-soft),
-            0 0 60px var(--neon-glow-soft),
-            0 0 100px var(--neon-glow-subtle),
-            0 0 140px var(--neon-glow-subtle);
-    }
-    50% {
-        box-shadow:
-            inset 0 0 50px var(--neon-glow),
-            inset 0 0 100px var(--neon-glow-soft),
-            0 0 40px var(--neon-glow),
-            0 0 80px var(--neon-glow-soft),
-            0 0 120px var(--neon-glow-soft),
-            0 0 160px var(--neon-glow-subtle);
-    }
-}
 
 /* Sparkle effects around cylinder */
 .revolver-frame::before,
@@ -1272,7 +1240,7 @@ body.shake {
 /* ========== LIVE FEED ========== */
 .live-feed-panel {
     background:
-        linear-gradient(180deg, rgba(12, 25, 12, 0.92) 0%, rgba(8, 18, 8, 0.95) 100%);
+        linear-gradient(180deg, rgba(18, 35, 18, 0.95) 0%, rgba(12, 25, 12, 0.97) 100%);
     border: 1px solid var(--border-neon-bright);
     border-radius: 6px;
     padding: 14px;
@@ -1284,8 +1252,8 @@ body.shake {
     box-shadow:
         0 0 15px var(--neon-glow-soft),
         0 0 30px var(--neon-glow-subtle),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05),
-        inset 0 0 40px rgba(0, 255, 65, 0.04);
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 40px rgba(0, 255, 65, 0.06);
 }
 
 /* Corner accents */
