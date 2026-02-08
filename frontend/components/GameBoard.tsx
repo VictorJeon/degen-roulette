@@ -216,7 +216,7 @@ export default function GameBoard() {
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
   // Chamber positions for PNG overlay
-  const CHAMBER_PCT = 26.5;
+  const CHAMBER_PCT = 24.5;
   const chamberAngles = [0, 60, 120, 180, 240, 300];
   const chamberOverlayPositions = chamberAngles.map(deg => {
     const rad = (deg - 90) * (Math.PI / 180);
@@ -596,26 +596,61 @@ export default function GameBoard() {
 
         .modal-card {
           width: min(580px, 92vw);
-          background: 
-            linear-gradient(180deg, rgba(10, 18, 10, 0.98) 0%, rgba(5, 10, 5, 0.99) 100%);
-          border: 1px solid var(--border-neon);
+          background:
+            linear-gradient(180deg, rgba(12, 25, 12, 0.98) 0%, rgba(8, 18, 8, 0.99) 100%);
+          border: 1px solid var(--border-neon-bright);
           border-radius: 8px;
-          padding: 22px;
+          padding: 24px;
           display: flex;
           flex-direction: column;
-          gap: 12px;
-          box-shadow: 
-            0 0 30px var(--neon-glow-soft),
-            0 0 60px var(--neon-glow-subtle);
+          gap: 14px;
+          position: relative;
+          box-shadow:
+            0 0 20px var(--neon-glow-soft),
+            0 0 40px var(--neon-glow-subtle),
+            0 0 60px var(--neon-glow-subtle),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            inset 0 0 40px rgba(0, 255, 65, 0.04);
+        }
+
+        /* Modal corner accents */
+        .modal-card::before,
+        .modal-card::after {
+          content: '';
+          position: absolute;
+          width: 14px;
+          height: 14px;
+          border: 1px solid var(--neon);
+          opacity: 0.8;
+        }
+
+        .modal-card::before {
+          top: 6px;
+          left: 6px;
+          border-right: none;
+          border-bottom: none;
+        }
+
+        .modal-card::after {
+          bottom: 6px;
+          right: 6px;
+          border-left: none;
+          border-top: none;
         }
 
         .modal-card h3 {
           margin: 0;
           font-family: var(--pixel-font);
           color: var(--neon);
-          font-size: 0.8rem;
-          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
-          letter-spacing: 1px;
+          font-size: 0.85rem;
+          text-shadow:
+            0 0 10px var(--neon),
+            0 0 20px var(--neon-glow),
+            0 0 35px var(--neon-glow-soft);
+          letter-spacing: 2px;
+          text-align: center;
+          padding-bottom: 8px;
+          border-bottom: 1px solid rgba(0, 255, 65, 0.15);
         }
 
         .modal-card ol {
