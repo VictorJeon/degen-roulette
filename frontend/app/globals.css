@@ -352,35 +352,71 @@ body::after {
     50% { text-shadow: 0 0 25px var(--accent-glow), 0 0 40px var(--accent-glow); }
 }
 
-.cylinder-svg {
+/* PNG Cylinder */
+.cylinder-container {
+    position: relative;
     width: 100%;
     height: 100%;
-    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.chamber-circle {
-    transition: all 0.3s ease;
+.cylinder-png {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
-.chamber-circle.active {
-    stroke: var(--accent) !important;
-    stroke-width: 3 !important;
+.cylinder-blur {
+    filter: blur(6px) brightness(1.2);
 }
 
-.chamber-circle.selected {
-    stroke: var(--danger) !important;
-    stroke-width: 3 !important;
-    filter: drop-shadow(0 0 8px var(--danger));
+/* Chamber overlays on PNG */
+.chamber-overlay {
+    transition: background 0.2s;
 }
 
-.chamber-circle.fired {
-    fill: rgba(239, 68, 68, 0.3) !important;
+.chamber-overlay.selectable:hover {
+    background: rgba(191, 255, 0, 0.15);
+    box-shadow: 0 0 12px rgba(191, 255, 0, 0.4), inset 0 0 8px rgba(191, 255, 0, 0.2);
 }
 
-/* Clickable chambers in loading phase */
-.cylinder-svg g[id^="chamber-"]:hover .chamber-circle {
-    stroke: var(--text-secondary) !important;
-    stroke-width: 2 !important;
+.chamber-select-ring {
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid rgba(191, 255, 0, 0.5);
+    animation: selectPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selectPulse {
+    0%, 100% { border-color: rgba(191, 255, 0, 0.3); box-shadow: 0 0 6px rgba(191, 255, 0, 0.2); }
+    50% { border-color: rgba(191, 255, 0, 0.7); box-shadow: 0 0 14px rgba(191, 255, 0, 0.5); }
+}
+
+.chamber-fired-overlay {
+    position: absolute;
+    inset: 10%;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.25);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.bullet-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    height: 40%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #d4a017 40%, #b8860b 100%);
+    transition: opacity 0.15s;
+}
+
+.bullet-dot.fired {
+    background: radial-gradient(circle, #ef4444 40%, #dc2626 100%);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
 .bullet-indicator {
