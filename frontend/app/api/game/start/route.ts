@@ -21,19 +21,18 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     await ensureGamesSchema();
 
-    // Clean up stale pending games (>5 min old)
+    // Clean up all pending games (not yet confirmed on-chain)
     await sql`
       DELETE FROM games
       WHERE player_wallet = ${playerWallet}
         AND status = 'pending'
-        AND created_at < NOW() - INTERVAL '2 minutes'
     `;
 
-    // Check for existing active game
+    // Check for existing started (on-chain confirmed) game
     const { rows: active } = await sql`
       SELECT id FROM games
       WHERE player_wallet = ${playerWallet}
-        AND status IN ('pending', 'started')
+        AND status = 'started'
       LIMIT 1
     `;
 
