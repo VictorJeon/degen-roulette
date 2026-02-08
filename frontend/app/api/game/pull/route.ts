@@ -56,25 +56,29 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     // Determine outcome
     if (currentRound === bulletPosition) {
-      // Death → auto settle
-      // Note: on-chain requires rounds_survived >= 1, so use max(currentRound, 1)
+      // Death → return immediately, settle in background
       const roundsForSettle = Math.max(currentRound, 1);
-      try {
-        const settleResult = await settleGameLogic(gameId, roundsForSettle);
-        return NextResponse.json({
-          survived: false,
-          round: currentRound,
-          bulletPosition,
-          settleResult,
+      
+      // Trigger settlement asynchronously (fire-and-forget)
+      settleGameLogic(gameId, roundsForSettle)
+        .then((result) => {
+          console.log(`[pull] Background settlement complete for game ${gameId}:`, result);
+        })
+        .catch(async (settleError: any) => {
+          console.error(`[pull] Background settlement FAILED for game ${gameId}:`, settleError);
+          await logServerError('api/game/pull:background-settle', settleError, { gameId, roundsForSettle });
         });
-      } catch (settleError: any) {
-        console.error('settle error in pull:', settleError);
-        await logServerError('api/game/pull:settle', settleError, { gameId });
-        return NextResponse.json(
-          { error: `Settle failed: ${settleError.message}` },
-          { status: 500 }
-        );
-      }
+
+      // Return death result immediately (don't wait for settlement)
+      return NextResponse.json({
+        survived: false,
+        round: currentRound,
+        bulletPosition,
+        settleResult: {
+          payout: 0, // death = no payout
+          serverSeed: game.server_seed,
+        },
+      });
     } else {
       // Survived → increment current_round (optimistic locking)
       const { rows: updated } = await sql`
