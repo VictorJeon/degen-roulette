@@ -434,15 +434,8 @@ export default function GameBoard() {
           width: 280px;
           height: 280px;
           margin: 0 auto 16px;
-          border-radius: 20%;
-          border: 3px solid #BFFF00;
-          background: radial-gradient(circle at center, rgba(15, 26, 15, 0.8) 0%, rgba(5, 10, 5, 0.95) 100%);
-          box-shadow: 
-            0 0 15px rgba(191, 255, 0, 0.4),
-            0 0 30px rgba(191, 255, 0, 0.2),
-            0 0 60px rgba(191, 255, 0, 0.1),
-            inset 0 0 30px rgba(0, 0, 0, 0.5);
-          padding: 10px;
+          background: transparent;
+          padding: 0;
         }
 
         .barrel-indicator {
