@@ -374,6 +374,9 @@ export default function GameBoard() {
         setCylinderRotation(prev => prev + 360 + (delta % 360));
         soundRef.current?.playGunshot?.();
         setActionHint('');
+        // Clear selected chamber so only death bullet shows
+        setSelectedChamber(null);
+        setBulletVisible(false);
         await sleep(600);
         setIsReloading(false);
         return;
