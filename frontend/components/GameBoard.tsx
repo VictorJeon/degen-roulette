@@ -10,7 +10,6 @@ import { MULTIPLIERS } from '@/lib/constants';
 
 // Odds for each round (survival probability display)
 const ROUND_ODDS = ['5/6', '4/5', '3/4', '2/3', '1/2'];
-const MAX_LABELS = ['', '', 'MAX', '', ''];
 
 function HowToPlayModal({ onClose }: { onClose: () => void }) {
   return (
@@ -216,7 +215,7 @@ export default function GameBoard() {
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
   // Chamber positions for PNG overlay
-  const CHAMBER_PCT = 24.5;
+  const CHAMBER_PCT = 26.5;
   const chamberAngles = [0, 60, 120, 180, 240, 300];
   const chamberOverlayPositions = chamberAngles.map(deg => {
     const rad = (deg - 90) * (Math.PI / 180);
@@ -292,11 +291,10 @@ export default function GameBoard() {
           </div>
           <div className="odds-row">
             {ROUND_ODDS.map((odds, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className={`odds-cell ${gameState.roundsSurvived === idx + 1 ? 'active' : ''}`}
               >
-                {MAX_LABELS[idx] && <span className="max-label">{MAX_LABELS[idx]} </span>}
                 {odds}
               </div>
             ))}
