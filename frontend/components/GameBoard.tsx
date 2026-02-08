@@ -433,7 +433,7 @@ export default function GameBoard() {
 
   // Chamber positions for PNG overlay (elliptical + offset center)
   const CENTER_X = 50;
-  const CENTER_Y = 49.65;  // Cylinder center is slightly above 50%
+  const CENTER_Y = 49.16;  // Adjusted center for best fit across all chambers
   const CHAMBER_PCT_X = 27.14;  // Horizontal radius
   const CHAMBER_PCT_Y = 27.35;   // Vertical radius
   const chamberAngles = [0, 60, 120, 180, 240, 300];
