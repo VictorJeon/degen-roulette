@@ -356,7 +356,7 @@ body::after {
 /* ========== PANEL (shared) ========== */
 .panel {
     background:
-        linear-gradient(180deg, rgba(18, 35, 18, 0.95) 0%, rgba(12, 25, 12, 0.97) 100%);
+        linear-gradient(180deg, rgba(8, 18, 8, 0.9) 0%, rgba(6, 14, 6, 0.92) 100%);
     border: 1px solid var(--border-neon-bright);
     border-radius: 6px;
     padding: 14px;
@@ -1237,7 +1237,7 @@ body.shake {
 /* ========== LIVE FEED ========== */
 .live-feed-panel {
     background:
-        linear-gradient(180deg, rgba(18, 35, 18, 0.95) 0%, rgba(12, 25, 12, 0.97) 100%);
+        linear-gradient(180deg, rgba(8, 18, 8, 0.9) 0%, rgba(6, 14, 6, 0.92) 100%);
     border: 1px solid var(--border-neon-bright);
     border-radius: 6px;
     padding: 14px;
