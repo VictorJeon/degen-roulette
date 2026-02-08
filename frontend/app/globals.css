@@ -72,8 +72,8 @@ body::before {
     width: 100%;
     height: 100%;
     background-image:
-        linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+        linear-gradient(rgba(0, 255, 65, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 65, 0.02) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: 0;
@@ -92,8 +92,8 @@ body::after {
             0deg,
             transparent,
             transparent 2px,
-            rgba(0, 0, 0, 0.1) 2px,
-            rgba(0, 0, 0, 0.1) 4px
+            rgba(0, 0, 0, 0.05) 2px,
+            rgba(0, 0, 0, 0.05) 4px
         );
     pointer-events: none;
     z-index: 1000;
@@ -106,7 +106,7 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(ellipse at center, transparent 25%, rgba(0,5,0,0.6) 65%, rgba(0,3,0,0.85) 100%);
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,5,0,0.4) 80%, rgba(0,3,0,0.7) 100%);
     pointer-events: none;
     z-index: 999;
 }
@@ -645,6 +645,11 @@ body::after {
     object-fit: contain;
     user-select: none;
     -webkit-user-drag: none;
+    filter:
+        drop-shadow(0 0 8px var(--neon))
+        drop-shadow(0 0 15px var(--neon-glow))
+        drop-shadow(0 0 25px var(--neon-glow-soft))
+        drop-shadow(0 0 40px var(--neon-glow-subtle));
 }
 
 .cylinder-blur {
@@ -1466,64 +1471,6 @@ body.shake {
     line-height: 1.6;
 }
 
-/* ========== DECO RINGS ========== */
-.cylinder-deco-rings {
-    position: absolute;
-    inset: -50px;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.deco-ring-svg {
-    width: 100%;
-    height: 100%;
-}
-
-.deco-ring-outer {
-    fill: none;
-    stroke: var(--neon);
-    stroke-width: 1;
-    stroke-dasharray: 8 4;
-    opacity: 0.35;
-    animation: decoRotateSlow 30s linear infinite;
-    transform-origin: center;
-}
-
-.deco-ring-mid {
-    fill: none;
-    stroke: var(--neon);
-    stroke-width: 0.8;
-    opacity: 0.2;
-}
-
-.deco-tick {
-    stroke: var(--neon);
-    stroke-width: 1;
-    opacity: 0.3;
-}
-
-.deco-tick-major {
-    stroke: var(--neon);
-    stroke-width: 1.5;
-    opacity: 0.5;
-}
-
-.deco-crosshair {
-    stroke: var(--neon);
-    stroke-width: 1.2;
-    opacity: 0.4;
-}
-
-.deco-crosshair-dot {
-    fill: var(--neon);
-    opacity: 0.5;
-}
-
-@keyframes decoRotateSlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
 /* ========== MOBILE ========== */
 @media (max-width: 768px) {
     .header {
@@ -1554,10 +1501,6 @@ body.shake {
     .revolver-frame {
         width: 240px;
         height: 240px;
-    }
-
-    .cylinder-deco-rings {
-        inset: -40px;
     }
 }
 

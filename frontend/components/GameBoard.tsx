@@ -315,43 +315,6 @@ export default function GameBoard() {
 
         {/* Revolver Cylinder */}
         <div className="revolver-frame">
-          {/* Decorative rings around cylinder */}
-          <div className="cylinder-deco-rings">
-            <svg viewBox="0 0 400 400" className="deco-ring-svg">
-              {/* Outer dashed ring - slow rotation */}
-              <circle cx="200" cy="200" r="190" className="deco-ring-outer" />
-              {/* Tick marks around outer ring */}
-              {Array.from({ length: 72 }).map((_, i) => {
-                const angle = (i * 5 - 90) * (Math.PI / 180);
-                const isMajor = i % 6 === 0;
-                const r1 = isMajor ? 175 : 180;
-                const r2 = 190;
-                return (
-                  <line
-                    key={`tick-${i}`}
-                    x1={200 + r1 * Math.cos(angle)}
-                    y1={200 + r1 * Math.sin(angle)}
-                    x2={200 + r2 * Math.cos(angle)}
-                    y2={200 + r2 * Math.sin(angle)}
-                    className={isMajor ? 'deco-tick-major' : 'deco-tick'}
-                  />
-                );
-              })}
-              {/* Middle ring */}
-              <circle cx="200" cy="200" r="170" className="deco-ring-mid" />
-              {/* Crosshair lines */}
-              <line x1="200" y1="2" x2="200" y2="24" className="deco-crosshair" />
-              <line x1="200" y1="376" x2="200" y2="398" className="deco-crosshair" />
-              <line x1="2" y1="200" x2="24" y2="200" className="deco-crosshair" />
-              <line x1="376" y1="200" x2="398" y2="200" className="deco-crosshair" />
-              {/* Small dots at crosshair ends */}
-              <circle cx="200" cy="12" r="2" className="deco-crosshair-dot" />
-              <circle cx="200" cy="388" r="2" className="deco-crosshair-dot" />
-              <circle cx="12" cy="200" r="2" className="deco-crosshair-dot" />
-              <circle cx="388" cy="200" r="2" className="deco-crosshair-dot" />
-            </svg>
-          </div>
-
           {/* Barrel indicator */}
           <div className="barrel-indicator">
             <svg viewBox="0 0 40 36" className="barrel-svg">
