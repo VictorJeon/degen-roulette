@@ -49,8 +49,8 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     // Insert game
     const { rows } = await sql`
-      INSERT INTO games (player_wallet, server_seed, seed_hash, status)
-      VALUES (${playerWallet}, ${serverSeed}, ${seedHash}, 'pending')
+      INSERT INTO games (player_wallet, server_seed, seed_hash, status, current_round)
+      VALUES (${playerWallet}, ${serverSeed}, ${seedHash}, 'pending', 0)
       RETURNING id
     `;
 

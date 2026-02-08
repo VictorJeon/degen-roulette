@@ -58,6 +58,7 @@ export async function ensureGamesSchema(): Promise<void> {
       server_seed TEXT NOT NULL,
       seed_hash TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'pending',
+      current_round INT NOT NULL DEFAULT 0,
       rounds_survived INT,
       bullet_position INT,
       won BOOLEAN,
@@ -70,4 +71,10 @@ export async function ensureGamesSchema(): Promise<void> {
   `;
   await sql`CREATE INDEX IF NOT EXISTS idx_games_player ON games(player_wallet)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_games_status ON games(status)`;
+
+  // Add current_round column to existing tables (idempotent)
+  await sql`
+    ALTER TABLE games
+    ADD COLUMN IF NOT EXISTS current_round INT NOT NULL DEFAULT 0
+  `;
 }

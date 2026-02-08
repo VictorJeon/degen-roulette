@@ -132,19 +132,57 @@ export function useGame() {
     }
   }, [wallet, program, gamePda, houseConfigPda, houseVaultPda, playerStatsPda]);
 
-  const pullTrigger = useCallback(() => {
-    setGameState(prev => {
-      const newRounds = prev.roundsSurvived + 1;
-      if (newRounds > 5) return prev;
-      const mult = MULTIPLIERS[newRounds - 1];
-      return {
-        ...prev,
-        roundsSurvived: newRounds,
-        currentMultiplier: mult,
-        potentialWin: (prev.betAmount ?? 0) * mult,
-      };
-    });
-  }, []);
+  const pullTrigger = useCallback(async () => {
+    if (!gameState.gameId) throw new Error('No active game');
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Call API for server-side check
+      const res = await fetch('/api/game/pull', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameId: gameState.gameId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Pull failed');
+      }
+
+      const data = await res.json();
+
+      if (data.survived) {
+        // Survived → update state
+        setGameState(prev => {
+          const mult = MULTIPLIERS[data.round - 1];
+          return {
+            ...prev,
+            roundsSurvived: data.round,
+            currentMultiplier: mult,
+            potentialWin: (prev.betAmount ?? 0) * mult,
+          };
+        });
+      } else {
+        // Died → REKT state
+        setGameState(prev => ({
+          ...prev,
+          status: 'lost',
+          roundsSurvived: data.round,
+          bulletPosition: data.bulletPosition,
+          payout: data.settleResult.payout / LAMPORTS_PER_SOL,
+          serverSeed: data.settleResult.serverSeed,
+        }));
+      }
+    } catch (err: any) {
+      console.error('pullTrigger error:', err);
+      setError(err.message || 'Failed to pull trigger');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [gameState.gameId]);
 
   const settleGame = useCallback(async () => {
     if (!gameState.gameId || gameState.roundsSurvived < 1) {
@@ -161,7 +199,7 @@ export function useGame() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           gameId: gameState.gameId,
-          roundsSurvived: gameState.roundsSurvived,
+          // roundsSurvived removed - server uses DB current_round
         }),
       });
       const data = await res.json();
