@@ -119,11 +119,13 @@ export function ResultOverlay({
 
         .result-overlay.won .result-content {
           border-color: var(--success);
-          box-shadow: 
-            0 0 20px var(--success-glow),
-            0 0 40px rgba(0, 255, 65, 0.2),
-            0 0 60px rgba(0, 255, 65, 0.1),
-            inset 0 0 30px rgba(0, 255, 65, 0.05);
+          border-width: 2px;
+          box-shadow:
+            0 0 25px var(--success-glow),
+            0 0 50px rgba(0, 255, 65, 0.25),
+            0 0 80px rgba(0, 255, 65, 0.15),
+            0 0 120px rgba(0, 255, 65, 0.08),
+            inset 0 0 40px rgba(0, 255, 65, 0.06);
         }
 
         .result-overlay.won .corner {
@@ -132,11 +134,13 @@ export function ResultOverlay({
 
         .result-overlay.lost .result-content {
           border-color: var(--danger);
-          box-shadow: 
-            0 0 20px var(--danger-glow),
-            0 0 40px rgba(255, 0, 64, 0.2),
-            0 0 60px rgba(255, 0, 64, 0.1),
-            inset 0 0 30px rgba(255, 0, 64, 0.05);
+          border-width: 2px;
+          box-shadow:
+            0 0 25px var(--danger-glow),
+            0 0 50px rgba(255, 0, 64, 0.25),
+            0 0 80px rgba(255, 0, 64, 0.15),
+            0 0 120px rgba(255, 0, 64, 0.08),
+            inset 0 0 40px rgba(255, 0, 64, 0.06);
         }
 
         .result-overlay.lost .corner {
@@ -145,27 +149,29 @@ export function ResultOverlay({
 
         .result-title {
           font-family: var(--pixel-font);
-          font-size: 2rem;
+          font-size: 2.8rem;
           margin: 0;
-          letter-spacing: 5px;
+          letter-spacing: 6px;
         }
 
         .result-overlay.won .result-title {
           color: var(--success);
-          text-shadow: 
-            0 0 10px var(--success),
-            0 0 20px var(--success-glow),
-            0 0 40px var(--success-glow),
-            0 0 60px rgba(0, 255, 65, 0.3);
+          text-shadow:
+            0 0 15px var(--success),
+            0 0 30px var(--success-glow),
+            0 0 60px var(--success-glow),
+            0 0 90px rgba(0, 255, 65, 0.3),
+            0 0 120px rgba(0, 255, 65, 0.15);
           animation: textGlow 1.5s ease-in-out infinite;
         }
 
         .result-overlay.lost .result-title {
           color: var(--danger);
-          text-shadow: 
-            0 0 10px var(--danger),
-            0 0 20px var(--danger-glow),
-            0 0 40px var(--danger-glow);
+          text-shadow:
+            0 0 15px var(--danger),
+            0 0 30px var(--danger-glow),
+            0 0 60px var(--danger-glow),
+            0 0 90px rgba(255, 0, 64, 0.2);
           animation: flicker 0.15s step-end 4;
         }
 
@@ -224,31 +230,33 @@ export function ResultOverlay({
 
         .play-again-btn {
           font-family: var(--pixel-font);
-          font-size: 0.8rem;
-          padding: 0.95rem 2.2rem;
-          background: 
-            linear-gradient(180deg, rgba(0, 35, 0, 0.8) 0%, rgba(0, 20, 0, 0.95) 100%);
-          border: 2px solid var(--neon);
+          font-size: 1rem;
+          padding: 1.15rem 3rem;
+          background:
+            linear-gradient(180deg, rgba(0, 40, 0, 0.8) 0%, rgba(0, 22, 0, 0.95) 100%);
+          border: 3px solid var(--neon);
           border-radius: 4px;
           color: var(--neon);
           cursor: pointer;
           transition: all 0.15s;
           text-transform: uppercase;
-          letter-spacing: 4px;
-          margin-top: 0.4rem;
+          letter-spacing: 5px;
+          margin-top: 0.6rem;
           position: relative;
           overflow: hidden;
-          
-          box-shadow: 
-            0 0 15px var(--neon-glow-soft),
-            0 0 30px var(--neon-glow-subtle),
-            0 0 45px rgba(0, 255, 65, 0.1),
-            inset 0 0 20px var(--neon-glow-subtle),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-          
-          text-shadow: 
-            0 0 5px var(--neon),
-            0 0 10px var(--neon-glow);
+          min-width: 300px;
+
+          box-shadow:
+            0 0 15px var(--neon-glow),
+            0 0 30px var(--neon-glow-soft),
+            0 0 50px var(--neon-glow-subtle),
+            0 0 70px var(--neon-glow-subtle),
+            inset 0 0 25px var(--neon-glow-subtle),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+          text-shadow:
+            0 0 8px var(--neon),
+            0 0 15px var(--neon-glow);
         }
 
         .btn-text {
@@ -269,23 +277,23 @@ export function ResultOverlay({
         }
 
         .play-again-btn:hover {
-          background: 
-            linear-gradient(180deg, rgba(0, 50, 0, 0.9) 0%, rgba(0, 30, 0, 0.98) 100%);
+          background:
+            linear-gradient(180deg, rgba(0, 55, 0, 0.9) 0%, rgba(0, 35, 0, 0.98) 100%);
           border-color: var(--neon-bright);
-          
-          box-shadow: 
-            0 0 20px var(--neon-glow),
-            0 0 40px var(--neon-glow-soft),
-            0 0 60px var(--neon-glow-soft),
-            0 0 80px rgba(0, 255, 65, 0.15),
-            inset 0 0 30px var(--neon-glow-soft),
+
+          box-shadow:
+            0 0 25px var(--neon-glow),
+            0 0 50px var(--neon-glow-soft),
+            0 0 80px var(--neon-glow-soft),
+            0 0 110px rgba(0, 255, 65, 0.15),
+            inset 0 0 35px var(--neon-glow-soft),
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
-          
-          text-shadow: 
-            0 0 8px var(--neon),
-            0 0 15px var(--neon-glow),
-            0 0 25px var(--neon-glow-soft);
-          
+
+          text-shadow:
+            0 0 10px var(--neon),
+            0 0 20px var(--neon-glow),
+            0 0 35px var(--neon-glow-soft);
+
           transform: translateY(-2px);
         }
 

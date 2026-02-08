@@ -138,12 +138,15 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          background: 
-            linear-gradient(180deg, rgba(0, 20, 0, 0.7) 0%, rgba(0, 12, 0, 0.85) 100%);
-          border: 1px solid var(--border-neon);
+          background:
+            linear-gradient(180deg, rgba(0, 25, 0, 0.7) 0%, rgba(0, 15, 0, 0.85) 100%);
+          border: 2px solid var(--border-neon-bright);
           border-radius: 4px;
-          padding: 0.4rem 0.6rem;
+          padding: 0.5rem 0.7rem;
           position: relative;
+          box-shadow:
+            0 0 10px var(--neon-glow-subtle),
+            inset 0 0 15px rgba(0, 255, 65, 0.03);
         }
 
         .bet-input-inline {
@@ -163,9 +166,11 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
 
         .bet-input-wrapper:focus-within {
           border-color: var(--neon);
-          box-shadow: 
-            0 0 10px var(--neon-glow-soft),
-            0 0 20px var(--neon-glow-subtle);
+          box-shadow:
+            0 0 12px var(--neon-glow),
+            0 0 25px var(--neon-glow-soft),
+            0 0 40px var(--neon-glow-subtle),
+            inset 0 0 20px rgba(0, 255, 65, 0.05);
         }
 
         .bet-arrows {
@@ -201,16 +206,17 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
 
         .payout-info {
           font-family: var(--pixel-font);
-          font-size: 0.36rem;
-          color: var(--text-dim);
+          font-size: 0.38rem;
+          color: var(--text-muted);
           display: flex;
           gap: 0.5rem;
           justify-content: center;
-          margin-top: 0.2rem;
+          margin-top: 0.3rem;
         }
 
         .payout-info strong {
-          color: var(--text-muted);
+          color: var(--text-secondary);
+          text-shadow: 0 0 4px var(--neon-glow-subtle);
         }
 
         .separator {

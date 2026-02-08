@@ -315,30 +315,70 @@ export default function GameBoard() {
 
         {/* Revolver Cylinder */}
         <div className="revolver-frame">
+          {/* Decorative rings around cylinder */}
+          <div className="cylinder-deco-rings">
+            <svg viewBox="0 0 400 400" className="deco-ring-svg">
+              {/* Outer dashed ring - slow rotation */}
+              <circle cx="200" cy="200" r="190" className="deco-ring-outer" />
+              {/* Tick marks around outer ring */}
+              {Array.from({ length: 72 }).map((_, i) => {
+                const angle = (i * 5 - 90) * (Math.PI / 180);
+                const isMajor = i % 6 === 0;
+                const r1 = isMajor ? 175 : 180;
+                const r2 = 190;
+                return (
+                  <line
+                    key={`tick-${i}`}
+                    x1={200 + r1 * Math.cos(angle)}
+                    y1={200 + r1 * Math.sin(angle)}
+                    x2={200 + r2 * Math.cos(angle)}
+                    y2={200 + r2 * Math.sin(angle)}
+                    className={isMajor ? 'deco-tick-major' : 'deco-tick'}
+                  />
+                );
+              })}
+              {/* Middle ring */}
+              <circle cx="200" cy="200" r="170" className="deco-ring-mid" />
+              {/* Crosshair lines */}
+              <line x1="200" y1="2" x2="200" y2="24" className="deco-crosshair" />
+              <line x1="200" y1="376" x2="200" y2="398" className="deco-crosshair" />
+              <line x1="2" y1="200" x2="24" y2="200" className="deco-crosshair" />
+              <line x1="376" y1="200" x2="398" y2="200" className="deco-crosshair" />
+              {/* Small dots at crosshair ends */}
+              <circle cx="200" cy="12" r="2" className="deco-crosshair-dot" />
+              <circle cx="200" cy="388" r="2" className="deco-crosshair-dot" />
+              <circle cx="12" cy="200" r="2" className="deco-crosshair-dot" />
+              <circle cx="388" cy="200" r="2" className="deco-crosshair-dot" />
+            </svg>
+          </div>
+
           {/* Barrel indicator */}
           <div className="barrel-indicator">
             <svg viewBox="0 0 40 36" className="barrel-svg">
-              {/* Main arrow shape */}
-              <path 
-                d="M20 36 L6 10 L12 10 L12 0 L28 0 L28 10 L34 10 Z" 
-                fill="none"
-                stroke="#00FF41"
-                strokeWidth="2"
-              />
-              {/* Inner fill with gradient */}
               <defs>
                 <linearGradient id="barrelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#00FF41" stopOpacity="0.9" />
                   <stop offset="100%" stopColor="#00cc34" stopOpacity="0.7" />
                 </linearGradient>
               </defs>
-              <path 
-                d="M20 34 L8 11 L13 11 L13 2 L27 2 L27 11 L32 11 Z" 
+              <path
+                d="M20 36 L6 10 L12 10 L12 0 L28 0 L28 10 L34 10 Z"
+                fill="none"
+                stroke="#00FF41"
+                strokeWidth="2"
+              />
+              <path
+                d="M20 34 L8 11 L13 11 L13 2 L27 2 L27 11 L32 11 Z"
                 fill="url(#barrelGrad)"
               />
-              {/* Center line */}
               <line x1="20" y1="5" x2="20" y2="28" stroke="#00FF41" strokeWidth="1" opacity="0.5" />
             </svg>
+          </div>
+
+          {/* Sparkles - 8 particles */}
+          <div className="cylinder-sparkles">
+            <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+            <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
           </div>
 
           {/* Cylinder PNG — rotates */}
@@ -454,20 +494,21 @@ export default function GameBoard() {
 
       <style jsx>{`
         .game-card {
-          background: 
+          background:
             linear-gradient(180deg, rgba(10, 18, 10, 0.95) 0%, rgba(5, 10, 5, 0.98) 100%);
-          border: 1px solid var(--border-neon);
+          border: 1px solid var(--border-neon-bright);
           border-radius: 8px;
           padding: 18px 20px;
           position: relative;
           width: 100%;
-          max-width: 640px;
-          
-          box-shadow: 
-            0 0 20px var(--neon-glow-subtle),
+          max-width: 680px;
+
+          box-shadow:
+            0 0 20px var(--neon-glow-soft),
             0 0 40px var(--neon-glow-subtle),
-            inset 0 1px 0 rgba(255, 255, 255, 0.04),
-            inset 0 0 40px rgba(0, 255, 65, 0.02);
+            0 0 60px var(--neon-glow-subtle),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            inset 0 0 50px rgba(0, 255, 65, 0.03);
         }
 
         .corner-decor {
@@ -505,8 +546,8 @@ export default function GameBoard() {
         /* Revolver frame */
         .revolver-frame {
           position: relative;
-          width: 270px;
-          height: 270px;
+          width: 300px;
+          height: 300px;
           margin: 0 auto 10px;
           padding: 0;
         }
