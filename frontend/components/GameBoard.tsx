@@ -13,42 +13,260 @@ const ROUND_ODDS = ['5/6', '4/5', '3/4', '2/3', '1/2'];
 
 function HowToPlayModal({ onClose }: { onClose: () => void }) {
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <h3>HOW TO PLAY</h3>
-        <ol>
-          <li>1) BET 금액 입력 후 START</li>
-          <li>2) 총알 넣을 챔버 선택</li>
-          <li>3) 실린더 회전 → 총알 위치 감춰짐</li>
-          <li>4) PULL → 상단 챔버 발사</li>
-          <li>5) 살았으면 실린더 한 칸 회전</li>
-          <li>6) 원할 때 CASH OUT</li>
-        </ol>
-        <button className="mini-btn" onClick={onClose}>닫기</button>
+    <>
+      <div className="modal-backdrop" onClick={onClose}>
+        <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+          <h3>HOW TO PLAY</h3>
+          <ol>
+            <li>1) BET 금액 입력 후 START</li>
+            <li>2) 총알 넣을 챔버 선택</li>
+            <li>3) 실린더 회전 → 총알 위치 감춰짐</li>
+            <li>4) PULL → 상단 챔버 발사</li>
+            <li>5) 살았으면 실린더 한 칸 회전</li>
+            <li>6) 원할 때 CASH OUT</li>
+          </ol>
+          <button className="mini-btn" onClick={onClose}>닫기</button>
+        </div>
       </div>
-    </div>
+
+      <style jsx>{`
+        .modal-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.88);
+          z-index: 1400;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-card {
+          width: min(580px, 92vw);
+          background:
+            linear-gradient(180deg, rgba(12, 25, 12, 0.98) 0%, rgba(8, 18, 18, 0.99) 100%);
+          border: 1px solid var(--border-neon-bright);
+          border-radius: 8px;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          position: relative;
+          box-shadow:
+            0 0 20px var(--neon-glow-soft),
+            0 0 40px var(--neon-glow-subtle),
+            0 0 60px var(--neon-glow-subtle),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            inset 0 0 40px rgba(0, 255, 65, 0.04);
+        }
+
+        .modal-card::before,
+        .modal-card::after {
+          content: '';
+          position: absolute;
+          width: 14px;
+          height: 14px;
+          border: 1px solid var(--neon);
+          opacity: 0.8;
+        }
+
+        .modal-card::before {
+          top: 6px;
+          left: 6px;
+          border-right: none;
+          border-bottom: none;
+        }
+
+        .modal-card::after {
+          bottom: 6px;
+          right: 6px;
+          border-left: none;
+          border-top: none;
+        }
+
+        .modal-card h3 {
+          margin: 0;
+          font-family: var(--pixel-font);
+          color: var(--neon);
+          font-size: 0.85rem;
+          text-shadow:
+            0 0 10px var(--neon),
+            0 0 20px var(--neon-glow),
+            0 0 35px var(--neon-glow-soft);
+          letter-spacing: 2px;
+          text-align: center;
+          padding-bottom: 8px;
+          border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+        }
+
+        .modal-card ol {
+          margin: 0;
+          padding-left: 16px;
+          color: var(--text-primary);
+          line-height: 1.85;
+          font-size: 0.88rem;
+        }
+
+        .modal-card li {
+          margin-bottom: 0.4rem;
+          font-family: var(--body-font);
+        }
+
+        .mini-btn {
+          font-family: var(--pixel-font);
+          color: var(--neon);
+          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
+          font-size: 0.55rem;
+          letter-spacing: 1px;
+          background: transparent;
+          border: 1px solid var(--border-neon);
+          padding: 0.4rem 0.8rem;
+          cursor: pointer;
+          transition: all 0.15s;
+          border-radius: 4px;
+        }
+
+        .mini-btn:hover {
+          border-color: var(--neon);
+          box-shadow: 0 0 10px var(--neon-glow-soft), inset 0 0 5px var(--neon-glow-subtle);
+        }
+      `}</style>
+    </>
   );
 }
 
 function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null; gameId: number | null; onClose: () => void }) {
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <h3>PROVABLY FAIR</h3>
-        <p>게임 시작 시 seed hash를 온체인에 commit한 뒤,
-          settle 시 server seed를 공개해 검증해요.</p>
-        {gameId && <p className="mono">Game ID: {gameId}</p>}
-        {serverSeed ? (
-          <>
-            <p className="mono">Server Seed (revealed):</p>
-            <p className="mono seed">{serverSeed}</p>
-          </>
-        ) : (
-          <p className="mono">정산 후 seed가 공개돼요.</p>
-        )}
-        <button className="mini-btn" onClick={onClose}>닫기</button>
+    <>
+      <div className="modal-backdrop" onClick={onClose}>
+        <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+          <h3>PROVABLY FAIR</h3>
+          <p>게임 시작 시 seed hash를 온체인에 commit한 뒤,
+            settle 시 server seed를 공개해 검증해요.</p>
+          {gameId && <p className="mono">Game ID: {gameId}</p>}
+          {serverSeed ? (
+            <>
+              <p className="mono">Server Seed (revealed):</p>
+              <p className="mono seed">{serverSeed}</p>
+            </>
+          ) : (
+            <p className="mono">정산 후 seed가 공개돼요.</p>
+          )}
+          <button className="mini-btn" onClick={onClose}>닫기</button>
+        </div>
       </div>
-    </div>
+
+      <style jsx>{`
+        .modal-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.88);
+          z-index: 1400;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-card {
+          width: min(580px, 92vw);
+          background:
+            linear-gradient(180deg, rgba(12, 25, 12, 0.98) 0%, rgba(8, 18, 8, 0.99) 100%);
+          border: 1px solid var(--border-neon-bright);
+          border-radius: 8px;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          position: relative;
+          box-shadow:
+            0 0 20px var(--neon-glow-soft),
+            0 0 40px var(--neon-glow-subtle),
+            0 0 60px var(--neon-glow-subtle),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            inset 0 0 40px rgba(0, 255, 65, 0.04);
+        }
+
+        .modal-card::before,
+        .modal-card::after {
+          content: '';
+          position: absolute;
+          width: 14px;
+          height: 14px;
+          border: 1px solid var(--neon);
+          opacity: 0.8;
+        }
+
+        .modal-card::before {
+          top: 6px;
+          left: 6px;
+          border-right: none;
+          border-bottom: none;
+        }
+
+        .modal-card::after {
+          bottom: 6px;
+          right: 6px;
+          border-left: none;
+          border-top: none;
+        }
+
+        .modal-card h3 {
+          margin: 0;
+          font-family: var(--pixel-font);
+          color: var(--neon);
+          font-size: 0.85rem;
+          text-shadow:
+            0 0 10px var(--neon),
+            0 0 20px var(--neon-glow),
+            0 0 35px var(--neon-glow-soft);
+          letter-spacing: 2px;
+          text-align: center;
+          padding-bottom: 8px;
+          border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+        }
+
+        .modal-card p {
+          margin: 0;
+          color: var(--text-primary);
+          line-height: 1.6;
+          font-size: 0.85rem;
+          font-family: var(--body-font);
+        }
+
+        .modal-card p.mono {
+          font-family: 'Courier New', monospace;
+          font-size: 0.75rem;
+          color: var(--text-secondary);
+        }
+
+        .modal-card p.seed {
+          background: rgba(0, 255, 65, 0.05);
+          border: 1px solid var(--border-neon);
+          border-radius: 4px;
+          padding: 0.5rem;
+          word-break: break-all;
+          font-size: 0.7rem;
+        }
+
+        .mini-btn {
+          font-family: var(--pixel-font);
+          color: var(--neon);
+          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
+          font-size: 0.55rem;
+          letter-spacing: 1px;
+          background: transparent;
+          border: 1px solid var(--border-neon);
+          padding: 0.4rem 0.8rem;
+          cursor: pointer;
+          transition: all 0.15s;
+          border-radius: 4px;
+        }
+
+        .mini-btn:hover {
+          border-color: var(--neon);
+          box-shadow: 0 0 10px var(--neon-glow-soft), inset 0 0 5px var(--neon-glow-subtle);
+        }
+      `}</style>
+    </>
   );
 }
 
