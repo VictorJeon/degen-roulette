@@ -18,14 +18,14 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
         <div className="modal-card" onClick={(e) => e.stopPropagation()}>
           <h3>HOW TO PLAY</h3>
           <ol>
-            <li>1) BET 금액 입력 후 START</li>
-            <li>2) 총알 넣을 챔버 선택</li>
-            <li>3) 실린더 회전 → 총알 위치 감춰짐</li>
-            <li>4) PULL → 상단 챔버 발사</li>
-            <li>5) 살았으면 실린더 한 칸 회전</li>
-            <li>6) 원할 때 CASH OUT</li>
+            <li>Enter BET amount and click START</li>
+            <li>Select a chamber to load the bullet</li>
+            <li>Cylinder spins → bullet position hidden</li>
+            <li>PULL TRIGGER → fires top chamber</li>
+            <li>If you survive, cylinder rotates one chamber</li>
+            <li>CASH OUT anytime to collect winnings</li>
           </ol>
-          <button className="mini-btn" onClick={onClose}>닫기</button>
+          <button className="mini-btn" onClick={onClose}>Close</button>
         </div>
       </div>
 
@@ -104,11 +104,11 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
           color: var(--text-primary);
           line-height: 1.85;
           font-size: 0.88rem;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
         }
 
         .modal-card li {
           margin-bottom: 0.4rem;
-          font-family: var(--body-font);
         }
 
         .mini-btn {
@@ -140,8 +140,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
       <div className="modal-backdrop" onClick={onClose}>
         <div className="modal-card" onClick={(e) => e.stopPropagation()}>
           <h3>PROVABLY FAIR</h3>
-          <p>게임 시작 시 seed hash를 온체인에 commit한 뒤,
-            settle 시 server seed를 공개해 검증해요.</p>
+          <p>At game start, a seed hash is committed on-chain. After settlement, the server seed is revealed for verification.</p>
           {gameId && <p className="mono">Game ID: {gameId}</p>}
           {serverSeed ? (
             <>
@@ -149,9 +148,9 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
               <p className="mono seed">{serverSeed}</p>
             </>
           ) : (
-            <p className="mono">정산 후 seed가 공개돼요.</p>
+            <p className="mono">Seed will be revealed after settlement.</p>
           )}
-          <button className="mini-btn" onClick={onClose}>닫기</button>
+          <button className="mini-btn" onClick={onClose}>Close</button>
         </div>
       </div>
 
@@ -229,7 +228,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
           color: var(--text-primary);
           line-height: 1.6;
           font-size: 0.85rem;
-          font-family: var(--body-font);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
         }
 
         .modal-card p.mono {
