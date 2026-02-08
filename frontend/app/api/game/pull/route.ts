@@ -67,6 +67,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         .catch(async (settleError: any) => {
           console.error(`[pull] Background settlement FAILED for game ${gameId}:`, settleError);
           await logServerError('api/game/pull:background-settle', settleError, { gameId, roundsForSettle });
+          // Even if settlement fails, mark game as lost in DB to prevent stale active state
+          try {
+            await sql`UPDATE games SET status = 'lost' WHERE id = ${gameId}`;
+          } catch (dbErr) {
+            console.error(`[pull] Failed to update game status after settle error:`, dbErr);
+          }
         });
 
       // Return death result immediately (don't wait for settlement)

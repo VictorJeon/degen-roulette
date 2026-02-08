@@ -27,6 +27,7 @@ export async function GET(
       FROM games
       WHERE player_wallet = ${wallet}
         AND status = 'started'
+        AND created_at > NOW() - INTERVAL '5 minutes'
       ORDER BY created_at DESC
       LIMIT 1
     `;
