@@ -680,7 +680,7 @@ export default function GameBoard() {
       </div>
 
       {/* Result Overlay */}
-      {isGameOver && !!gameState.betAmount && (
+      {isGameOver && (
         <ResultOverlay
           won={gameState.status === 'won'}
           betAmount={gameState.betAmount}
