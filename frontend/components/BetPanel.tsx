@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { MIN_BET } from '@/lib/constants';
 
 interface BetPanelProps {
   startGame: (betAmount: number) => Promise<void>;
@@ -23,8 +24,8 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
       return;
     }
 
-    if (betAmount < 0.001) {
-      setInstruction('>>> SELECT YOUR BET <<<');
+    if (betAmount < MIN_BET) {
+      setInstruction(`>>> MIN BET: ${MIN_BET} SOL <<<`);
       setShakeBetting(true);
       setTimeout(() => setShakeBetting(false), 300);
       return;
@@ -58,7 +59,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
             value={betAmount}
             onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
             step="0.001"
-            min="0.001"
+            min={MIN_BET}
             disabled={isLoading}
             aria-label="Bet amount in SOL"
             className="bet-input-inline"
@@ -66,7 +67,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           <div className="bet-arrows">
             <button 
               className="arrow-btn"
-              onClick={() => setBetAmount(prev => Math.max(0.001, prev - 0.001))}
+              onClick={() => setBetAmount(prev => Math.max(MIN_BET, prev - 0.001))}
               disabled={isLoading}
             >
               <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
