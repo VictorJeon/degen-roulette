@@ -265,17 +265,13 @@ export default function GameBoard() {
       )}
 
       <div className="game-main game-card">
-        {/* Corner decorations */}
-        <CornerDecor position="tl" />
-        <CornerDecor position="tr" />
-        <CornerDecor position="bl" />
-        <CornerDecor position="br" />
-
-        {/* Result Title */}
-        {isGameOver && (
+        {/* Result Title or Game Title */}
+        {isGameOver ? (
           <h1 className={`game-result-title ${gameState.status === 'won' ? 'safe' : 'dead'}`}>
             {getResultText()}
           </h1>
+        ) : (
+          <h1 className="game-title">DEGEN ROULETTE</h1>
         )}
 
         {/* Tagline */}
@@ -319,14 +315,6 @@ export default function GameBoard() {
 
         {/* Revolver Cylinder */}
         <div className="revolver-frame">
-          {/* Sparkle effects */}
-          <div className="cylinder-sparkles">
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-          </div>
-
           {/* Barrel indicator */}
           <div className="barrel-indicator">
             <svg viewBox="0 0 40 36" className="barrel-svg">
