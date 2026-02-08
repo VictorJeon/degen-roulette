@@ -431,15 +431,15 @@ export default function GameBoard() {
   const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
-  // Chamber positions for PNG overlay (R=29.6%, calibrated from top chamber at 20.4%)
-  const CHAMBER_PCT = 29.6;
-  const chamberOverlayPositions = [0, 60, 120, 180, 240, 300].map(deg => {
-    const rad = (deg - 90) * (Math.PI / 180);
-    return {
-      left: 50 + CHAMBER_PCT * Math.cos(rad),
-      top: 50 + CHAMBER_PCT * Math.sin(rad),
-    };
-  });
+  // Chamber positions — manually calibrated by Mason to match PNG
+  const chamberOverlayPositions = [
+    { left: 50,      top: 20.4  },  // 0° Top
+    { left: 74.2,    top: 34.6  },  // 60° Top-right
+    { left: 74.1344, top: 62.9  },  // 120° Bottom-right
+    { left: 50,      top: 78.4  },  // 180° Bottom
+    { left: 25.8,    top: 62.8  },  // 240° Bottom-left
+    { left: 25.7,    top: 34.6  },  // 300° Top-left
+  ];
 
   const getInstruction = () => {
     if (!isActive) return null;
