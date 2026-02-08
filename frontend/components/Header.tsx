@@ -14,21 +14,15 @@ export default function Header({ resultText, showResult }: HeaderProps) {
 
   return (
     <header className="header">
-      <div className="logo">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="12" cy="8" r="2" />
-          <circle cx="8" cy="14" r="2" />
-          <circle cx="16" cy="14" r="2" />
-        </svg>
-        DEGEN ROULETTE
+      <div className="stats-badge">
+        Total Plays: <span>{totalPlays.toLocaleString()}</span>
       </div>
 
       {showResult && resultText && showBanner && (
         <div className="result-banner">
           <span className="result-banner-text">RESULT: {resultText}</span>
-          <button 
-            className="result-banner-close" 
+          <button
+            className="result-banner-close"
             onClick={() => setShowBanner(false)}
             aria-label="Close result banner"
           >
@@ -47,10 +41,6 @@ export default function Header({ resultText, showResult }: HeaderProps) {
         >
           X
         </a>
-
-        <div className="stats-badge">
-          Total Plays: <span>{totalPlays.toLocaleString()}</span>
-        </div>
 
         <WalletMultiButton />
       </div>

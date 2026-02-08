@@ -357,7 +357,7 @@ body::after {
 /* ========== PANEL (shared) ========== */
 .panel {
     background:
-        linear-gradient(180deg, rgba(10, 20, 10, 0.95) 0%, rgba(5, 12, 5, 0.98) 100%);
+        linear-gradient(180deg, rgba(12, 25, 12, 0.92) 0%, rgba(8, 18, 8, 0.95) 100%);
     border: 1px solid var(--border-neon-bright);
     border-radius: 6px;
     padding: 14px;
@@ -365,8 +365,8 @@ body::after {
     box-shadow:
         0 0 15px var(--neon-glow-soft),
         0 0 30px var(--neon-glow-subtle),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        inset 0 0 40px rgba(0, 255, 65, 0.03);
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 40px rgba(0, 255, 65, 0.04);
 }
 
 /* Panel corner accents */
@@ -1256,7 +1256,7 @@ body.shake {
 /* ========== LIVE FEED ========== */
 .live-feed-panel {
     background:
-        linear-gradient(180deg, rgba(10, 20, 10, 0.95) 0%, rgba(5, 12, 5, 0.98) 100%);
+        linear-gradient(180deg, rgba(12, 25, 12, 0.92) 0%, rgba(8, 18, 8, 0.95) 100%);
     border: 1px solid var(--border-neon-bright);
     border-radius: 6px;
     padding: 14px;
@@ -1268,8 +1268,8 @@ body.shake {
     box-shadow:
         0 0 15px var(--neon-glow-soft),
         0 0 30px var(--neon-glow-subtle),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        inset 0 0 40px rgba(0, 255, 65, 0.03);
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 40px rgba(0, 255, 65, 0.04);
 }
 
 /* Corner accents */
