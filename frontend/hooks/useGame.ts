@@ -164,6 +164,7 @@ export function useGame() {
             potentialWin: (prev.betAmount ?? 0) * mult,
           };
         });
+        return { survived: true, round: data.round };
       } else {
         // Died → REKT state
         setGameState(prev => ({
@@ -174,6 +175,7 @@ export function useGame() {
           payout: data.settleResult.payout / LAMPORTS_PER_SOL,
           serverSeed: data.settleResult.serverSeed,
         }));
+        return { survived: false, round: data.round, bulletPosition: data.bulletPosition };
       }
     } catch (err: any) {
       console.error('pullTrigger error:', err);

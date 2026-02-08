@@ -353,16 +353,36 @@ export default function GameBoard() {
     if (cylinderPhase !== 'ready') return;
 
     try {
-      const nextRounds = gameState.roundsSurvived + 1;
       setIsReloading(true);
       setActionHint('');
 
       soundRef.current?.playTrigger();
       await sleep(250);
 
-      pullTrigger();
+      // Await server response FIRST
+      const result = await pullTrigger();
+
+      if (result && !result.survived) {
+        // DEATH — rotate cylinder so bullet aligns with hammer (top)
+        // bulletPosition is 0-5, current round determines how many rotations happened
+        // The hammer fires at the "current" chamber. Rotate to show bullet at top.
+        const bulletPos = result.bulletPosition ?? 0;
+        const targetAngle = -(bulletPos * 60); // rotate so bullet is at 0° (top)
+        const currentNormalized = cylinderRotation % 360;
+        const delta = targetAngle - currentNormalized;
+        // Add full spins for drama
+        setCylinderRotation(prev => prev + 360 + (delta % 360));
+        soundRef.current?.playGunshot?.();
+        setActionHint('');
+        await sleep(600);
+        setIsReloading(false);
+        return;
+      }
+
+      // SURVIVED
+      const nextRounds = gameState.roundsSurvived + 1;
       soundRef.current?.playEmptyChamber();
-      setActionHint(`✓ YOU LIVE · R${nextRounds}`);
+      setActionHint(`✓ YOU LIVE · R${nextRounds + 1}`);
 
       await sleep(300);
       soundRef.current?.playCylinderSpin();
