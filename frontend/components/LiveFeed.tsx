@@ -1,9 +1,11 @@
 'use client';
 
 import { useLiveFeed } from '@/hooks/useLiveFeed';
+import { useState } from 'react';
 
 export function LiveFeed() {
   const { feed } = useLiveFeed();
+  const [activeTab, setActiveTab] = useState<'global' | 'friends'>('global');
 
   const getTimeAgo = (timestamp: Date) => {
     const seconds = Math.floor((Date.now() - timestamp.getTime()) / 1000);
@@ -15,104 +17,67 @@ export function LiveFeed() {
   };
 
   return (
-    <div className="live-feed">
-      <h3 className="feed-title">LIVE FEED</h3>
+    <div className="live-feed-panel">
+      <div className="feed-header">
+        <h3 className="feed-title">LIVE FEED</h3>
+        <span className="feed-scope">GLOBAL</span>
+      </div>
+
+      <div className="feed-tabs">
+        <button
+          className={`feed-tab ${activeTab === 'global' ? 'active' : ''}`}
+          onClick={() => setActiveTab('global')}
+        >
+          {activeTab === 'global' && (
+            <svg className="feed-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
+          )}
+          GLOBAL
+        </button>
+        <button
+          className={`feed-tab ${activeTab === 'friends' ? 'active' : ''}`}
+          onClick={() => setActiveTab('friends')}
+        >
+          ≡ FRIENDS
+        </button>
+      </div>
+
       <div className="feed-list">
         {feed.length === 0 ? (
-          <div className="empty-state">Waiting for blood...</div>
+          <div className="feed-empty">Waiting for blood...</div>
         ) : (
           feed.map((item, i) => (
             <div key={i} className="feed-item">
-              <span className="player">{item.player}</span>
-              <span className={item.won ? 'profit success' : 'profit danger'}>
-                {item.won
-                  ? `+${item.profit.toFixed(3)}`
-                  : item.roundsSurvived === 0
-                    ? 'REKT @R1'
-                    : `REKT @R${item.roundsSurvived + 1}`}
-              </span>
-              <span className="time">{getTimeAgo(item.timestamp)}</span>
+              <div className="feed-item-top">
+                <span className="feed-player">{item.player}</span>
+                <span className="feed-round">
+                  R{item.roundsSurvived + (item.won ? 0 : 1)} · {item.betAmount?.toFixed(2) || '0.01'} SOL
+                </span>
+              </div>
+              <div className="feed-item-bottom">
+                <span className={`feed-result ${item.won ? 'safe' : 'bang'}`}>
+                  {item.won ? 'SAFE' : 'BANG'}
+                </span>
+                <span className={`feed-profit ${item.won ? 'positive' : 'negative'}`}>
+                  {item.won
+                    ? `+${item.profit.toFixed(3)}`
+                    : `-${(item.betAmount || 0.01).toFixed(3)}`}
+                </span>
+              </div>
             </div>
           ))
         )}
       </div>
 
       <style jsx>{`
-        .live-feed {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          max-height: 700px;
-          background: #0d1015;
-          border: 1px solid #343840;
-          border-radius: 12px;
-          padding: 1rem;
-        }
-
-        .feed-title {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 1rem;
-          color: var(--accent);
-          text-shadow: 0 0 8px rgba(163,230,53,0.4);
-          margin: 0 0 0.8rem 0;
-          letter-spacing: 1px;
-        }
-
-        .feed-list {
-          flex: 1;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 0.45rem;
-        }
-
-        .empty-state {
+        .feed-empty {
           text-align: center;
-          color: rgba(255, 255, 255, 0.38);
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          color: var(--text-muted);
+          font-family: var(--pixel-font);
+          font-size: 0.5rem;
           padding: 2rem 1rem;
           line-height: 1.6;
-        }
-
-        .feed-item {
-          display: grid;
-          grid-template-columns: 1fr auto auto;
-          gap: 0.7rem;
-          align-items: center;
-          padding: 0.55rem 0.6rem;
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 8px;
-          font-family: 'Space Grotesk', monospace;
-          font-size: 0.84rem;
-          transition: background 0.2s;
-        }
-
-        .feed-item:hover { background: rgba(255, 255, 255, 0.08); }
-
-        .player {
-          color: rgba(255, 255, 255, 0.85);
-          font-weight: 600;
-        }
-
-        .profit {
-          font-weight: 700;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.52rem;
-        }
-
-        .profit.success { color: var(--success); }
-        .profit.danger { color: var(--danger); }
-
-        .time {
-          color: rgba(255, 255, 255, 0.45);
-          font-size: 0.74rem;
-        }
-
-        @media (max-width: 768px) {
-          .feed-item { grid-template-columns: 1fr auto; }
-          .time { grid-column: 2; text-align: right; }
         }
       `}</style>
     </div>

@@ -15,7 +15,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
   const [shakeBetting, setShakeBetting] = useState(false);
   const [instruction, setInstruction] = useState('');
 
-  const quickBets = [0.005, 0.01, 0.015, 0.03];
+  const quickBets = [0.005, 0.001, 0.013, 0.015, 0.03];
 
   const handleStartGame = async () => {
     if (!publicKey) {
@@ -23,7 +23,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
       return;
     }
 
-    if (betAmount < 0.005) {
+    if (betAmount < 0.001) {
       setInstruction('>>> SELECT YOUR BET <<<');
       setShakeBetting(true);
       setTimeout(() => setShakeBetting(false), 300);
@@ -35,18 +35,21 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
     try {
       await startGame(betAmount);
       setInstruction('>>> GAME STARTED <<<');
-    } catch (err: any) {
-      setInstruction(`>>> ${err.message || 'ERROR'} <<<`);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'ERROR';
+      setInstruction(`>>> ${errorMessage} <<<`);
     }
   };
 
+  // Calculate potential payout/loss
+  const potentialPayout = (betAmount * 1.94).toFixed(3);
+  const potentialLoss = betAmount.toFixed(2);
+
   return (
     <>
-      {instruction ? (
-        <div className="game-instruction">{instruction}</div>
-      ) : (
-        <div className="game-instruction">&gt;&gt;&gt; SELECT YOUR BET &lt;&lt;&lt;</div>
-      )}
+      <div className="game-instruction">
+        {instruction || '>>> SELECT YOUR BET <<<'}
+      </div>
 
       <div className={`inline-betting ${shakeBetting ? 'animate-shake' : ''}`}>
         <div className="bet-row">
@@ -55,7 +58,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
             value={betAmount}
             onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
             step="0.001"
-            min="0.005"
+            min="0.001"
             disabled={isLoading}
             aria-label="Bet amount in SOL"
             className="bet-input-inline"
@@ -79,12 +82,18 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           ))}
         </div>
 
+        <div className="payout-info">
+          <span>Potential Payout: {potentialPayout}</span>
+          <span className="separator">·</span>
+          <span>Potential Loss: {potentialLoss} SOL</span>
+        </div>
+
         <button
           onClick={handleStartGame}
           disabled={isLoading}
           className="trigger-btn trigger-btn-start"
         >
-          {isLoading ? 'SIGNING...' : 'START'}
+          {isLoading ? 'SIGNING...' : 'PLAY AGAIN'}
         </button>
 
         <div className="fair-badge">
@@ -94,6 +103,22 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           Provably Fair
         </div>
       </div>
+
+      <style jsx>{`
+        .payout-info {
+          font-family: var(--pixel-font);
+          font-size: 0.4rem;
+          color: var(--text-muted);
+          display: flex;
+          gap: 0.5rem;
+          justify-content: center;
+          margin-top: 0.3rem;
+        }
+
+        .separator {
+          color: var(--text-muted);
+        }
+      `}</style>
     </>
   );
 }

@@ -35,51 +35,53 @@ export function StatsBar({ betAmount, currentMultiplier, potentialWin, roundsSur
         .stats-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 10px;
+          gap: 8px;
           width: 100%;
-          margin-bottom: 1rem;
+          margin-bottom: 0.8rem;
         }
 
         .stat-card {
           display: flex;
           flex-direction: column;
-          gap: 6px;
-          background: var(--bg-tertiary);
-          border: 1px solid #2f2f35;
-          border-radius: 10px;
-          padding: 12px;
+          gap: 5px;
+          background: rgba(0, 20, 0, 0.5);
+          border: 1px solid var(--border-neon);
+          border-radius: 6px;
+          padding: 10px 8px;
           text-align: center;
         }
 
         .label {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.52rem;
-          color: #a1a1aa;
+          font-family: var(--pixel-font);
+          font-size: 0.42rem;
+          color: var(--text-muted);
         }
 
         .value {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.82rem;
-          color: #f4f4f5;
+          font-family: var(--pixel-font);
+          font-size: 0.65rem;
+          color: var(--text-primary);
         }
 
         .value.accent {
-          color: var(--accent);
-          text-shadow: 0 0 10px rgba(163,230,53,0.45);
+          color: var(--neon-green);
+          text-shadow: 0 0 10px var(--neon-green-glow);
         }
 
         .value.success {
           color: var(--success);
-          text-shadow: 0 0 10px rgba(0,255,136,0.35);
+          text-shadow: 0 0 10px var(--success-glow);
         }
 
         .value.danger {
           color: var(--danger);
-          text-shadow: 0 0 10px rgba(255,59,59,0.35);
+          text-shadow: 0 0 10px var(--danger-glow);
         }
 
-        @media (max-width: 920px) {
-          .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 600px) {
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
       `}</style>
     </div>

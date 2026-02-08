@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useGame } from '@/hooks/useGame';
 import { SoundEngine } from '@/lib/sound';
 import BetPanel from './BetPanel';
@@ -58,7 +58,6 @@ export default function GameBoard() {
   const [shakeScreen, setShakeScreen] = useState(false);
   const [showFlashSuccess, setShowFlashSuccess] = useState(false);
   const [showFlashDeath, setShowFlashDeath] = useState(false);
-  // Rotation always in multiples of 60° so chambers snap to positions
   const [cylinderRotation, setCylinderRotation] = useState(0);
   const [selectedChamber, setSelectedChamber] = useState<number | null>(null);
   const [cylinderPhase, setCylinderPhase] = useState<CylinderPhase>('selecting');
@@ -74,11 +73,6 @@ export default function GameBoard() {
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  // Chamber at 12 o'clock = the one whose original position, after rotation, is at top
-  // Chambers are indexed 0-5 clockwise starting from top (0°, 60°, 120°, 180°, 240°, 300°)
-  // After rotating cylinder by R degrees CW, chamber i is visually at angle (i*60 + R) % 360
-  // Chamber at top (0°): i where (i*60 + R) % 360 === 0 → i = ((360 - R%360) % 360) / 60
-
   const handleSelectChamber = async (i: number) => {
     if (cylinderPhase !== 'selecting') return;
 
@@ -89,19 +83,17 @@ export default function GameBoard() {
 
     await sleep(600);
 
-    // Spin: multiple full rotations + random offset (always 60° multiples)
     setCylinderPhase('spinning');
     setActionHint('');
     soundRef.current?.playCylinderSpin();
-    const randomSteps = Math.floor(Math.random() * 6); // 0-5 extra chambers
-    const fullSpins = 360 * 4; // 4 full rotations for drama
+    const randomSteps = Math.floor(Math.random() * 6);
+    const fullSpins = 360 * 4;
     const spinAmount = fullSpins + randomSteps * 60;
     setCylinderRotation(prev => prev + spinAmount);
 
     await sleep(300);
     setBulletVisible(false);
 
-    // Wait for spin to settle (matches CSS transition duration)
     await sleep(1800);
 
     soundRef.current?.playReload();
@@ -118,7 +110,6 @@ export default function GameBoard() {
       setIsReloading(true);
       setActionHint('');
 
-      // Fire: brief pause then trigger sound
       soundRef.current?.playTrigger();
       await sleep(250);
 
@@ -126,7 +117,6 @@ export default function GameBoard() {
       soundRef.current?.playEmptyChamber();
       setActionHint(`SURVIVED R${nextRounds}`);
 
-      // Advance cylinder by one chamber (60° clockwise)
       await sleep(300);
       soundRef.current?.playCylinderSpin();
       setCylinderRotation(prev => prev + 60);
@@ -194,24 +184,14 @@ export default function GameBoard() {
   const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
-  // 6 chambers at 60° intervals, index 0 at 12 o'clock (top center)
-  // For PNG overlay: positions as percentage of container size
-  const CHAMBER_PCT = 26.5; // chamber center distance from center as % of container
-  const chamberAngles = [0, 60, 120, 180, 240, 300]; // degrees, 0 = top
+  // Chamber positions for PNG overlay
+  const CHAMBER_PCT = 26.5;
+  const chamberAngles = [0, 60, 120, 180, 240, 300];
   const chamberOverlayPositions = chamberAngles.map(deg => {
     const rad = (deg - 90) * (Math.PI / 180);
     return {
       left: 50 + CHAMBER_PCT * Math.cos(rad),
       top: 50 + CHAMBER_PCT * Math.sin(rad),
-    };
-  });
-  // SVG positions still needed for backwards compat
-  const CHAMBER_RADIUS = 75;
-  const chamberPositions = chamberAngles.map(deg => {
-    const rad = (deg - 90) * (Math.PI / 180);
-    return {
-      x: 150 + CHAMBER_RADIUS * Math.cos(rad),
-      y: 150 + CHAMBER_RADIUS * Math.sin(rad),
     };
   });
 
@@ -223,12 +203,18 @@ export default function GameBoard() {
     return '>>> PULL THE TRIGGER <<<';
   };
 
-  // Slower easing for initial big spin, snappy for chamber advance
   const spinTransition = cylinderPhase === 'spinning'
     ? 'transform 2.0s cubic-bezier(0.08, 0.82, 0.17, 1.0)'
     : cylinderRotation === 0
       ? 'none'
       : 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1.0)';
+
+  // Result text for display
+  const getResultText = () => {
+    if (gameState.status === 'won') return 'YOU LIVE.';
+    if (gameState.status === 'lost') return 'YOU DIED.';
+    return null;
+  };
 
   return (
     <div className="game-content">
@@ -245,21 +231,20 @@ export default function GameBoard() {
       )}
 
       <div className="game-main game-card">
-        <h1 className="game-title">DEGEN ROULETTE</h1>
+        {/* Result Title */}
+        {isGameOver && (
+          <h1 className={`game-result-title ${gameState.status === 'won' ? 'safe' : 'dead'}`}>
+            {getResultText()}
+          </h1>
+        )}
+
+        {/* Tagline */}
         <p className="game-subtitle">1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?</p>
 
         {error && <p className="game-error">{error}</p>}
         {actionHint && <p className="game-hint">{actionHint}</p>}
 
-        {isActive && gameState.betAmount && (
-          <StatsBar
-            betAmount={gameState.betAmount}
-            currentMultiplier={gameState.currentMultiplier}
-            potentialWin={gameState.potentialWin}
-            roundsSurvived={gameState.roundsSurvived}
-          />
-        )}
-
+        {/* Multiplier Table */}
         <div className="multiplier-table">
           {MULTIPLIERS.map((m, idx) => (
             <div key={idx} className={`m-row ${gameState.roundsSurvived === idx + 1 ? 'active' : ''}`}>
@@ -269,12 +254,22 @@ export default function GameBoard() {
           ))}
         </div>
 
-        {/* Revolver cylinder — PNG asset + overlay */}
+        {/* Stats during active game */}
+        {isActive && gameState.betAmount && (
+          <StatsBar
+            betAmount={gameState.betAmount}
+            currentMultiplier={gameState.currentMultiplier}
+            potentialWin={gameState.potentialWin}
+            roundsSurvived={gameState.roundsSurvived}
+          />
+        )}
+
+        {/* Revolver Cylinder */}
         <div className="revolver-frame">
-          {/* Barrel / firing pin — fixed at top, does NOT rotate */}
+          {/* Barrel indicator */}
           <div className="barrel-indicator">
             <svg viewBox="0 0 40 32" className="barrel-svg">
-              <path d="M20 32 L8 8 L14 8 L14 0 L26 0 L26 8 L32 8 Z" fill="#BFFF00" opacity="0.95" />
+              <path d="M20 32 L8 8 L14 8 L14 0 L26 0 L26 8 L32 8 Z" fill="#00FF41" opacity="0.95" />
             </svg>
           </div>
 
@@ -290,7 +285,7 @@ export default function GameBoard() {
               draggable={false}
             />
 
-            {/* Chamber overlays — rotate with the cylinder */}
+            {/* Chamber overlays */}
             {chamberOverlayPositions.map((pos, i) => {
               const isBulletHere = selectedChamber === i;
               const isFired = gameState.bulletPosition !== null && i === gameState.bulletPosition;
@@ -313,13 +308,10 @@ export default function GameBoard() {
                   }}
                   onClick={() => canSelect && handleSelectChamber(i)}
                 >
-                  {/* Bullet */}
                   {(showBullet || isFired) && (
                     <div className={`bullet-dot ${isFired ? 'fired' : ''}`} />
                   )}
-                  {/* Selection glow ring */}
                   {canSelect && <div className="chamber-select-ring" />}
-                  {/* Fired red overlay */}
                   {isFired && <div className="chamber-fired-overlay" />}
                 </div>
               );
@@ -327,8 +319,10 @@ export default function GameBoard() {
           </div>
         </div>
 
+        {/* Betting Panel (idle state) */}
         {gameState.status === 'idle' && <BetPanel startGame={startGame} isLoading={isLoading} />}
 
+        {/* Active Game Controls */}
         {isActive && (
           <>
             <p className="game-instruction">{getInstruction()}</p>
@@ -353,11 +347,13 @@ export default function GameBoard() {
           </>
         )}
 
+        {/* Sub Actions */}
         <div className="sub-actions">
           <button className="mini-btn" onClick={() => setShowHowTo(true)}>How to Play</button>
           <button className="mini-btn" onClick={() => setShowFair(true)}>Provably Fair</button>
         </div>
 
+        {/* Settling State */}
         {isSettling && (
           <div className="settling-state">
             <div className="spinner"></div>
@@ -366,6 +362,7 @@ export default function GameBoard() {
         )}
       </div>
 
+      {/* Result Overlay */}
       {isGameOver && gameState.betAmount && (
         <ResultOverlay
           won={gameState.status === 'won'}
@@ -379,62 +376,37 @@ export default function GameBoard() {
 
       <style jsx>{`
         .game-card {
-          background: var(--bg-secondary);
-          border: 1px solid #27272a;
-          border-radius: 14px;
-          padding: 24px;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+          background: var(--bg-panel);
+          border: 1px solid var(--border-neon);
+          border-radius: 10px;
+          padding: 20px;
+          box-shadow: 0 0 30px var(--neon-green-soft);
           width: 100%;
-          max-width: 760px;
+          max-width: 680px;
         }
 
         .game-error {
           color: var(--danger);
-          font-family: 'Space Grotesk', sans-serif;
+          font-family: var(--body-font);
           font-size: 0.85rem;
+          text-align: center;
         }
 
         .game-hint {
-          color: var(--accent);
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.55rem;
-          text-shadow: 0 0 8px var(--accent-glow);
-          min-height: 1.2em;
-        }
-
-        .multiplier-table {
-          width: 100%;
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 8px;
-          margin-bottom: 12px;
-        }
-
-        .m-row {
-          background: var(--bg-tertiary);
-          border: 1px solid #2f2f35;
-          border-radius: 8px;
-          padding: 8px;
-          font-family: 'Press Start 2P', monospace;
+          color: var(--neon-green);
+          font-family: var(--pixel-font);
           font-size: 0.52rem;
-          display: flex;
-          justify-content: space-between;
-          color: #a1a1aa;
+          text-shadow: 0 0 8px var(--neon-green-glow);
+          min-height: 1.2em;
+          text-align: center;
         }
 
-        .m-row.active {
-          border-color: var(--accent);
-          color: var(--accent);
-          box-shadow: 0 0 12px rgba(163,230,53,0.2);
-        }
-
-        /* === Revolver frame - Neon Cyberpunk === */
+        /* Revolver frame */
         .revolver-frame {
           position: relative;
           width: 280px;
           height: 280px;
-          margin: 0 auto 16px;
-          background: transparent;
+          margin: 0 auto 12px;
           padding: 0;
         }
 
@@ -452,21 +424,7 @@ export default function GameBoard() {
         .barrel-svg {
           width: 100%;
           height: 100%;
-          filter: drop-shadow(0 0 8px #BFFF00) drop-shadow(0 0 16px rgba(191, 255, 0, 0.5));
-        }
-
-        .cylinder-svg {
-          width: 100%;
-          height: 100%;
-          filter: drop-shadow(0 0 10px rgba(191, 255, 0, 0.15));
-        }
-
-        .cylinder-svg.cylinder-blur {
-          filter: blur(2px) drop-shadow(0 0 10px rgba(191, 255, 0, 0.15));
-        }
-
-        .chamber-hover:hover {
-          stroke: rgba(191, 255, 0, 0.6) !important;
+          filter: drop-shadow(0 0 8px var(--neon-green)) drop-shadow(0 0 16px var(--neon-green-glow));
         }
 
         .trigger-btn.locked {
@@ -477,42 +435,107 @@ export default function GameBoard() {
         .sub-actions {
           display: flex;
           gap: 8px;
-          margin-top: 8px;
+          margin-top: 12px;
+          justify-content: center;
         }
 
         .mini-btn {
-          background: #171717;
-          border: 1px solid #3a3a3a;
-          color: #d4d4d8;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.52rem;
-          padding: 8px 10px;
-          border-radius: 8px;
+          background: rgba(0, 20, 0, 0.5);
+          border: 1px solid var(--border-neon);
+          color: var(--text-secondary);
+          font-family: var(--pixel-font);
+          font-size: 0.48rem;
+          padding: 8px 12px;
+          border-radius: 6px;
           cursor: pointer;
+          transition: all 0.15s;
         }
-        .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .mini-btn:hover {
+          border-color: var(--neon-green);
+          color: var(--neon-green);
+          box-shadow: 0 0 10px var(--neon-green-soft);
+        }
 
         .modal-backdrop {
-          position: fixed; inset: 0;
-          background: rgba(0,0,0,0.82);
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.85);
           z-index: 1400;
-          display: flex; align-items: center; justify-content: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
+
         .modal-card {
           width: min(620px, 92vw);
-          background: #0f1013; border: 1px solid #2f3338;
-          border-radius: 12px; padding: 20px;
-          display: flex; flex-direction: column; gap: 12px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-neon);
+          border-radius: 10px;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          box-shadow: 0 0 40px var(--neon-green-soft);
         }
-        .modal-card h3 { margin: 0; font-family: 'Press Start 2P', monospace; color: var(--accent); font-size: 0.9rem; }
-        .modal-card ol { margin: 0; padding-left: 18px; color: #e4e4e7; line-height: 1.7; font-size: 0.95rem; }
-        .mono { font-family: 'Space Grotesk', monospace; font-size: 0.85rem; color: #d4d4d8; margin: 0; }
-        .seed { word-break: break-all; color: #a3e635; }
 
-        .settling-state { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-top: 1rem; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(163,230,53,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .settling-state p { font-family: 'Press Start 2P', monospace; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+        .modal-card h3 {
+          margin: 0;
+          font-family: var(--pixel-font);
+          color: var(--neon-green);
+          font-size: 0.85rem;
+          text-shadow: 0 0 10px var(--neon-green-glow);
+        }
+
+        .modal-card ol {
+          margin: 0;
+          padding-left: 18px;
+          color: var(--text-primary);
+          line-height: 1.8;
+          font-size: 0.9rem;
+        }
+
+        .mono {
+          font-family: var(--body-font);
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          margin: 0;
+        }
+
+        .seed {
+          word-break: break-all;
+          color: var(--neon-green);
+        }
+
+        .settling-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 3px solid var(--neon-green-soft);
+          border-top-color: var(--neon-green);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .settling-state p {
+          font-family: var(--pixel-font);
+          color: var(--neon-green);
+          text-shadow: 0 0 10px var(--neon-green-glow);
+          font-size: 0.6rem;
+        }
       `}</style>
     </div>
   );
