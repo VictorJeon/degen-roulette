@@ -683,7 +683,7 @@ export default function GameBoard() {
       {isGameOver && (
         <ResultOverlay
           won={gameState.status === 'won'}
-          betAmount={gameState.betAmount}
+          betAmount={gameState.betAmount || 0}
           payout={gameState.payout || 0}
           multiplier={gameState.roundsSurvived > 0 ? MULTIPLIERS[gameState.roundsSurvived - 1] : MULTIPLIERS[0]}
           roundsSurvived={gameState.roundsSurvived}
