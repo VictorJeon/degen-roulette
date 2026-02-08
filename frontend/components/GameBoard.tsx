@@ -499,7 +499,7 @@ export default function GameBoard() {
         <div className="multiplier-table">
           <div className="multiplier-row">
             {MULTIPLIERS.map((m, idx) => (
-              <div key={idx} className={`m-row ${gameState.roundsSurvived === idx + 1 ? 'active' : ''}`}>
+              <div key={idx} className={`m-row ${isActive && gameState.roundsSurvived === idx ? 'active' : ''}`}>
                 <span>R{idx + 1}</span>
                 <span>{m.toFixed(2)}x</span>
               </div>
@@ -509,7 +509,7 @@ export default function GameBoard() {
             {ROUND_ODDS.map((odds, idx) => (
               <div
                 key={idx}
-                className={`odds-cell ${gameState.roundsSurvived === idx + 1 ? 'active' : ''}`}
+                className={`odds-cell ${isActive && gameState.roundsSurvived === idx ? 'active' : ''}`}
               >
                 {odds}
               </div>
