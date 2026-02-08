@@ -431,14 +431,17 @@ export default function GameBoard() {
   const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
-  // Chamber positions for PNG overlay
-  const CHAMBER_PCT = 27.7;
+  // Chamber positions for PNG overlay (elliptical + offset center)
+  const CENTER_X = 50;
+  const CENTER_Y = 49.65;  // Cylinder center is slightly above 50%
+  const CHAMBER_PCT_X = 27.14;  // Horizontal radius
+  const CHAMBER_PCT_Y = 27.35;   // Vertical radius
   const chamberAngles = [0, 60, 120, 180, 240, 300];
   const chamberOverlayPositions = chamberAngles.map(deg => {
     const rad = (deg - 90) * (Math.PI / 180);
     return {
-      left: 50 + CHAMBER_PCT * Math.cos(rad),
-      top: 50 + CHAMBER_PCT * Math.sin(rad),
+      left: CENTER_X + CHAMBER_PCT_X * Math.cos(rad),
+      top: CENTER_Y + CHAMBER_PCT_Y * Math.sin(rad),
     };
   });
 
