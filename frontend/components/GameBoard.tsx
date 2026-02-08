@@ -264,7 +264,7 @@ export default function GameBoard() {
           {/* Barrel / firing pin — fixed at top, does NOT rotate */}
           <div className="barrel-indicator">
             <svg viewBox="0 0 40 32" className="barrel-svg">
-              <path d="M20 32 L8 8 L14 8 L14 0 L26 0 L26 8 L32 8 Z" fill="#a3e635" opacity="0.9" />
+              <path d="M20 32 L8 8 L14 8 L14 0 L26 0 L26 8 L32 8 Z" fill="#BFFF00" opacity="0.95" />
             </svg>
           </div>
 
@@ -277,20 +277,50 @@ export default function GameBoard() {
             }}
           >
             <defs>
+              {/* Neon cyberpunk green gradient for cylinder body */}
               <radialGradient id="cylBody" cx="50%" cy="42%" r="55%">
-                <stop offset="0%" stopColor="#404040" />
-                <stop offset="50%" stopColor="#2a2a2a" />
-                <stop offset="100%" stopColor="#151515" />
+                <stop offset="0%" stopColor="#1a2a1a" />
+                <stop offset="50%" stopColor="#0f1a0f" />
+                <stop offset="100%" stopColor="#0a1a0a" />
               </radialGradient>
+              {/* Deep chamber hole gradient */}
               <radialGradient id="chamberHole" cx="40%" cy="35%" r="60%">
-                <stop offset="0%" stopColor="#1a1a1a" />
-                <stop offset="100%" stopColor="#080808" />
+                <stop offset="0%" stopColor="#0a0f0a" />
+                <stop offset="100%" stopColor="#050505" />
               </radialGradient>
+              {/* Neon glow filter for cylinder edge */}
+              <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur1" />
+                <feGaussianBlur stdDeviation="6" result="blur2" />
+                <feMerge>
+                  <feMergeNode in="blur2" />
+                  <feMergeNode in="blur1" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              {/* Glow filter for center hub */}
+              <filter id="hubGlow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
             </defs>
 
-            {/* Outer ring — cylinder body */}
-            <circle cx="150" cy="150" r="140" fill="none" stroke="#3a3a3a" strokeWidth="4" />
+            {/* Outer ring — cylinder body with neon edge */}
+            <circle cx="150" cy="150" r="140" fill="none" stroke="#BFFF00" strokeWidth="3" filter="url(#neonGlow)" opacity="0.9" />
             <circle cx="150" cy="150" r="138" fill="url(#cylBody)" />
+            
+            {/* Notch details on cylinder edge (top and bottom) */}
+            {[0, 60, 120, 180, 240, 300].map((deg, i) => {
+              const rad = (deg - 90) * (Math.PI / 180);
+              const cx = 150 + 138 * Math.cos(rad);
+              const cy = 150 + 138 * Math.sin(rad);
+              return (
+                <circle key={`notch-${i}`} cx={cx} cy={cy} r="8" fill="#0a1a0a" stroke="#1a2a1a" strokeWidth="1" />
+              );
+            })}
 
             {/* Subtle fluting lines between chambers (revolver detail) */}
             {chamberAngles.map((deg, i) => {
@@ -302,7 +332,7 @@ export default function GameBoard() {
               const y2 = 150 + 130 * Math.sin(rad);
               return (
                 <line key={`flute-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-                  stroke="#1f1f1f" strokeWidth="1" opacity="0.5" />
+                  stroke="#0f1a0f" strokeWidth="1" opacity="0.6" />
               );
             })}
 
@@ -318,19 +348,21 @@ export default function GameBoard() {
                   onClick={() => canSelect && handleSelectChamber(i)}
                   style={{ cursor: canSelect ? 'pointer' : 'default' }}
                 >
-                  {/* Chamber rim */}
+                  {/* Chamber outer ring with neon glow when selectable */}
                   <circle cx={pos.x} cy={pos.y} r="26"
                     fill="none"
-                    stroke={isFired ? '#ef4444' : canSelect ? '#525263' : '#3f3f46'}
+                    stroke={isFired ? '#ef4444' : canSelect ? '#BFFF00' : '#2a3a2a'}
                     strokeWidth="2.5"
+                    filter={canSelect ? 'url(#hubGlow)' : undefined}
+                    opacity={canSelect ? 0.8 : 1}
                   />
-                  {/* Chamber hole */}
+                  {/* Chamber hole - deep black */}
                   <circle cx={pos.x} cy={pos.y} r="24"
                     fill={isFired ? 'rgba(239, 68, 68, 0.25)' : 'url(#chamberHole)'}
                   />
                   {/* Inner bore ring */}
                   <circle cx={pos.x} cy={pos.y} r="16"
-                    fill="none" stroke="#2a2a2a" strokeWidth="1"
+                    fill="none" stroke="#1a2a1a" strokeWidth="1.5"
                   />
                   {/* Bullet (brass colored) */}
                   <circle cx={pos.x} cy={pos.y} r="10"
@@ -358,12 +390,12 @@ export default function GameBoard() {
               );
             })}
 
-            {/* Center pin */}
-            <circle cx="150" cy="150" r="22" fill="#1a1a1a" stroke="#3a3a3a" strokeWidth="2" />
-            <circle cx="150" cy="150" r="8" fill="#0a0a0a" stroke="#555" strokeWidth="1.5" />
-            {/* Center pin cross */}
-            <line x1="145" y1="150" x2="155" y2="150" stroke="#444" strokeWidth="1" />
-            <line x1="150" y1="145" x2="150" y2="155" stroke="#444" strokeWidth="1" />
+            {/* Center hub - dark green with neon cross */}
+            <circle cx="150" cy="150" r="22" fill="#0a1a0a" stroke="#1a2a1a" strokeWidth="2" />
+            <circle cx="150" cy="150" r="12" fill="#0f1a0f" stroke="#BFFF00" strokeWidth="1.5" filter="url(#hubGlow)" />
+            {/* Center pin cross - neon green */}
+            <line x1="143" y1="150" x2="157" y2="150" stroke="#BFFF00" strokeWidth="1.5" filter="url(#hubGlow)" />
+            <line x1="150" y1="143" x2="150" y2="157" stroke="#BFFF00" strokeWidth="1.5" filter="url(#hubGlow)" />
           </svg>
         </div>
 
@@ -468,43 +500,52 @@ export default function GameBoard() {
           box-shadow: 0 0 12px rgba(163,230,53,0.2);
         }
 
-        /* === Revolver frame === */
+        /* === Revolver frame - Neon Cyberpunk === */
         .revolver-frame {
           position: relative;
           width: 280px;
           height: 280px;
           margin: 0 auto 16px;
-          filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.6));
+          border-radius: 20%;
+          border: 3px solid #BFFF00;
+          background: radial-gradient(circle at center, rgba(15, 26, 15, 0.8) 0%, rgba(5, 10, 5, 0.95) 100%);
+          box-shadow: 
+            0 0 15px rgba(191, 255, 0, 0.4),
+            0 0 30px rgba(191, 255, 0, 0.2),
+            0 0 60px rgba(191, 255, 0, 0.1),
+            inset 0 0 30px rgba(0, 0, 0, 0.5);
+          padding: 10px;
         }
 
         .barrel-indicator {
           position: absolute;
-          top: -6px;
+          top: -8px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 10;
-          width: 28px;
-          height: 24px;
+          width: 32px;
+          height: 28px;
           pointer-events: none;
         }
 
         .barrel-svg {
           width: 100%;
           height: 100%;
-          filter: drop-shadow(0 0 6px rgba(163,230,53,0.5));
+          filter: drop-shadow(0 0 8px #BFFF00) drop-shadow(0 0 16px rgba(191, 255, 0, 0.5));
         }
 
         .cylinder-svg {
           width: 100%;
           height: 100%;
+          filter: drop-shadow(0 0 10px rgba(191, 255, 0, 0.15));
         }
 
         .cylinder-svg.cylinder-blur {
-          filter: blur(2px);
+          filter: blur(2px) drop-shadow(0 0 10px rgba(191, 255, 0, 0.15));
         }
 
         .chamber-hover:hover {
-          stroke: rgba(163, 230, 53, 0.5) !important;
+          stroke: rgba(191, 255, 0, 0.6) !important;
         }
 
         .trigger-btn.locked {
