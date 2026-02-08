@@ -518,7 +518,7 @@ export default function GameBoard() {
         </div>
 
         {/* Stats during active game */}
-        {isActive && gameState.betAmount && (
+        {isActive && !!gameState.betAmount && (
           <StatsBar
             betAmount={gameState.betAmount}
             currentMultiplier={gameState.currentMultiplier}
@@ -657,7 +657,7 @@ export default function GameBoard() {
       </div>
 
       {/* Result Overlay */}
-      {isGameOver && gameState.betAmount && (
+      {isGameOver && !!gameState.betAmount && (
         <ResultOverlay
           won={gameState.status === 'won'}
           betAmount={gameState.betAmount}
