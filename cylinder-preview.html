@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cylinder Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #09090b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: sans-serif;
+  }
+
+  .revolver-frame {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    border-radius: 20%;
+    border: 3px solid #BFFF00;
+    background: radial-gradient(circle at center, rgba(15, 26, 15, 0.8) 0%, rgba(5, 10, 5, 0.95) 100%);
+    box-shadow: 
+      0 0 15px rgba(191, 255, 0, 0.4),
+      0 0 30px rgba(191, 255, 0, 0.2),
+      0 0 60px rgba(191, 255, 0, 0.1),
+      inset 0 0 30px rgba(0, 0, 0, 0.5);
+    padding: 12px;
+  }
+
+  .barrel-indicator {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 32px;
+    height: 28px;
+    pointer-events: none;
+  }
+
+  .barrel-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 8px #BFFF00) drop-shadow(0 0 16px rgba(191, 255, 0, 0.5));
+  }
+
+  .cylinder-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 10px rgba(191, 255, 0, 0.15));
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Chamber hover */
+  .chamber-group { cursor: pointer; }
+  .chamber-group:hover .chamber-hover-ring { stroke: rgba(191, 255, 0, 0.6); }
+</style>
+</head>
+<body>
+
+<div class="revolver-frame">
+  <!-- Barrel pointer -->
+  <div class="barrel-indicator">
+    <svg viewBox="0 0 40 32" class="barrel-svg">
+      <path d="M20 32 L8 8 L14 8 L14 0 L26 0 L26 8 L32 8 Z" fill="#BFFF00" opacity="0.95" />
+    </svg>
+  </div>
+
+  <svg class="cylinder-svg" viewBox="0 0 300 300" id="cylinder">
+    <defs>
+      <radialGradient id="cylBody" cx="50%" cy="42%" r="55%">
+        <stop offset="0%" stop-color="#1a2a1a" />
+        <stop offset="50%" stop-color="#0f1a0f" />
+        <stop offset="100%" stop-color="#0a1a0a" />
+      </radialGradient>
+      <radialGradient id="chamberHole" cx="40%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#0a0f0a" />
+        <stop offset="100%" stop-color="#050505" />
+      </radialGradient>
+      <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="blur1" />
+        <feGaussianBlur stdDeviation="6" result="blur2" />
+        <feMerge>
+          <feMergeNode in="blur2" />
+          <feMergeNode in="blur1" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="hubGlow" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur stdDeviation="2" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+
+    <!-- Outer ring with neon glow -->
+    <circle cx="150" cy="150" r="140" fill="none" stroke="#BFFF00" stroke-width="3" filter="url(#neonGlow)" opacity="0.9" />
+    <!-- Body -->
+    <circle cx="150" cy="150" r="138" fill="url(#cylBody)" />
+
+    <!-- Notch details -->
+    <script type="text/javascript">
+      // Generated via JS below
+    </script>
+
+    <!-- Fluting lines between chambers -->
+    <line x1="150" y1="50" x2="150" y2="20" stroke="#0f1a0f" stroke-width="1" opacity="0.6" />
+
+    <!-- Center hub -->
+    <circle cx="150" cy="150" r="22" fill="#0a1a0a" stroke="#1a2a1a" stroke-width="2" />
+    <circle cx="150" cy="150" r="12" fill="#0f1a0f" stroke="#BFFF00" stroke-width="1.5" filter="url(#hubGlow)" />
+    <line x1="143" y1="150" x2="157" y2="150" stroke="#BFFF00" stroke-width="1.5" filter="url(#hubGlow)" />
+    <line x1="150" y1="143" x2="150" y2="157" stroke="#BFFF00" stroke-width="1.5" filter="url(#hubGlow)" />
+  </svg>
+</div>
+
+<script>
+  const svg = document.getElementById('cylinder');
+  const ns = 'http://www.w3.org/2000/svg';
+  const cx = 150, cy = 150, r = 85;
+  const chamberAngles = [0, 60, 120, 180, 240, 300];
+
+  // Notches on edge
+  chamberAngles.forEach((deg, i) => {
+    const rad = (deg - 90) * Math.PI / 180;
+    const nx = cx + 138 * Math.cos(rad);
+    const ny = cy + 138 * Math.sin(rad);
+    const notch = document.createElementNS(ns, 'circle');
+    notch.setAttribute('cx', nx);
+    notch.setAttribute('cy', ny);
+    notch.setAttribute('r', '8');
+    notch.setAttribute('fill', '#0a1a0a');
+    notch.setAttribute('stroke', '#1a2a1a');
+    notch.setAttribute('stroke-width', '1');
+    // Insert before center hub
+    svg.querySelector('circle[r="22"]').before(notch);
+  });
+
+  // Fluting lines
+  chamberAngles.forEach((deg, i) => {
+    const midDeg = deg + 30;
+    const rad = (midDeg - 90) * Math.PI / 180;
+    const x1 = cx + 50 * Math.cos(rad);
+    const y1 = cy + 50 * Math.sin(rad);
+    const x2 = cx + 130 * Math.cos(rad);
+    const y2 = cy + 130 * Math.sin(rad);
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke', '#0f1a0f');
+    line.setAttribute('stroke-width', '1');
+    line.setAttribute('opacity', '0.6');
+    svg.querySelector('circle[r="22"]').before(line);
+  });
+
+  // Chambers
+  chamberAngles.forEach((deg, i) => {
+    const rad = (deg - 90) * Math.PI / 180;
+    const px = cx + r * Math.cos(rad);
+    const py = cy + r * Math.sin(rad);
+
+    const g = document.createElementNS(ns, 'g');
+    g.setAttribute('class', 'chamber-group');
+
+    // Outer ring
+    const outer = document.createElementNS(ns, 'circle');
+    outer.setAttribute('cx', px); outer.setAttribute('cy', py);
+    outer.setAttribute('r', '26'); outer.setAttribute('fill', 'none');
+    outer.setAttribute('stroke', '#BFFF00'); outer.setAttribute('stroke-width', '2.5');
+    outer.setAttribute('filter', 'url(#hubGlow)'); outer.setAttribute('opacity', '0.8');
+    g.appendChild(outer);
+
+    // Hole
+    const hole = document.createElementNS(ns, 'circle');
+    hole.setAttribute('cx', px); hole.setAttribute('cy', py);
+    hole.setAttribute('r', '24'); hole.setAttribute('fill', 'url(#chamberHole)');
+    g.appendChild(hole);
+
+    // Inner bore
+    const bore = document.createElementNS(ns, 'circle');
+    bore.setAttribute('cx', px); bore.setAttribute('cy', py);
+    bore.setAttribute('r', '16'); bore.setAttribute('fill', 'none');
+    bore.setAttribute('stroke', '#1a2a1a'); bore.setAttribute('stroke-width', '1.5');
+    g.appendChild(bore);
+
+    // Hover ring
+    const hover = document.createElementNS(ns, 'circle');
+    hover.setAttribute('cx', px); hover.setAttribute('cy', py);
+    hover.setAttribute('r', '26'); hover.setAttribute('fill', 'transparent');
+    hover.setAttribute('stroke', 'transparent'); hover.setAttribute('stroke-width', '4');
+    hover.setAttribute('class', 'chamber-hover-ring');
+    g.appendChild(hover);
+
+    svg.querySelector('circle[r="22"]').before(g);
+  });
+
+  // Remove placeholder fluting line
+  svg.querySelector('line[x1="150"]')?.remove();
+
+  // Click to spin demo
+  let rotation = 0;
+  document.querySelector('.revolver-frame').addEventListener('click', () => {
+    rotation += 60 + Math.floor(Math.random() * 5) * 60;
+    document.getElementById('cylinder').style.transform = `rotate(${rotation}deg)`;
+  });
+</script>
+
+</body>
+</html>

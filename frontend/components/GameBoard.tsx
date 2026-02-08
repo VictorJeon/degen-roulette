@@ -279,19 +279,32 @@ export default function GameBoard() {
             <defs>
               {/* Neon cyberpunk green gradient for cylinder body */}
               <radialGradient id="cylBody" cx="50%" cy="42%" r="55%">
-                <stop offset="0%" stopColor="#1a2a1a" />
-                <stop offset="50%" stopColor="#0f1a0f" />
-                <stop offset="100%" stopColor="#0a1a0a" />
+                <stop offset="0%" stopColor="#2a3a2a" />
+                <stop offset="50%" stopColor="#1a2a1a" />
+                <stop offset="100%" stopColor="#0d1a0d" />
               </radialGradient>
-              {/* Deep chamber hole gradient */}
+              {/* Deep chamber hole gradient - innermost */}
               <radialGradient id="chamberHole" cx="40%" cy="35%" r="60%">
-                <stop offset="0%" stopColor="#0a0f0a" />
+                <stop offset="0%" stopColor="#0a0a0a" />
                 <stop offset="100%" stopColor="#050505" />
               </radialGradient>
+              {/* Outer metallic ring for chambers */}
+              <linearGradient id="chamberOuterRing" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#a0b070" />
+                <stop offset="30%" stopColor="#8a9a60" />
+                <stop offset="70%" stopColor="#6a7a4a" />
+                <stop offset="100%" stopColor="#5a6a3a" />
+              </linearGradient>
+              {/* Inner metallic ring for chambers */}
+              <linearGradient id="chamberInnerRing" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#4a5a3a" />
+                <stop offset="50%" stopColor="#3a4a2a" />
+                <stop offset="100%" stopColor="#2a3a2a" />
+              </linearGradient>
               {/* Neon glow filter for cylinder edge */}
               <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="3" result="blur1" />
-                <feGaussianBlur stdDeviation="6" result="blur2" />
+                <feGaussianBlur stdDeviation="4" result="blur1" />
+                <feGaussianBlur stdDeviation="8" result="blur2" />
                 <feMerge>
                   <feMergeNode in="blur2" />
                   <feMergeNode in="blur1" />
@@ -306,37 +319,95 @@ export default function GameBoard() {
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
+              {/* Subtle chamber glow when selectable */}
+              <filter id="selectGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
             </defs>
 
-            {/* Outer ring — cylinder body with neon edge */}
-            <circle cx="150" cy="150" r="140" fill="none" stroke="#BFFF00" strokeWidth="3" filter="url(#neonGlow)" opacity="0.9" />
-            <circle cx="150" cy="150" r="138" fill="url(#cylBody)" />
-            
-            {/* Notch details on cylinder edge (top and bottom) */}
-            {[0, 60, 120, 180, 240, 300].map((deg, i) => {
-              const rad = (deg - 90) * (Math.PI / 180);
-              const cx = 150 + 138 * Math.cos(rad);
-              const cy = 150 + 138 * Math.sin(rad);
+            {/* Gear-shaped cylinder body with 6 teeth */}
+            {(() => {
+              // Generate gear path with 6 rectangular teeth between chambers
+              const cx = 150, cy = 150;
+              const baseRadius = 125; // Main body radius
+              const toothHeight = 15; // How far teeth protrude
+              const toothWidth = 28; // Angular width at base (degrees)
+              const toothTopWidth = 22; // Angular width at top (degrees) - creates chamfer
+              
+              let pathD = '';
+              for (let i = 0; i < 6; i++) {
+                const toothAngle = i * 60 + 30; // Teeth at 30, 90, 150, 210, 270, 330 (between chambers)
+                const nextToothAngle = ((i + 1) % 6) * 60 + 30;
+                
+                // Angles in radians
+                const toothStartDeg = toothAngle - toothWidth / 2;
+                const toothEndDeg = toothAngle + toothWidth / 2;
+                const toothTopStartDeg = toothAngle - toothTopWidth / 2;
+                const toothTopEndDeg = toothAngle + toothTopWidth / 2;
+                
+                // Arc between teeth (from previous tooth end to this tooth start)
+                const arcStartRad = (i === 0 ? 30 - toothWidth / 2 : (i - 1) * 60 + 30 + toothWidth / 2 - 90) * Math.PI / 180;
+                const arcEndRad = (toothStartDeg - 90) * Math.PI / 180;
+                
+                // Points for this tooth
+                const p1x = cx + baseRadius * Math.cos((toothStartDeg - 90) * Math.PI / 180);
+                const p1y = cy + baseRadius * Math.sin((toothStartDeg - 90) * Math.PI / 180);
+                const p2x = cx + (baseRadius + toothHeight) * Math.cos((toothTopStartDeg - 90) * Math.PI / 180);
+                const p2y = cy + (baseRadius + toothHeight) * Math.sin((toothTopStartDeg - 90) * Math.PI / 180);
+                const p3x = cx + (baseRadius + toothHeight) * Math.cos((toothTopEndDeg - 90) * Math.PI / 180);
+                const p3y = cy + (baseRadius + toothHeight) * Math.sin((toothTopEndDeg - 90) * Math.PI / 180);
+                const p4x = cx + baseRadius * Math.cos((toothEndDeg - 90) * Math.PI / 180);
+                const p4y = cy + baseRadius * Math.sin((toothEndDeg - 90) * Math.PI / 180);
+                
+                if (i === 0) {
+                  // Start at first tooth base
+                  pathD = `M ${p1x.toFixed(1)} ${p1y.toFixed(1)}`;
+                }
+                
+                // Draw tooth: chamfered left edge, flat top, chamfered right edge
+                pathD += ` L ${p2x.toFixed(1)} ${p2y.toFixed(1)}`;
+                pathD += ` L ${p3x.toFixed(1)} ${p3y.toFixed(1)}`;
+                pathD += ` L ${p4x.toFixed(1)} ${p4y.toFixed(1)}`;
+                
+                // Arc to next tooth (or back to start)
+                const nextStartDeg = (i < 5) ? (i + 1) * 60 + 30 - toothWidth / 2 : 30 - toothWidth / 2;
+                const nextP1x = cx + baseRadius * Math.cos((nextStartDeg - 90) * Math.PI / 180);
+                const nextP1y = cy + baseRadius * Math.sin((nextStartDeg - 90) * Math.PI / 180);
+                
+                // Use arc command for the curved section between teeth
+                pathD += ` A ${baseRadius} ${baseRadius} 0 0 1 ${nextP1x.toFixed(1)} ${nextP1y.toFixed(1)}`;
+              }
+              pathD += ' Z';
+              
               return (
-                <circle key={`notch-${i}`} cx={cx} cy={cy} r="8" fill="#0a1a0a" stroke="#1a2a1a" strokeWidth="1" />
+                <>
+                  {/* Neon glow outline */}
+                  <path d={pathD} fill="none" stroke="#BFFF00" strokeWidth="3" filter="url(#neonGlow)" opacity="0.95" />
+                  {/* Body fill (slightly smaller to show edge) */}
+                  <path d={pathD} fill="url(#cylBody)" transform="translate(150,150) scale(0.98) translate(-150,-150)" />
+                </>
               );
-            })}
+            })()}
 
-            {/* Subtle fluting lines between chambers (revolver detail) */}
+            {/* Subtle fluting lines between chambers (revolver detail) - more subtle */}
             {chamberAngles.map((deg, i) => {
-              const midDeg = deg + 30; // halfway between chambers
+              const midDeg = deg + 30; // halfway between chambers (where teeth are)
               const rad = (midDeg - 90) * (Math.PI / 180);
-              const x1 = 150 + 50 * Math.cos(rad);
-              const y1 = 150 + 50 * Math.sin(rad);
-              const x2 = 150 + 130 * Math.cos(rad);
-              const y2 = 150 + 130 * Math.sin(rad);
+              const x1 = 150 + 45 * Math.cos(rad);
+              const y1 = 150 + 45 * Math.sin(rad);
+              const x2 = 150 + 115 * Math.cos(rad);
+              const y2 = 150 + 115 * Math.sin(rad);
               return (
                 <line key={`flute-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-                  stroke="#0f1a0f" strokeWidth="1" opacity="0.6" />
+                  stroke="#0a1a0a" strokeWidth="1.5" opacity="0.3" />
               );
             })}
 
-            {/* Chambers */}
+            {/* Chambers - 2-ring metallic structure */}
             {chamberPositions.map((pos, i) => {
               const isBulletHere = selectedChamber === i;
               const isFired = gameState.bulletPosition !== null && i === gameState.bulletPosition;
@@ -348,24 +419,29 @@ export default function GameBoard() {
                   onClick={() => canSelect && handleSelectChamber(i)}
                   style={{ cursor: canSelect ? 'pointer' : 'default' }}
                 >
-                  {/* Chamber outer ring with neon glow when selectable */}
-                  <circle cx={pos.x} cy={pos.y} r="26"
+                  {/* Outer metallic ring - bright highlight */}
+                  <circle cx={pos.x} cy={pos.y} r="30"
                     fill="none"
-                    stroke={isFired ? '#ef4444' : canSelect ? '#BFFF00' : '#2a3a2a'}
-                    strokeWidth="2.5"
-                    filter={canSelect ? 'url(#hubGlow)' : undefined}
-                    opacity={canSelect ? 0.8 : 1}
+                    stroke={isFired ? '#ef4444' : canSelect ? '#BFFF00' : 'url(#chamberOuterRing)'}
+                    strokeWidth="4"
+                    filter={canSelect ? 'url(#selectGlow)' : undefined}
                   />
-                  {/* Chamber hole - deep black */}
-                  <circle cx={pos.x} cy={pos.y} r="24"
-                    fill={isFired ? 'rgba(239, 68, 68, 0.25)' : 'url(#chamberHole)'}
+                  {/* Inner metallic ring - darker */}
+                  <circle cx={pos.x} cy={pos.y} r="25"
+                    fill="none"
+                    stroke={isFired ? '#aa3333' : '#3a4a3a'}
+                    strokeWidth="3"
                   />
-                  {/* Inner bore ring */}
-                  <circle cx={pos.x} cy={pos.y} r="16"
-                    fill="none" stroke="#1a2a1a" strokeWidth="1.5"
+                  {/* Deep chamber hole - innermost black */}
+                  <circle cx={pos.x} cy={pos.y} r="21"
+                    fill={isFired ? 'rgba(239, 68, 68, 0.3)' : 'url(#chamberHole)'}
+                  />
+                  {/* Inner bore shadow ring for depth */}
+                  <circle cx={pos.x} cy={pos.y} r="18"
+                    fill="none" stroke="#0a0a0a" strokeWidth="2" opacity="0.6"
                   />
                   {/* Bullet (brass colored) */}
-                  <circle cx={pos.x} cy={pos.y} r="10"
+                  <circle cx={pos.x} cy={pos.y} r="11"
                     fill={isFired ? '#ef4444' : '#d4a017'}
                     style={{
                       opacity: showBullet || isFired ? 1 : 0,
@@ -374,7 +450,7 @@ export default function GameBoard() {
                   />
                   {/* Bullet primer dot */}
                   {(showBullet || isFired) && (
-                    <circle cx={pos.x} cy={pos.y} r="3.5"
+                    <circle cx={pos.x} cy={pos.y} r="4"
                       fill={isFired ? '#ff6b6b' : '#b8860b'}
                       style={{ opacity: showBullet || isFired ? 1 : 0 }}
                     />
@@ -390,12 +466,16 @@ export default function GameBoard() {
               );
             })}
 
-            {/* Center hub - dark green with neon cross */}
-            <circle cx="150" cy="150" r="22" fill="#0a1a0a" stroke="#1a2a1a" strokeWidth="2" />
-            <circle cx="150" cy="150" r="12" fill="#0f1a0f" stroke="#BFFF00" strokeWidth="1.5" filter="url(#hubGlow)" />
-            {/* Center pin cross - neon green */}
-            <line x1="143" y1="150" x2="157" y2="150" stroke="#BFFF00" strokeWidth="1.5" filter="url(#hubGlow)" />
-            <line x1="150" y1="143" x2="150" y2="157" stroke="#BFFF00" strokeWidth="1.5" filter="url(#hubGlow)" />
+            {/* Center hub - enhanced 3D metallic look */}
+            {/* Outer hub ring */}
+            <circle cx="150" cy="150" r="24" fill="#1a2a1a" stroke="#4a6a3a" strokeWidth="2.5" />
+            {/* Middle hub ring with gradient */}
+            <circle cx="150" cy="150" r="18" fill="#2a4a2a" stroke="#3a5a3a" strokeWidth="2" />
+            {/* Inner hub with neon ring */}
+            <circle cx="150" cy="150" r="12" fill="#1a3a1a" stroke="#BFFF00" strokeWidth="2" filter="url(#hubGlow)" />
+            {/* Center pin cross - bold neon green */}
+            <line x1="142" y1="150" x2="158" y2="150" stroke="#BFFF00" strokeWidth="2.5" strokeLinecap="round" filter="url(#hubGlow)" />
+            <line x1="150" y1="142" x2="150" y2="158" stroke="#BFFF00" strokeWidth="2.5" strokeLinecap="round" filter="url(#hubGlow)" />
           </svg>
         </div>
 
