@@ -28,11 +28,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         AND status = 'pending'
     `;
 
-    // Check for existing started (on-chain confirmed) game
+    // Check for existing started (on-chain confirmed) game within 5 minutes
     const { rows: active } = await sql`
       SELECT id FROM games
       WHERE player_wallet = ${playerWallet}
         AND status = 'started'
+        AND created_at > NOW() - INTERVAL '5 minutes'
       LIMIT 1
     `;
 
@@ -42,6 +43,15 @@ export async function POST(request: Request): Promise<NextResponse> {
         { status: 409 }
       );
     }
+
+    // Clean up old started games (>5 minutes) - likely abandoned
+    await sql`
+      UPDATE games
+      SET status = 'lost', updated_at = NOW()
+      WHERE player_wallet = ${playerWallet}
+        AND status = 'started'
+        AND created_at <= NOW() - INTERVAL '5 minutes'
+    `;
 
     // Generate server seed
     const { serverSeed, seedHash, seedHashBytes } = generateServerSeed();
