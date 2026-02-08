@@ -432,7 +432,7 @@ export default function GameBoard() {
   const triggerReady = isActive && cylinderPhase === 'ready' && !isLoading && !isReloading;
 
   // Chamber positions for PNG overlay
-  const CHAMBER_PCT = 26.5;
+  const CHAMBER_PCT = 27.7;
   const chamberAngles = [0, 60, 120, 180, 240, 300];
   const chamberOverlayPositions = chamberAngles.map(deg => {
     const rad = (deg - 90) * (Math.PI / 180);
