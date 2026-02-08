@@ -146,7 +146,7 @@ export default function GameBoard() {
 
       pullTrigger();
       soundRef.current?.playEmptyChamber();
-      setActionHint(`SURVIVED R${nextRounds}`);
+      setActionHint(`✓ YOU LIVE · R${nextRounds}`);
 
       await sleep(300);
       soundRef.current?.playCylinderSpin();
@@ -334,7 +334,6 @@ export default function GameBoard() {
                 d="M20 34 L8 11 L13 11 L13 2 L27 2 L27 11 L32 11 Z"
                 fill="url(#barrelGrad)"
               />
-              <line x1="20" y1="5" x2="20" y2="28" stroke="#00FF41" strokeWidth="1" opacity="0.5" />
             </svg>
           </div>
 
@@ -495,10 +494,17 @@ export default function GameBoard() {
         .game-hint {
           color: var(--neon);
           font-family: var(--pixel-font);
-          font-size: 0.5rem;
-          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
-          min-height: 1.1em;
+          font-size: 0.85rem;
+          font-weight: bold;
+          text-shadow:
+            0 0 10px var(--neon),
+            0 0 20px var(--neon-glow),
+            0 0 35px var(--neon-glow-soft),
+            0 0 50px var(--neon-glow-subtle);
+          min-height: 1.5em;
           text-align: center;
+          letter-spacing: 2px;
+          animation: textGlow 1.5s ease-in-out infinite;
         }
 
         .max-label {

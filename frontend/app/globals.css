@@ -563,54 +563,64 @@ body::after {
 
 .m-row {
     background:
-        linear-gradient(180deg, rgba(0, 18, 0, 0.5) 0%, rgba(0, 10, 0, 0.7) 100%);
-    border: 1px solid rgba(0, 255, 65, 0.08);
+        linear-gradient(180deg, rgba(0, 35, 0, 0.75) 0%, rgba(0, 25, 0, 0.85) 100%);
+    border: 2px solid rgba(0, 255, 65, 0.35);
     border-radius: 4px;
-    padding: 10px 6px;
+    padding: 12px 8px;
     font-family: var(--pixel-font);
-    font-size: 0.55rem;
+    font-size: 0.7rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    color: var(--text-dim);
+    gap: 5px;
+    color: var(--text-secondary);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    box-shadow:
+        0 0 8px rgba(0, 255, 65, 0.15),
+        inset 0 0 15px rgba(0, 255, 65, 0.05);
 }
 
 .m-row span:first-child {
-    color: var(--text-muted);
-    font-size: 0.48rem;
+    color: var(--text-primary);
+    font-size: 0.6rem;
+    letter-spacing: 0.5px;
 }
 
 .m-row span:last-child {
-    font-size: 0.56rem;
+    font-size: 0.75rem;
+    color: var(--neon);
+    text-shadow: 0 0 6px var(--neon-glow-subtle);
+    font-weight: bold;
 }
 
 .m-row.active {
     border-color: var(--neon);
-    border-width: 2px;
+    border-width: 3px;
     background:
-        linear-gradient(180deg, rgba(0, 60, 0, 0.75) 0%, rgba(0, 40, 0, 0.9) 100%);
+        linear-gradient(180deg, rgba(0, 70, 0, 0.85) 0%, rgba(0, 50, 0, 0.95) 100%);
     box-shadow:
-        0 0 12px var(--neon-glow),
-        0 0 25px var(--neon-glow-soft),
-        0 0 40px var(--neon-glow-subtle),
-        inset 0 0 20px var(--neon-glow-subtle);
-    transform: scaleY(1.18) scaleX(1.04);
+        0 0 15px var(--neon-glow),
+        0 0 30px var(--neon-glow-soft),
+        0 0 50px var(--neon-glow-subtle),
+        inset 0 0 30px var(--neon-glow-subtle);
+    transform: scaleY(1.22) scaleX(1.06);
     z-index: 2;
 }
 
 .m-row.active span:first-child {
     color: var(--neon-bright);
-    text-shadow: 0 0 8px var(--neon-glow);
-    font-size: 0.52rem;
+    text-shadow: 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow-soft);
+    font-size: 0.65rem;
 }
 
 .m-row.active span:last-child {
-    color: var(--neon);
-    text-shadow: 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow-soft);
-    font-size: 0.68rem;
+    color: var(--neon-bright);
+    text-shadow:
+        0 0 12px var(--neon-glow),
+        0 0 25px var(--neon-glow-soft),
+        0 0 40px var(--neon-glow-subtle);
+    font-size: 0.9rem;
 }
 
 /* Odds row below multipliers */
@@ -618,18 +628,22 @@ body::after {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 5px;
+    margin-top: 4px;
 }
 
 .odds-cell {
     font-family: var(--pixel-font);
-    font-size: 0.36rem;
-    color: var(--text-dim);
+    font-size: 0.48rem;
+    color: var(--text-secondary);
     text-align: center;
-    padding: 2px 0;
+    padding: 4px 0;
+    transition: all 0.3s;
 }
 
 .odds-cell.active {
-    color: var(--text-muted);
+    color: var(--neon);
+    text-shadow: 0 0 8px var(--neon-glow);
+    font-size: 0.52rem;
 }
 
 /* ========== CYLINDER ========== */
