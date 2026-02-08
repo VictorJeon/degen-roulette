@@ -41,18 +41,18 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
     }
   };
 
-  // Calculate potential payout/loss
+  // Calculate potential payout/loss (using R3 multiplier as reference)
   const potentialPayout = (betAmount * 1.94).toFixed(3);
   const potentialLoss = betAmount.toFixed(2);
 
   return (
-    <>
+    <div className="bet-panel">
       <div className="game-instruction">
         {instruction || '>>> SELECT YOUR BET <<<'}
       </div>
 
       <div className={`inline-betting ${shakeBetting ? 'animate-shake' : ''}`}>
-        <div className="bet-row">
+        <div className="bet-input-wrapper">
           <input
             type="number"
             value={betAmount}
@@ -63,6 +63,26 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
             aria-label="Bet amount in SOL"
             className="bet-input-inline"
           />
+          <div className="bet-arrows">
+            <button 
+              className="arrow-btn"
+              onClick={() => setBetAmount(prev => Math.max(0.001, prev - 0.001))}
+              disabled={isLoading}
+            >
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 14l5-5 5 5z"/>
+              </svg>
+            </button>
+            <button 
+              className="arrow-btn"
+              onClick={() => setBetAmount(prev => prev + 0.001)}
+              disabled={isLoading}
+            >
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            </button>
+          </div>
           <span className="bet-currency">SOL</span>
         </div>
 
@@ -83,9 +103,9 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
         </div>
 
         <div className="payout-info">
-          <span>Potential Payout: {potentialPayout}</span>
+          <span>Potential Payout: <strong>{potentialPayout}</strong></span>
           <span className="separator">·</span>
-          <span>Potential Loss: {potentialLoss} SOL</span>
+          <span>Potential Loss: <strong>{potentialLoss} SOL</strong></span>
         </div>
 
         <button
@@ -93,7 +113,9 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           disabled={isLoading}
           className="trigger-btn trigger-btn-start"
         >
-          {isLoading ? 'SIGNING...' : 'PLAY AGAIN'}
+          <span className="btn-inner">
+            {isLoading ? 'SIGNING...' : 'PLAY AGAIN'}
+          </span>
         </button>
 
         <div className="fair-badge">
@@ -105,20 +127,101 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
       </div>
 
       <style jsx>{`
+        .bet-panel {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+        }
+
+        .bet-input-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: 
+            linear-gradient(180deg, rgba(0, 20, 0, 0.7) 0%, rgba(0, 12, 0, 0.85) 100%);
+          border: 1px solid var(--border-neon);
+          border-radius: 4px;
+          padding: 0.4rem 0.6rem;
+          position: relative;
+        }
+
+        .bet-input-inline {
+          font-family: var(--pixel-font);
+          font-size: 0.9rem;
+          width: 130px;
+          padding: 0.4rem 0.5rem;
+          background: transparent;
+          border: none;
+          color: var(--neon);
+          text-align: center;
+        }
+
+        .bet-input-inline:focus {
+          outline: none;
+        }
+
+        .bet-input-wrapper:focus-within {
+          border-color: var(--neon);
+          box-shadow: 
+            0 0 10px var(--neon-glow-soft),
+            0 0 20px var(--neon-glow-subtle);
+        }
+
+        .bet-arrows {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .arrow-btn {
+          background: rgba(0, 255, 65, 0.1);
+          border: 1px solid var(--border-dim);
+          border-radius: 2px;
+          color: var(--text-muted);
+          cursor: pointer;
+          padding: 2px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.12s;
+        }
+
+        .arrow-btn:hover {
+          color: var(--neon);
+          border-color: var(--neon);
+        }
+
+        .bet-currency {
+          font-family: var(--pixel-font);
+          font-size: 0.5rem;
+          color: var(--text-muted);
+          margin-left: 0.3rem;
+        }
+
         .payout-info {
           font-family: var(--pixel-font);
-          font-size: 0.4rem;
-          color: var(--text-muted);
+          font-size: 0.36rem;
+          color: var(--text-dim);
           display: flex;
           gap: 0.5rem;
           justify-content: center;
-          margin-top: 0.3rem;
+          margin-top: 0.2rem;
+        }
+
+        .payout-info strong {
+          color: var(--text-muted);
         }
 
         .separator {
-          color: var(--text-muted);
+          color: var(--text-dim);
+        }
+
+        .btn-inner {
+          position: relative;
+          z-index: 1;
         }
       `}</style>
-    </>
+    </div>
   );
 }

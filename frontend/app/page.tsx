@@ -5,7 +5,10 @@ import { LiveFeed } from "@/components/LiveFeed";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      {/* Vignette effect */}
+      <div className="vignette" />
+      
       <Header />
 
       <main className="main">

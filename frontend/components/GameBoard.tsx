@@ -8,6 +8,10 @@ import { StatsBar } from './StatsBar';
 import { ResultOverlay } from './ResultOverlay';
 import { MULTIPLIERS } from '@/lib/constants';
 
+// Odds for each round (survival probability display)
+const ROUND_ODDS = ['5/6', '4/5', '3/4', '2/3', '1/2'];
+const MAX_LABELS = ['', '', 'MAX', '', ''];
+
 function HowToPlayModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -46,6 +50,33 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
         <button className="mini-btn" onClick={onClose}>닫기</button>
       </div>
     </div>
+  );
+}
+
+// Decorative corner SVG component
+function CornerDecor({ position }: { position: 'tl' | 'tr' | 'bl' | 'br' }) {
+  const transforms: Record<string, string> = {
+    tl: '',
+    tr: 'scale(-1, 1)',
+    bl: 'scale(1, -1)',
+    br: 'scale(-1, -1)',
+  };
+  
+  return (
+    <svg 
+      className={`corner-decor corner-${position}`} 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24"
+      style={{ transform: transforms[position] }}
+    >
+      <path 
+        d="M0 0 L8 0 L8 2 L2 2 L2 8 L0 8 Z" 
+        fill="currentColor"
+        opacity="0.6"
+      />
+      <circle cx="4" cy="4" r="1.5" fill="currentColor" opacity="0.4" />
+    </svg>
   );
 }
 
@@ -218,6 +249,9 @@ export default function GameBoard() {
 
   return (
     <div className="game-content">
+      {/* Vignette overlay */}
+      <div className="vignette" />
+      
       <div className={`flash-overlay success ${showFlashSuccess ? 'active' : ''}`} />
       <div className={`flash-overlay death ${showFlashDeath ? 'active' : ''}`} />
 
@@ -231,6 +265,12 @@ export default function GameBoard() {
       )}
 
       <div className="game-main game-card">
+        {/* Corner decorations */}
+        <CornerDecor position="tl" />
+        <CornerDecor position="tr" />
+        <CornerDecor position="bl" />
+        <CornerDecor position="br" />
+
         {/* Result Title */}
         {isGameOver && (
           <h1 className={`game-result-title ${gameState.status === 'won' ? 'safe' : 'dead'}`}>
@@ -244,14 +284,27 @@ export default function GameBoard() {
         {error && <p className="game-error">{error}</p>}
         {actionHint && <p className="game-hint">{actionHint}</p>}
 
-        {/* Multiplier Table */}
+        {/* Multiplier Table with Odds */}
         <div className="multiplier-table">
-          {MULTIPLIERS.map((m, idx) => (
-            <div key={idx} className={`m-row ${gameState.roundsSurvived === idx + 1 ? 'active' : ''}`}>
-              <span>R{idx + 1}</span>
-              <span>{m.toFixed(2)}x</span>
-            </div>
-          ))}
+          <div className="multiplier-row">
+            {MULTIPLIERS.map((m, idx) => (
+              <div key={idx} className={`m-row ${gameState.roundsSurvived === idx + 1 ? 'active' : ''}`}>
+                <span>R{idx + 1}</span>
+                <span>{m.toFixed(2)}x</span>
+              </div>
+            ))}
+          </div>
+          <div className="odds-row">
+            {ROUND_ODDS.map((odds, idx) => (
+              <div 
+                key={idx} 
+                className={`odds-cell ${gameState.roundsSurvived === idx + 1 ? 'active' : ''}`}
+              >
+                {MAX_LABELS[idx] && <span className="max-label">{MAX_LABELS[idx]} </span>}
+                {odds}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Stats during active game */}
@@ -266,10 +319,37 @@ export default function GameBoard() {
 
         {/* Revolver Cylinder */}
         <div className="revolver-frame">
+          {/* Sparkle effects */}
+          <div className="cylinder-sparkles">
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+          </div>
+
           {/* Barrel indicator */}
           <div className="barrel-indicator">
-            <svg viewBox="0 0 40 32" className="barrel-svg">
-              <path d="M20 32 L8 8 L14 8 L14 0 L26 0 L26 8 L32 8 Z" fill="#00FF41" opacity="0.95" />
+            <svg viewBox="0 0 40 36" className="barrel-svg">
+              {/* Main arrow shape */}
+              <path 
+                d="M20 36 L6 10 L12 10 L12 0 L28 0 L28 10 L34 10 Z" 
+                fill="none"
+                stroke="#00FF41"
+                strokeWidth="2"
+              />
+              {/* Inner fill with gradient */}
+              <defs>
+                <linearGradient id="barrelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#00FF41" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#00cc34" stopOpacity="0.7" />
+                </linearGradient>
+              </defs>
+              <path 
+                d="M20 34 L8 11 L13 11 L13 2 L27 2 L27 11 L32 11 Z" 
+                fill="url(#barrelGrad)"
+              />
+              {/* Center line */}
+              <line x1="20" y1="5" x2="20" y2="28" stroke="#00FF41" strokeWidth="1" opacity="0.5" />
             </svg>
           </div>
 
@@ -349,8 +429,18 @@ export default function GameBoard() {
 
         {/* Sub Actions */}
         <div className="sub-actions">
-          <button className="mini-btn" onClick={() => setShowHowTo(true)}>How to Play</button>
-          <button className="mini-btn" onClick={() => setShowFair(true)}>Provably Fair</button>
+          <button className="mini-btn" onClick={() => setShowHowTo(true)}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+            </svg>
+            How to Play
+          </button>
+          <button className="mini-btn" onClick={() => setShowFair(true)}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+            Provably Fair
+          </button>
         </div>
 
         {/* Settling State */}
@@ -376,59 +466,85 @@ export default function GameBoard() {
 
       <style jsx>{`
         .game-card {
-          background: var(--bg-panel);
+          background: 
+            linear-gradient(180deg, rgba(10, 18, 10, 0.95) 0%, rgba(5, 10, 5, 0.98) 100%);
           border: 1px solid var(--border-neon);
-          border-radius: 10px;
-          padding: 20px;
-          box-shadow: 0 0 30px var(--neon-green-soft);
+          border-radius: 8px;
+          padding: 18px 20px;
+          position: relative;
           width: 100%;
-          max-width: 680px;
+          max-width: 640px;
+          
+          box-shadow: 
+            0 0 20px var(--neon-glow-subtle),
+            0 0 40px var(--neon-glow-subtle),
+            inset 0 1px 0 rgba(255, 255, 255, 0.04),
+            inset 0 0 40px rgba(0, 255, 65, 0.02);
         }
+
+        .corner-decor {
+          position: absolute;
+          color: var(--neon);
+          filter: drop-shadow(0 0 4px var(--neon-glow));
+        }
+
+        .corner-tl { top: 6px; left: 6px; }
+        .corner-tr { top: 6px; right: 6px; }
+        .corner-bl { bottom: 6px; left: 6px; }
+        .corner-br { bottom: 6px; right: 6px; }
 
         .game-error {
           color: var(--danger);
           font-family: var(--body-font);
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           text-align: center;
         }
 
         .game-hint {
-          color: var(--neon-green);
+          color: var(--neon);
           font-family: var(--pixel-font);
-          font-size: 0.52rem;
-          text-shadow: 0 0 8px var(--neon-green-glow);
-          min-height: 1.2em;
+          font-size: 0.5rem;
+          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
+          min-height: 1.1em;
           text-align: center;
+        }
+
+        .max-label {
+          color: var(--neon);
+          text-shadow: 0 0 4px var(--neon-glow);
         }
 
         /* Revolver frame */
         .revolver-frame {
           position: relative;
-          width: 280px;
-          height: 280px;
-          margin: 0 auto 12px;
+          width: 270px;
+          height: 270px;
+          margin: 0 auto 10px;
           padding: 0;
         }
 
         .barrel-indicator {
           position: absolute;
-          top: -8px;
+          top: -12px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 10;
-          width: 32px;
-          height: 28px;
+          width: 36px;
+          height: 32px;
           pointer-events: none;
         }
 
         .barrel-svg {
           width: 100%;
           height: 100%;
-          filter: drop-shadow(0 0 8px var(--neon-green)) drop-shadow(0 0 16px var(--neon-green-glow));
+          filter: 
+            drop-shadow(0 0 6px var(--neon)) 
+            drop-shadow(0 0 12px var(--neon-glow))
+            drop-shadow(0 0 20px var(--neon-glow-soft));
         }
 
         .trigger-btn.locked {
-          opacity: 0.4;
+          opacity: 0.35;
           cursor: not-allowed;
         }
 
@@ -440,27 +556,40 @@ export default function GameBoard() {
         }
 
         .mini-btn {
-          background: rgba(0, 20, 0, 0.5);
+          background: 
+            linear-gradient(180deg, rgba(0, 20, 0, 0.6) 0%, rgba(0, 12, 0, 0.8) 100%);
           border: 1px solid var(--border-neon);
           color: var(--text-secondary);
           font-family: var(--pixel-font);
-          font-size: 0.48rem;
-          padding: 8px 12px;
-          border-radius: 6px;
+          font-size: 0.44rem;
+          padding: 7px 11px;
+          border-radius: 4px;
           cursor: pointer;
           transition: all 0.15s;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+
+        .mini-btn svg {
+          opacity: 0.7;
         }
 
         .mini-btn:hover {
-          border-color: var(--neon-green);
-          color: var(--neon-green);
-          box-shadow: 0 0 10px var(--neon-green-soft);
+          border-color: var(--neon);
+          color: var(--neon);
+          box-shadow: 0 0 10px var(--neon-glow-subtle), inset 0 0 8px var(--neon-glow-subtle);
+        }
+
+        .mini-btn:hover svg {
+          opacity: 1;
+          filter: drop-shadow(0 0 3px var(--neon-glow));
         }
 
         .modal-backdrop {
           position: fixed;
           inset: 0;
-          background: rgba(0, 0, 0, 0.85);
+          background: rgba(0, 0, 0, 0.88);
           z-index: 1400;
           display: flex;
           align-items: center;
@@ -468,60 +597,73 @@ export default function GameBoard() {
         }
 
         .modal-card {
-          width: min(620px, 92vw);
-          background: var(--bg-secondary);
+          width: min(580px, 92vw);
+          background: 
+            linear-gradient(180deg, rgba(10, 18, 10, 0.98) 0%, rgba(5, 10, 5, 0.99) 100%);
           border: 1px solid var(--border-neon);
-          border-radius: 10px;
-          padding: 24px;
+          border-radius: 8px;
+          padding: 22px;
           display: flex;
           flex-direction: column;
-          gap: 14px;
-          box-shadow: 0 0 40px var(--neon-green-soft);
+          gap: 12px;
+          box-shadow: 
+            0 0 30px var(--neon-glow-soft),
+            0 0 60px var(--neon-glow-subtle);
         }
 
         .modal-card h3 {
           margin: 0;
           font-family: var(--pixel-font);
-          color: var(--neon-green);
-          font-size: 0.85rem;
-          text-shadow: 0 0 10px var(--neon-green-glow);
+          color: var(--neon);
+          font-size: 0.8rem;
+          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
+          letter-spacing: 1px;
         }
 
         .modal-card ol {
           margin: 0;
-          padding-left: 18px;
+          padding-left: 16px;
           color: var(--text-primary);
-          line-height: 1.8;
+          line-height: 1.85;
+          font-size: 0.88rem;
+        }
+
+        .modal-card p {
+          color: var(--text-secondary);
           font-size: 0.9rem;
+          line-height: 1.6;
+          margin: 0;
         }
 
         .mono {
           font-family: var(--body-font);
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           color: var(--text-secondary);
           margin: 0;
         }
 
         .seed {
           word-break: break-all;
-          color: var(--neon-green);
+          color: var(--neon);
+          text-shadow: 0 0 5px var(--neon-glow);
         }
 
         .settling-state {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 1rem;
-          margin-top: 1rem;
+          gap: 0.8rem;
+          margin-top: 0.8rem;
         }
 
         .spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid var(--neon-green-soft);
-          border-top-color: var(--neon-green);
+          width: 36px;
+          height: 36px;
+          border: 2px solid var(--neon-glow-soft);
+          border-top-color: var(--neon);
           border-radius: 50%;
           animation: spin 1s linear infinite;
+          box-shadow: 0 0 15px var(--neon-glow-subtle);
         }
 
         @keyframes spin {
@@ -532,9 +674,10 @@ export default function GameBoard() {
 
         .settling-state p {
           font-family: var(--pixel-font);
-          color: var(--neon-green);
-          text-shadow: 0 0 10px var(--neon-green-glow);
-          font-size: 0.6rem;
+          color: var(--neon);
+          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
+          font-size: 0.55rem;
+          letter-spacing: 1px;
         }
       `}</style>
     </div>
