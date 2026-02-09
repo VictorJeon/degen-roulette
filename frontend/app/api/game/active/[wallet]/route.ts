@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { PublicKey } from '@solana/web3.js';
 import { sql } from '@vercel/postgres';
 import { ensureGamesSchema } from '@/lib/db';
+import { gameMock } from '@/lib/game-mock';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,25 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid wallet address' }, { status: 400 });
     }
 
+    // Use in-memory mock if DB is not available
+    if (!process.env.POSTGRES_URL) {
+      console.warn('[game/active] Using in-memory mock (no POSTGRES_URL)');
+
+      const activeGame = gameMock.getActiveGame(wallet);
+      if (!activeGame) {
+        return NextResponse.json({ hasActiveGame: false });
+      }
+
+      return NextResponse.json({
+        hasActiveGame: true,
+        gameId: activeGame.id,
+        betAmount: activeGame.bet_amount,
+        seedHash: activeGame.seed_hash,
+        createdAt: activeGame.created_at,
+      });
+    }
+
+    // DB path (production)
     await ensureGamesSchema();
 
     const { rows } = await sql`

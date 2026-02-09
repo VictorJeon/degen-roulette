@@ -7,6 +7,10 @@ export const runtime = 'nodejs';
 // POST: 에러 기록
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.POSTGRES_URL) {
+      return NextResponse.json({ ok: true });
+    }
+
     await ensureErrorsSchema();
     const body = await request.json();
 
@@ -39,6 +43,10 @@ export async function POST(request: NextRequest) {
 // GET: 미해결 에러 조회 (Nova polling용)
 export async function GET(request: NextRequest) {
   try {
+    if (!process.env.POSTGRES_URL) {
+      return NextResponse.json({ errors: [], count: 0 });
+    }
+
     await ensureErrorsSchema();
     const { searchParams } = new URL(request.url);
     const resolved = searchParams.get('resolved') === 'true';

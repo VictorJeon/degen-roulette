@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useSearchParams } from 'next/navigation';
+import { getAnchorWallet } from '@/lib/testMode';
 
 export interface LeaderboardEntry {
   player: string;
@@ -15,9 +17,18 @@ export interface LeaderboardEntry {
 export function useLeaderboard() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const wallet = useAnchorWallet();
+  const walletFromHook = useAnchorWallet();
+  const wallet = getAnchorWallet(walletFromHook);
+  const searchParams = useSearchParams();
+  const isTestMode = searchParams.get('testMode') === 'true';
 
   const fetchLeaderboard = useCallback(async () => {
+    // Test mode에서는 API 호출 건너뛰기
+    if (isTestMode) {
+      console.log('[TEST MODE] Leaderboard fetch disabled');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const res = await fetch('/api/leaderboard');
@@ -47,13 +58,18 @@ export function useLeaderboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [wallet]);
+  }, [wallet, isTestMode]);
 
   useEffect(() => {
+    // Test mode에서는 polling도 비활성화
+    if (isTestMode) {
+      return;
+    }
+
     fetchLeaderboard();
     const interval = setInterval(fetchLeaderboard, 30000);
     return () => clearInterval(interval);
-  }, [fetchLeaderboard]);
+  }, [fetchLeaderboard, isTestMode]);
 
   return { leaderboard, isLoading, refresh: fetchLeaderboard };
 }

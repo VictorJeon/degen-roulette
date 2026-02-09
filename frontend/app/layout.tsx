@@ -28,6 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if(new URLSearchParams(window.location.search).get('testMode')==='true'){window.__TEST_MODE_ENABLED__=true;try{localStorage.setItem('walletName','"Test Wallet"');}catch(e){}}`,
+          }}
+        />
+      </head>
       <body className={`${pressStart2P.variable} ${spaceGrotesk.variable}`}>
         <BufferPolyfill />
         <WalletProviderWrapper>

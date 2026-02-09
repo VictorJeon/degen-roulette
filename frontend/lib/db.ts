@@ -12,6 +12,12 @@ export interface LeaderboardRow {
 }
 
 export async function ensureSchema(): Promise<void> {
+  // Skip DB operations if POSTGRES_URL is not set (e.g., during E2E tests)
+  if (!process.env.POSTGRES_URL) {
+    console.warn('[DB] POSTGRES_URL not set, skipping schema creation');
+    return;
+  }
+
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard (
       wallet_address text PRIMARY KEY,
@@ -32,6 +38,12 @@ export async function ensureSchema(): Promise<void> {
 }
 
 export async function ensureErrorsSchema(): Promise<void> {
+  // Skip DB operations if POSTGRES_URL is not set (e.g., during E2E tests)
+  if (!process.env.POSTGRES_URL) {
+    console.warn('[DB] POSTGRES_URL not set, skipping error schema creation');
+    return;
+  }
+
   await sql`
     CREATE TABLE IF NOT EXISTS error_logs (
       id SERIAL PRIMARY KEY,
@@ -50,6 +62,12 @@ export async function ensureErrorsSchema(): Promise<void> {
 }
 
 export async function ensureGamesSchema(): Promise<void> {
+  // Skip DB operations if POSTGRES_URL is not set (e.g., during E2E tests)
+  if (!process.env.POSTGRES_URL) {
+    console.warn('[DB] POSTGRES_URL not set, skipping games schema creation');
+    return;
+  }
+
   await sql`
     CREATE TABLE IF NOT EXISTS games (
       id SERIAL PRIMARY KEY,

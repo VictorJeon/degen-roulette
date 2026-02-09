@@ -7,6 +7,7 @@ interface ResultOverlayProps {
   multiplier: number;
   roundsSurvived: number;
   onNewGame: () => void;
+  onShowFair?: () => void;
 }
 
 export function ResultOverlay({
@@ -16,6 +17,7 @@ export function ResultOverlay({
   multiplier,
   roundsSurvived,
   onNewGame,
+  onShowFair,
 }: ResultOverlayProps) {
   const profit = payout - betAmount;
 
@@ -64,10 +66,19 @@ export function ResultOverlay({
           )}
         </div>
 
-        <button className="play-again-btn" onClick={onNewGame}>
+        <button className="play-again-btn" onClick={onNewGame} data-testid="play-again-button">
           <span className="btn-text">PLAY AGAIN</span>
           <span className="btn-glow" />
         </button>
+
+        {onShowFair && (
+          <button className="fair-btn" onClick={onShowFair} data-testid="result-provably-fair-button">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+            Provably Fair
+          </button>
+        )}
       </div>
 
       <style jsx>{`
@@ -303,6 +314,37 @@ export function ResultOverlay({
 
         .play-again-btn:active {
           transform: translateY(0);
+        }
+
+        .fair-btn {
+          font-family: var(--pixel-font);
+          color: var(--text-secondary);
+          font-size: 0.44rem;
+          letter-spacing: 1px;
+          background: linear-gradient(180deg, rgba(0, 20, 0, 0.6) 0%, rgba(0, 12, 0, 0.8) 100%);
+          border: 1px solid var(--border-neon);
+          padding: 7px 11px;
+          cursor: pointer;
+          transition: all 0.15s;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+
+        .fair-btn svg {
+          opacity: 0.7;
+        }
+
+        .fair-btn:hover {
+          border-color: var(--neon);
+          color: var(--neon);
+          box-shadow: 0 0 10px var(--neon-glow-subtle), inset 0 0 8px var(--neon-glow-subtle);
+        }
+
+        .fair-btn:hover svg {
+          opacity: 1;
+          filter: drop-shadow(0 0 3px var(--neon-glow));
         }
 
         @keyframes fadeIn {

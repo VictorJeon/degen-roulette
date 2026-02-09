@@ -5,10 +5,12 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { AnchorProvider, Program } from '@coral-xyz/anchor';
 import { IDL } from '@/lib/idl';
 import { PROGRAM_ID } from '@/lib/constants';
+import { getAnchorWallet } from '@/lib/testMode';
 
 export function useProgram() {
   const { connection } = useConnection();
-  const wallet = useAnchorWallet();
+  const walletFromHook = useAnchorWallet();
+  const wallet = getAnchorWallet(walletFromHook);
 
   const program = useMemo(() => {
     if (!wallet) return null;

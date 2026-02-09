@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { MIN_BET } from '@/lib/constants';
+import { MIN_BET, MAX_BET } from '@/lib/constants';
+import { getPublicKey } from '@/lib/testMode';
 
 interface BetPanelProps {
   startGame: (betAmount: number) => Promise<void>;
@@ -10,11 +11,17 @@ interface BetPanelProps {
 }
 
 export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
-  const { publicKey } = useWallet();
+  const { publicKey: walletPublicKey } = useWallet();
+  const publicKey = getPublicKey(walletPublicKey);
   const [betAmount, setBetAmount] = useState(0.01);
   const [selectedBet, setSelectedBet] = useState(0.01);
   const [shakeBetting, setShakeBetting] = useState(false);
   const [instruction, setInstruction] = useState('');
+
+  // Debug logging
+  useEffect(() => {
+    console.log('[BetPanel] Wallet publicKey:', publicKey?.toString());
+  }, [publicKey]);
 
   const quickBets = [0.005, 0.001, 0.013, 0.015, 0.03];
 
@@ -26,6 +33,13 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
 
     if (betAmount < MIN_BET) {
       setInstruction(`>>> MIN BET: ${MIN_BET} SOL <<<`);
+      setShakeBetting(true);
+      setTimeout(() => setShakeBetting(false), 300);
+      return;
+    }
+
+    if (betAmount > MAX_BET) {
+      setInstruction(`>>> MAX BET: ${MAX_BET} SOL <<<`);
       setShakeBetting(true);
       setTimeout(() => setShakeBetting(false), 300);
       return;
@@ -63,6 +77,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
             disabled={isLoading}
             aria-label="Bet amount in SOL"
             className="bet-input-inline"
+            data-testid="bet-amount-input"
           />
           <div className="bet-arrows">
             <button 
@@ -113,6 +128,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           onClick={handleStartGame}
           disabled={isLoading}
           className="trigger-btn trigger-btn-start"
+          data-testid="start-game-button"
         >
           <span className="btn-inner">
             {isLoading ? 'SIGNING...' : 'PLAY AGAIN'}

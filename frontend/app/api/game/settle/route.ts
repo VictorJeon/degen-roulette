@@ -3,6 +3,8 @@ import { sql } from '@vercel/postgres';
 import { ensureGamesSchema } from '@/lib/db';
 import { settleGameLogic } from '@/lib/game-server';
 import { logServerError } from '@/lib/server-error-reporter';
+import { gameMock } from '@/lib/game-mock';
+import { MULTIPLIERS } from '@/lib/constants';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,6 +17,58 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     if (!gameId) {
       return NextResponse.json({ error: 'Missing gameId' }, { status: 400 });
+    }
+
+    // Use in-memory mock if DB is not available
+    if (!process.env.POSTGRES_URL) {
+      console.warn('[game/settle] Using in-memory mock (no POSTGRES_URL)');
+
+      const game = gameMock.getGame(gameId);
+      if (!game) {
+        return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+      }
+
+      if (game.status !== 'started') {
+        return NextResponse.json(
+          { error: `Game status is ${game.status}, expected started` },
+          { status: 400 }
+        );
+      }
+
+      const roundsSurvived = game.current_round;
+      if (roundsSurvived < 1 || roundsSurvived > 5) {
+        return NextResponse.json(
+          { error: `Invalid rounds survived: ${roundsSurvived}` },
+          { status: 400 }
+        );
+      }
+
+      const seedBuffer = Buffer.from(game.server_seed, 'hex');
+      const bulletPosition = seedBuffer[0] % 6;
+      const multiplier = MULTIPLIERS[roundsSurvived - 1];
+      const betAmount = game.bet_amount || 10000000;
+      const payout = Math.round(betAmount * multiplier);
+
+      gameMock.updateGame(gameId, {
+        status: 'won',
+        rounds_survived: roundsSurvived,
+        bullet_position: bulletPosition,
+        won: true,
+        payout,
+        settled_at: new Date(),
+      });
+
+      return NextResponse.json({
+        won: true,
+        cancelled: false,
+        bulletPosition,
+        roundsSurvived,
+        payout,
+        betAmount,
+        serverSeed: game.server_seed,
+        seedHash: game.seed_hash,
+        txSignature: null,
+      });
     }
 
     await ensureGamesSchema();

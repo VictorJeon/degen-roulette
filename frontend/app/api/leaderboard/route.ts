@@ -9,6 +9,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(): Promise<NextResponse> {
   try {
+    if (!process.env.POSTGRES_URL) {
+      return NextResponse.json({ leaderboard: [] });
+    }
+
     await ensureSchema();
 
     const { rows } = await sql`

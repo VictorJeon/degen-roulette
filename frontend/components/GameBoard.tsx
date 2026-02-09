@@ -12,6 +12,17 @@ import { MULTIPLIERS } from '@/lib/constants';
 const ROUND_ODDS = ['5/6', '4/5', '3/4', '2/3', '1/2'];
 
 function HowToPlayModal({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   return (
     <>
       <div className="modal-backdrop" onClick={onClose}>
@@ -135,6 +146,17 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
 }
 
 function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null; gameId: number | null; onClose: () => void }) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   return (
     <>
       <div className="modal-backdrop" onClick={onClose}>
@@ -603,6 +625,7 @@ export default function GameBoard() {
                 <div
                   key={i}
                   className={`chamber-overlay ${canSelect ? 'selectable' : ''} ${isFired ? 'fired' : ''}`}
+                  data-testid={`chamber-${i}`}
                   style={{
                     position: 'absolute',
                     left: `${pos.left}%`,
@@ -638,6 +661,7 @@ export default function GameBoard() {
                 onClick={handlePullTrigger}
                 disabled={!triggerReady}
                 className={`trigger-btn ${gameState.roundsSurvived >= 3 ? 'danger' : ''} ${!triggerReady ? 'locked' : ''}`}
+                data-testid="pull-trigger-button"
               >
                 {cylinderPhase === 'selecting' ? 'LOAD FIRST'
                   : cylinderPhase === 'spinning' ? 'SPINNING...'
@@ -646,7 +670,8 @@ export default function GameBoard() {
               </button>
               {gameState.roundsSurvived >= 1 && cylinderPhase === 'ready' && (
                 <button onClick={handleCashOut} disabled={isLoading || isReloading}
-                  className="cashout-btn visible">
+                  className="cashout-btn visible"
+                  data-testid="cashout-button">
                   CASH OUT
                 </button>
               )}
@@ -662,7 +687,7 @@ export default function GameBoard() {
             </svg>
             How to Play
           </button>
-          <button className="mini-btn" onClick={() => setShowFair(true)}>
+          <button className="mini-btn" onClick={() => setShowFair(true)} data-testid="provably-fair-button">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
             </svg>
@@ -688,6 +713,7 @@ export default function GameBoard() {
           multiplier={gameState.roundsSurvived > 0 ? MULTIPLIERS[gameState.roundsSurvived - 1] : MULTIPLIERS[0]}
           roundsSurvived={gameState.roundsSurvived}
           onNewGame={handleNewGame}
+          onShowFair={() => setShowFair(true)}
         />
       )}
 

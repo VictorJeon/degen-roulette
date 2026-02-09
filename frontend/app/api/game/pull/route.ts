@@ -3,6 +3,7 @@ import { sql } from '@vercel/postgres';
 import { ensureGamesSchema } from '@/lib/db';
 import { settleGameLogic } from '@/lib/game-server';
 import { logServerError } from '@/lib/server-error-reporter';
+import { gameMock } from '@/lib/game-mock';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,6 +18,70 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: 'Missing gameId' }, { status: 400 });
     }
 
+    // Use in-memory mock if DB is not available
+    if (!process.env.POSTGRES_URL) {
+      console.warn('[game/pull] Using in-memory mock (no POSTGRES_URL)');
+
+      const game = gameMock.getGame(gameId);
+      if (!game) {
+        return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+      }
+
+      if (game.status !== 'started') {
+        return NextResponse.json(
+          { error: `Game status is ${game.status}, expected started` },
+          { status: 400 }
+        );
+      }
+
+      const currentRound = game.current_round;
+
+      // Edge case: already completed 5 rounds
+      if (currentRound >= 5) {
+        return NextResponse.json(
+          { error: 'Game already completed, must cash out' },
+          { status: 400 }
+        );
+      }
+
+      // Calculate bullet position
+      const seedBuffer = Buffer.from(game.server_seed, 'hex');
+      const bulletPosition = seedBuffer[0] % 6;
+
+      // Determine outcome
+      if (currentRound === bulletPosition) {
+        // Death
+        gameMock.updateGame(gameId, {
+          status: 'lost',
+          rounds_survived: Math.max(currentRound, 1),
+          bullet_position: bulletPosition,
+          won: false,
+          payout: 0,
+        });
+
+        return NextResponse.json({
+          survived: false,
+          round: currentRound,
+          bulletPosition,
+          settleResult: {
+            payout: 0,
+            serverSeed: game.server_seed,
+          },
+        });
+      } else {
+        // Survived
+        gameMock.updateGame(gameId, {
+          current_round: currentRound + 1,
+        });
+
+        return NextResponse.json({
+          survived: true,
+          round: currentRound + 1,
+        });
+      }
+    }
+
+    // DB path (production)
     await ensureGamesSchema();
 
     // Load game with row lock for concurrency control

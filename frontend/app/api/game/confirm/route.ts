@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 import { ensureGamesSchema } from '@/lib/db';
+import { gameMock } from '@/lib/game-mock';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,6 +14,28 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: 'Missing gameId or txSignature' }, { status: 400 });
     }
 
+    // Use in-memory mock if DB is not available
+    if (!process.env.POSTGRES_URL) {
+      console.warn('[game/confirm] Using in-memory mock (no POSTGRES_URL)');
+
+      const game = gameMock.getGame(gameId);
+      if (!game) {
+        return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+      }
+
+      if (game.status !== 'pending') {
+        return NextResponse.json({ error: 'Game is not in pending state' }, { status: 400 });
+      }
+
+      gameMock.updateGame(gameId, {
+        status: 'started',
+        start_tx: txSignature,
+      });
+
+      return NextResponse.json({ ok: true });
+    }
+
+    // DB path (production)
     await ensureGamesSchema();
 
     const { rows } = await sql`

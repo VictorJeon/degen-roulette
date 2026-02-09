@@ -5,6 +5,7 @@ export const PROGRAM_ID = new PublicKey('98RABzywqR9v33GmioVFeFrapM1LC5RiwmJbXdE
 
 // Game constants
 export const MIN_BET = 0.001; // SOL
+export const MAX_BET = 10; // SOL
 export const CHAMBERS = 6;
 export const MULTIPLIERS = [1.16, 1.45, 1.94, 2.91, 5.82];
 export const MULTIPLIER_LABELS = ['1.16x', '1.45x', '1.94x', '2.91x', '5.82x'];

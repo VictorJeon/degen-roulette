@@ -2,10 +2,11 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useProgram } from './useProgram';
-import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { BN } from '@coral-xyz/anchor';
 import { MULTIPLIERS, CHAMBERS } from '@/lib/constants';
+import { getPublicKey, getAnchorWallet, isTestMode } from '@/lib/testMode';
 
 interface GameState {
   status: 'idle' | 'waiting_start' | 'active' | 'settling' | 'won' | 'lost';
@@ -35,7 +36,10 @@ export function useGame() {
   const [error, setError] = useState<string | null>(null);
 
   const { program } = useProgram();
-  const wallet = useAnchorWallet();
+  const walletFromHook = useAnchorWallet();
+  const wallet = getAnchorWallet(walletFromHook);
+  const { publicKey: walletPublicKey } = useWallet();
+  const effectivePublicKey = getPublicKey(walletPublicKey);
 
   const gamePda = useMemo(() => {
     if (!wallet || !program) return null;
@@ -90,29 +94,41 @@ export function useGame() {
 
       const { gameId, seedHashBytes } = seedData;
 
-      // Step 2: Send start_game TX with seed_hash
-      const betAmountLamports = new BN(Math.round(betAmount * LAMPORTS_PER_SOL));
+      if (isTestMode()) {
+        // In test mode, skip on-chain TX — the API mock handles game state
+        console.log('[testMode] Skipping on-chain TX, using mock game:', gameId);
 
-      const tx = await program.methods
-        .startGame(betAmountLamports, seedHashBytes)
-        .accounts({
-          player: wallet.publicKey,
-          game: gamePda,
-          houseConfig: houseConfigPda,
-          houseVault: houseVaultPda,
-          playerStats: playerStatsPda,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
+        // Confirm the game with a fake TX signature (must await to avoid race)
+        await fetch('/api/game/confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ gameId, txSignature: 'test-tx-' + gameId }),
+        });
+      } else {
+        // Step 2: Send start_game TX with seed_hash
+        const betAmountLamports = new BN(Math.round(betAmount * LAMPORTS_PER_SOL));
 
-      console.log('start_game TX:', tx);
+        const tx = await program.methods
+          .startGame(betAmountLamports, seedHashBytes)
+          .accounts({
+            player: wallet.publicKey,
+            game: gamePda,
+            houseConfig: houseConfigPda,
+            houseVault: houseVaultPda,
+            playerStats: playerStatsPda,
+            systemProgram: SystemProgram.programId,
+          })
+          .rpc();
 
-      // Step 3: Confirm TX with API
-      fetch('/api/game/confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId, txSignature: tx }),
-      }).catch(err => console.warn('confirm API error:', err));
+        console.log('start_game TX:', tx);
+
+        // Step 3: Confirm TX with API
+        fetch('/api/game/confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ gameId, txSignature: tx }),
+        }).catch(err => console.warn('confirm API error:', err));
+      }
 
       setGameState(prev => ({
         ...prev,
@@ -243,10 +259,10 @@ export function useGame() {
 
   // Check for existing active game on page load
   useEffect(() => {
-    if (!wallet) return;
+    if (!effectivePublicKey) return;
     const checkActive = async () => {
       try {
-        const res = await fetch(`/api/game/active/${wallet.publicKey.toBase58()}`);
+        const res = await fetch(`/api/game/active/${effectivePublicKey.toBase58()}`);
         const data = await res.json();
         if (data.hasActiveGame) {
           setGameState(prev => ({
@@ -264,7 +280,7 @@ export function useGame() {
       }
     };
     checkActive();
-  }, [wallet]);
+  }, [effectivePublicKey]);
 
   return {
     gameState,
