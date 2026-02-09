@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     }
 
     const { rows } = await sql`
-      SELECT id, status, current_round, created_at, updated_at
+      SELECT id, status, current_round, created_at
       FROM games
       WHERE player_wallet = ${wallet}
       ORDER BY created_at DESC

@@ -85,7 +85,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     // Clean up old started games (>5 minutes) - likely abandoned
     await sql`
       UPDATE games
-      SET status = 'lost', updated_at = NOW()
+      SET status = 'lost'
       WHERE player_wallet = ${playerWallet}
         AND status = 'started'
         AND created_at <= NOW() - INTERVAL '5 minutes'
