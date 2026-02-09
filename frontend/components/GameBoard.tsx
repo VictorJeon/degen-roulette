@@ -367,7 +367,7 @@ export default function GameBoard() {
         <div className="relative w-[300px] h-[300px] mx-auto mb-2.5 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
           {/* Barrel indicator */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-9 h-8 pointer-events-none max-md:w-8 max-md:h-7 max-sm:w-7 max-sm:h-6">
-            <svg viewBox="0 0 40 36" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 6px rgba(0,255,65,0.3))' }}>
+            <svg viewBox="0 0 40 36" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.15))' }}>
               <defs>
                 <linearGradient id="barrelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#00FF41" stopOpacity="0.9" />
@@ -396,7 +396,7 @@ export default function GameBoard() {
               src="/cylinder-512.png"
               alt="Revolver cylinder"
               className={`w-full h-full object-contain select-none ${cylinderPhase === 'spinning' ? 'blur-[8px] brightness-[1.3]' : ''}`}
-              style={{ filter: cylinderPhase !== 'spinning' ? 'drop-shadow(0 0 6px rgba(0,255,65,0.3))' : undefined }}
+              style={{ filter: cylinderPhase !== 'spinning' ? 'drop-shadow(0 0 3px rgba(0,255,65,0.12))' : undefined }}
               draggable={false}
             />
 

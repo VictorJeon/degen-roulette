@@ -62,9 +62,11 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="font-display text-2xs text-gray-200 text-center tracking-wide">
-        {instruction || '>>> SELECT YOUR BET <<<'}
-      </div>
+      {instruction && (
+        <div className="font-display text-2xs text-gray-200 text-center tracking-wide">
+          {instruction}
+        </div>
+      )}
 
       <div className={`flex flex-col items-center gap-2.5 mt-2.5 w-full max-w-[360px] ${shakeBetting ? 'animate-shake' : ''}`}>
         <div className="flex items-center gap-1.5 bg-bg-surface border border-border-default rounded-xl px-3 py-2 w-full max-w-[300px] max-md:max-w-full focus-within:border-accent transition-colors">
