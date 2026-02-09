@@ -29,18 +29,18 @@
   --color-border-subtle: rgba(255, 255, 255, 0.04);
 
   /* Fonts */
-  --font-family-pixel: 'Press Start 2P', monospace;
-  --font-family-body: 'Space Grotesk', sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-body: 'Space Grotesk', sans-serif;
 
   /* Font Sizes (8-step scale) */
-  --font-size-3xs: 0.38rem;
-  --font-size-2xs: 0.45rem;
-  --font-size-xs: 0.5rem;
-  --font-size-sm: 0.6rem;
-  --font-size-base: 0.75rem;
-  --font-size-md: 0.85rem;
-  --font-size-lg: 1.2rem;
-  --font-size-xl: 1.8rem;
+  --text-3xs: 0.38rem;
+  --text-2xs: 0.45rem;
+  --text-xs: 0.5rem;
+  --text-sm: 0.6rem;
+  --text-base: 0.75rem;
+  --text-md: 0.85rem;
+  --text-lg: 1.2rem;
+  --text-xl: 1.8rem;
 
   /* Spacing (8px grid) */
   --spacing-1: 4px;

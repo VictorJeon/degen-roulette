@@ -147,13 +147,14 @@ vercel --prod
 모든 디자인 토큰은 `globals.css`의 `@theme` 블록에 정의됨.
 Tailwind 유틸리티 클래스로 자동 매핑:
 - `--color-*` → `bg-`, `text-`, `border-` 클래스
-- `--font-size-*` → `text-` 클래스
+- `--font-*` → `font-` 클래스
+- `--text-*` → `text-` 클래스
 - `--spacing-*` → `p-`, `m-`, `gap-` 클래스
 - `--radius-*` → `rounded-` 클래스
 
 예시:
 ```tsx
-<div className="bg-bg-primary text-text-primary font-pixel text-lg p-spacing-4 rounded-radius-md">
+<div className="bg-bg-primary text-text-primary font-pixel text-lg p-4 rounded-md">
   {/* Tailwind v4 토큰 사용 */}
 </div>
 ```
