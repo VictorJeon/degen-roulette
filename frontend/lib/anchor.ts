@@ -8,5 +8,9 @@ export function getProgram(provider: AnchorProvider) {
 }
 
 export function getConnection() {
-  return new Connection(DEVNET_ENDPOINT, 'confirmed');
+  return new Connection(DEVNET_ENDPOINT, {
+    commitment: 'confirmed',
+    confirmTransactionInitialTimeout: 60000,
+    wsEndpoint: undefined, // Disable WebSocket for mobile stability
+  });
 }

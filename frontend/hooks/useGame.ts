@@ -108,6 +108,23 @@ export function useGame() {
         // Step 2: Send start_game TX with seed_hash
         const betAmountLamports = new BN(Math.round(betAmount * LAMPORTS_PER_SOL));
 
+        // Retry blockhash fetch up to 3 times for mobile network stability
+        const connection = program.provider.connection;
+        let blockhash;
+        for (let i = 0; i < 3; i++) {
+          try {
+            const bh = await connection.getLatestBlockhash('confirmed');
+            blockhash = bh;
+            break;
+          } catch (err) {
+            console.warn(`[useGame] Blockhash fetch attempt ${i + 1} failed:`, err);
+            if (i === 2) {
+              throw new Error('Network error: Could not connect to Solana. Please check your connection and try again.');
+            }
+            await new Promise(r => setTimeout(r, 1000));
+          }
+        }
+
         const tx = await program.methods
           .startGame(betAmountLamports, seedHashBytes)
           .accounts({
@@ -140,7 +157,12 @@ export function useGame() {
       }));
     } catch (err: any) {
       console.error('start_game error:', err);
-      setError(err.message || 'Failed to start game');
+      // Convert network errors to user-friendly messages
+      let errorMessage = err.message || 'Failed to start game';
+      if (err instanceof TypeError && err.message.includes('Load failed')) {
+        errorMessage = 'Network error: Please check your connection and try again.';
+      }
+      setError(errorMessage);
       setGameState(prev => ({ ...prev, status: 'idle' }));
       throw err;
     } finally {

@@ -978,13 +978,21 @@ export default function GameBoard() {
 
         @media (max-width: 768px) {
           .game-card {
-            padding: 14px 16px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 8px 12px;
             max-width: 100%;
           }
 
+          .game-card::before,
+          .game-card::after {
+            display: none;
+          }
+
           .revolver-frame {
-            width: min(280px, 70vw);
-            height: min(280px, 70vw);
+            width: min(300px, 75vw);
+            height: min(300px, 75vw);
           }
 
           .barrel-indicator {
@@ -1049,12 +1057,12 @@ export default function GameBoard() {
 
         @media (max-width: 480px) {
           .game-card {
-            padding: 12px 14px;
+            padding: 8px 12px;
           }
 
           .revolver-frame {
-            width: min(240px, 65vw);
-            height: min(240px, 65vw);
+            width: min(260px, 70vw);
+            height: min(260px, 70vw);
           }
 
           .barrel-indicator {

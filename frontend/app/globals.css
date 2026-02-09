@@ -1496,14 +1496,29 @@ body.shake {
         padding: 0.3rem 0.4rem;
     }
 
+    /* Game card: remove borders/background on mobile for fullscreen feel */
+    .game-card {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 8px 12px !important;
+    }
+
+    .game-card::before,
+    .game-card::after {
+        display: none !important;
+    }
+
     /* Game Title */
     .game-title {
         font-size: 1rem;
         letter-spacing: 0.08em;
+        margin-bottom: 0.15rem;
     }
 
     .game-subtitle {
         font-size: 0.45rem;
+        margin-bottom: 0.3rem;
     }
 
     .game-result-title {
@@ -1511,42 +1526,39 @@ body.shake {
         letter-spacing: 0.15em;
     }
 
-    /* Revolver: responsive sizing */
-    .revolver-frame {
-        width: min(280px, 70vw);
-        height: min(280px, 70vw);
+    /* Multiplier table: more compact */
+    .multiplier-table {
+        margin-bottom: 4px;
     }
 
-    /* Chamber overlays: larger touch targets */
-    .chamber-overlay {
-        min-width: 44px;
-        min-height: 44px;
+    .multiplier-row {
+        gap: 3px !important;
     }
 
-    /* Multiplier table */
     .m-row {
-        padding: 8px 6px;
-        font-size: 0.6rem;
+        padding: 6px 4px;
+        font-size: 0.55rem;
+        gap: 3px;
     }
 
     .m-row span:first-child {
-        font-size: 0.5rem;
+        font-size: 0.45rem;
     }
 
     .m-row span:last-child {
-        font-size: 0.65rem;
+        font-size: 0.58rem;
     }
 
     .m-row.active {
-        transform: scaleY(1.15) scaleX(1.04);
+        transform: scaleY(1.1) scaleX(1.03);
     }
 
     .m-row.active span:first-child {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
     }
 
     .m-row.active span:last-child {
-        font-size: 0.75rem;
+        font-size: 0.68rem;
     }
 
     .odds-row {
@@ -1559,6 +1571,25 @@ body.shake {
 
     .odds-cell.active {
         font-size: 0.45rem;
+    }
+
+    /* Revolver: larger, more breathing room */
+    .revolver-frame {
+        width: min(300px, 75vw);
+        height: min(300px, 75vw);
+        margin: 8px auto 12px;
+    }
+
+    /* Chamber overlays: larger touch targets */
+    .chamber-overlay {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Game main spacing */
+    .game-main {
+        gap: 0.5rem;
+        padding-top: 0.5rem;
     }
 
     /* Buttons: full width, large touch targets */
@@ -1720,8 +1751,8 @@ body.shake {
 @media (max-width: 480px) {
     /* Small mobile: further optimizations */
     .revolver-frame {
-        width: min(240px, 65vw);
-        height: min(240px, 65vw);
+        width: min(260px, 70vw);
+        height: min(260px, 70vw);
     }
 
     .game-title {
@@ -1751,16 +1782,16 @@ body.shake {
     }
 
     .m-row {
-        padding: 6px 4px;
-        font-size: 0.55rem;
+        padding: 5px 3px;
+        font-size: 0.5rem;
     }
 
     .m-row span:first-child {
-        font-size: 0.45rem;
+        font-size: 0.42rem;
     }
 
     .m-row span:last-child {
-        font-size: 0.6rem;
+        font-size: 0.52rem;
     }
 }
 
