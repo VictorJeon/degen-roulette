@@ -1,70 +1,267 @@
-# Mobile Redesign v2
+# Mobile Redesign v2 — Concrete Implementation
 
-## 레퍼런스
-코인플립 앱 (스크린샷 참조). 핵심: 요소 크기 균일, 여백 일정, compact한 bet input.
+## 목표
+모바일 UI를 레퍼런스(코인플립 앱) 수준으로 조화롭게. 핵심: 요소 크기 균일, 여백 일정, compact bet input.
 
-## 변경사항
+---
 
-### 1. 헤더
-- 좌측에 작은 로고/아이콘 추가 (DEGEN ROULETTE 텍스트 or 총 아이콘)
-- X 아이콘 + CONNECT 버튼 우측 유지
-- 전체 높이 compact하게
+## 1. BetPanel.tsx — 프리셋 금액 변경
 
-### 2. 라운드 선택 (R1~R5)
-- 카드 크기 키우기 — 현재 너무 작음
-- 선택된 라운드: **배경색 채움** (filled) + border 강조. 미선택: border only
-- 해머(총구) 화살표가 라운드 카드와 겹치지 않도록 위치 조정
-  - 화살표를 리볼버 위에만 표시하거나, 라운드 카드와 간격 확보
+**파일**: `frontend/components/BetPanel.tsx`
 
-### 3. 베팅 금액 입력
-- **레퍼런스 스타일로 변경**: `[SOL] [0.01          ] [−] [+]`
-  - 좌측: "SOL" 라벨 (배경 회색 박스)
-  - 중앙: 금액 input
-  - 우측: −/+ 버튼 (44px 이상, 터치 친화적)
-- 전체 높이 줄이기 — 현재 너무 큼
-- border 얇게 (1px), 현재 두꺼운 네온 border 제거
+```tsx
+// Line 26: 변경
+const quickBets = [0.001, 0.01, 0.05, 0.10, 0.25, 0.50];
+```
 
-### 4. 프리셋 금액 버튼
-- 값 변경: `0.001`, `0.01`, `0.05`, `0.10`, `0.25`, `0.50`
-- 선택된 프리셋: **filled 배경** (레퍼런스처럼)
-- 미선택: border only
-- 크기 균일, 간격 균일
+## 2. BetPanel.tsx — CTA 버튼 텍스트
 
-### 5. CTA 버튼
-- 텍스트: `BET {amount} SOL` (예: "BET 0.01 SOL")
-- "PLAY AGAIN" 제거
-- 항상 현재 베팅 금액 반영
+```tsx
+// trigger-btn의 텍스트를 동적으로 변경
+// "PLAY AGAIN" → "BET {betAmount} SOL"
+// gameState.status === 'idle' 이든 다른 상태든 동일
+<span className="btn-inner">BET {betAmount} SOL</span>
+```
 
-### 6. Provably Fair 중복 제거
-- 인라인 "✅ PROVABLY FAIR" 텍스트 유지
-- 하단 "Provably Fair" 버튼 제거 (How to Play 버튼만 남기거나, 둘 다 제거하고 인라인에 클릭 가능하게)
+## 3. BetPanel.tsx — bet-input-wrapper 레이아웃 변경
 
-### 7. 리볼버 크기
-- 현재 대비 ~15% 축소
-- 빈 공간을 줄여서 베팅 영역이 스크롤 없이 보이도록
+현재 구조: `[input] [arrows(−/+)] [SOL]`
+변경 구조: `[SOL label] [input] [−] [+]`
 
-### 8. Potential Payout/Loss
-- 폰트 크기 키우기 (현재 12px? → 16px)
-- Payout은 초록색, Loss는 빨간색으로 색상 강조
-- CTA 버튼 바로 위에 위치
+```tsx
+<div className="bet-input-wrapper">
+  <span className="bet-currency-label">SOL</span>
+  <input ... className="bet-input-inline" />
+  <button className="arrow-btn" onClick={decrement}>−</button>
+  <button className="arrow-btn" onClick={increment}>+</button>
+</div>
+```
 
-### 9. 전체 조화
-- 네온 그린 border를 최소화. 핵심 요소(CTA, 선택된 라운드)에만 사용
-- 나머지 border는 subtle한 회색 or 반투명 그린
-- 요소 간 여백 통일 (12px or 16px)
-- 레퍼런스처럼 "자연스러운 위계": 비주얼(리볼버) → 선택(라운드) → 금액 → 액션
+## 4. BetPanel.tsx — Provably Fair 중복 제거
 
-## 수정 파일
-- `frontend/components/BetPanel.tsx` — 입력, 프리셋, CTA
-- `frontend/components/GameBoard.tsx` — 라운드 선택, 리볼버 크기
-- `frontend/components/Header.tsx` — 로고 추가
-- `frontend/components/StatsBar.tsx` — 라운드 카드 스타일
-- `frontend/app/globals.css` — 반응형 스타일
-- `frontend/lib/constants.ts` — 프리셋 금액 값
+현재: `fair-badge` 인라인 + 하단 "How to Play" / "Provably Fair" 버튼 2개
+변경: `fair-badge` 인라인만 유지, 클릭 가능하게. 하단 버튼 영역 제거.
 
-## 규칙
-- 데스크톱 레이아웃 깨뜨리지 말 것
-- 모바일 breakpoint: 768px 이하
-- 44px 최소 터치 타겟 유지
-- iOS input zoom 방지 (font-size: 16px)
-- TSC + Build 통과 필수
+```tsx
+// fair-badge를 button으로 감싸서 클릭 시 모달 열기
+<button className="fair-badge" onClick={() => setShowFairModal(true)}>
+  <CheckCircle ... /> PROVABLY FAIR
+</button>
+
+// 하단의 info-buttons div 전체 제거
+```
+
+## 5. globals.css — 모바일 bet-input-wrapper 스타일
+
+```css
+/* @media (max-width: 768px) 안에 추가/수정 */
+
+.bet-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 380px;
+    height: 48px;
+    border: 1px solid rgba(0, 255, 65, 0.25);
+    border-radius: 6px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(0, 20, 0, 0.6) 0%, rgba(0, 12, 0, 0.8) 100%);
+}
+
+.bet-currency-label {
+    font-family: var(--pixel-font);
+    font-size: 0.5rem;
+    color: var(--text-muted);
+    padding: 0 12px;
+    background: rgba(0, 255, 65, 0.08);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid rgba(0, 255, 65, 0.15);
+}
+
+.bet-input-inline {
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    font-family: var(--pixel-font);
+    font-size: 0.8rem;
+    color: var(--neon);
+    padding: 0 12px;
+    text-align: left;
+}
+
+.arrow-btn {
+    width: 48px;
+    height: 100%;
+    border: none;
+    border-left: 1px solid rgba(0, 255, 65, 0.15);
+    background: rgba(0, 255, 65, 0.05);
+    color: var(--neon);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow-btn:active {
+    background: rgba(0, 255, 65, 0.15);
+}
+```
+
+## 6. globals.css — 프리셋 버튼 스타일 수정
+
+```css
+/* @media (max-width: 768px) */
+
+.quick-amounts-inline {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    width: 100%;
+    max-width: 380px;
+}
+
+.quick-btn-inline {
+    flex: 1;
+    font-family: var(--pixel-font);
+    font-size: 0.42rem;
+    padding: 8px 4px;
+    border: 1px solid rgba(0, 255, 65, 0.25);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.quick-btn-inline.selected {
+    background: rgba(0, 255, 65, 0.15);
+    border-color: var(--neon);
+    color: var(--neon);
+}
+```
+
+## 7. globals.css — payout-info 크기 키우기
+
+```css
+/* @media (max-width: 768px) */
+
+.payout-info {
+    font-size: 0.48rem;  /* 현재 0.34rem → 0.48rem */
+    color: var(--text-primary);
+    margin: 4px 0;
+}
+
+.payout-info .value.win {
+    color: var(--neon);
+    text-shadow: 0 0 6px var(--neon-glow-subtle);
+}
+
+.payout-info .value.loss {
+    color: var(--danger);
+}
+```
+
+## 8. globals.css — 리볼버 크기 축소 (모바일)
+
+```css
+/* @media (max-width: 768px) */
+
+.cylinder-container {
+    width: min(240px, 60vw);  /* 현재 min(280px, 70vw) → 축소 */
+    height: min(240px, 60vw);
+}
+```
+
+## 9. globals.css — m-row (라운드 카드) 크기 확대
+
+```css
+/* @media (max-width: 768px) */
+
+.m-row {
+    padding: 14px 10px;  /* 현재보다 약간 키움 */
+}
+
+.m-row span:first-child {
+    font-size: 0.55rem;  /* R1, R2 등 라벨 */
+}
+
+.m-row span:last-child {
+    font-size: 0.7rem;  /* 1.16x 등 배율 */
+}
+
+.multiplier-row {
+    gap: 6px;  /* 카드 간격 살짝 넓힘 */
+}
+```
+
+## 10. globals.css — 전체 여백 통일
+
+```css
+/* @media (max-width: 768px) */
+
+.inline-betting {
+    gap: 10px;  /* 현재 0.6rem → 10px로 통일 */
+    margin-top: 8px;
+}
+
+.game-subtitle {
+    margin-bottom: 6px;
+}
+
+.multiplier-table {
+    margin-bottom: 6px;  /* 현재 8px → 6px */
+}
+```
+
+## 11. globals.css — 네온 border 최소화
+
+```css
+/* @media (max-width: 768px) */
+
+/* CTA 버튼만 강한 네온 유지 */
+.trigger-btn-start {
+    border: 2px solid var(--neon);
+}
+
+/* 나머지 요소는 subtle border */
+.m-row:not(.active) {
+    border: 1px solid rgba(0, 255, 65, 0.2);  /* 현재 2px → 1px, 투명도 낮춤 */
+}
+
+.inline-betting {
+    /* 기존 네온 박스 border가 있다면 제거 또는 얇게 */
+}
+```
+
+## 12. Header.tsx — 좌측 로고 텍스트
+
+현재 헤더 좌측이 비어있음. "🎯" 또는 "DR" 텍스트 로고 추가.
+
+```tsx
+// Header.tsx 좌측에 추가
+<span className="header-logo">🎯</span>
+```
+
+```css
+.header-logo {
+    font-size: 1.2rem;
+    margin-right: auto;
+}
+```
+
+---
+
+## 수정 파일 목록
+1. `frontend/components/BetPanel.tsx` — quickBets 값, CTA 텍스트, input 구조, fair-badge
+2. `frontend/app/globals.css` — 위 CSS 전부
+3. `frontend/components/Header.tsx` — 로고 추가
+4. `frontend/components/GameBoard.tsx` — 하단 info-buttons 제거 (if there)
+
+## 검증
+- `npx tsc --noEmit` — 0 errors
+- `pnpm build` — 0 errors
+- 데스크톱 레이아웃 깨지지 않을 것 (모바일 미디어쿼리 안에서만 수정)
