@@ -4,7 +4,7 @@
 Solana 러시안 룰렛 게임. 플레이어가 SOL을 베팅하고, 6발 중 1발 실탄이 든 실린더를 라운드마다 돌린다.
 살아남을수록 배율 상승 (1.16x → 5.82x). 언제든 cash out 가능.
 
-- **Stack**: Anchor v2 (Rust) + Next.js 16 + React 19 + Tailwind
+- **Stack**: Anchor v2 (Rust) + Next.js 16 + React 19 + Tailwind v4
 - **Network**: Solana Devnet
 - **v3**: VRF 제거, Server Seed Commit-Reveal (death.fun 방식)
 
@@ -134,6 +134,38 @@ vercel --prod
 - `testMode.ts`: `useWallet()` context null일 때 `window.solana` fallback
 - **wallet-adapter-react 제약**: `adapter.connect()` 직접 호출해도 React context 업데이트 안 됨 → `window.solana` fallback 패턴 필수
 - 테스트 지갑: `7sGVDuAUW8g4noZggELMgQrpLQbTeARfpViVWrT7WRbW`
+
+## TAILWIND V4 SETUP
+
+### Installation
+- **Version**: Tailwind CSS v4 (CSS-first configuration)
+- **PostCSS plugin**: `@tailwindcss/postcss`
+- **Config file**: `postcss.config.mjs` (NOT tailwind.config.ts)
+- **CSS import**: `@import "tailwindcss";` in `globals.css`
+
+### Design Tokens (@theme)
+모든 디자인 토큰은 `globals.css`의 `@theme` 블록에 정의됨.
+Tailwind 유틸리티 클래스로 자동 매핑:
+- `--color-*` → `bg-`, `text-`, `border-` 클래스
+- `--font-size-*` → `text-` 클래스
+- `--spacing-*` → `p-`, `m-`, `gap-` 클래스
+- `--radius-*` → `rounded-` 클래스
+
+예시:
+```tsx
+<div className="bg-bg-primary text-text-primary font-pixel text-lg p-spacing-4 rounded-radius-md">
+  {/* Tailwind v4 토큰 사용 */}
+</div>
+```
+
+### 기존 CSS 변수 유지
+`:root` 블록의 기존 CSS 변수는 그대로 유지 (하위 호환).
+마이그레이션은 점진적으로 진행 예정.
+
+### Build 주의사항
+- `.next` 디렉토리 오류 시: `rm -rf .next && pnpm build`
+- TypeScript 체크: `pnpm exec tsc --noEmit` (항상 통과해야 함)
+- v4는 JIT 컴파일 — 빌드 시간 개선
 
 ## DESIGN SYSTEM
 

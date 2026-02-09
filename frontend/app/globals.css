@@ -1,6 +1,62 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* Colors — Background */
+  --color-bg-primary: #050805;
+  --color-bg-secondary: #0a0e0a;
+  --color-bg-tertiary: #0d120d;
+  --color-bg-panel: rgba(8, 16, 8, 0.92);
+
+  /* Colors — Accent (Neon Green) */
+  --color-neon: #00FF41;
+  --color-neon-bright: #39FF14;
+  --color-neon-dim: #00cc34;
+  --color-neon-dark: #009922;
+
+  /* Colors — Text */
+  --color-text-primary: #e8f5e8;
+  --color-text-secondary: #8aaa8a;
+  --color-text-muted: #4a6a4a;
+
+  /* Colors — Semantic */
+  --color-danger: #FF0040;
+  --color-danger-bright: #FF1A5C;
+  --color-success: #00FF41;
+
+  /* Colors — Border */
+  --color-border-neon: rgba(0, 255, 65, 0.35);
+  --color-border-dim: rgba(0, 255, 65, 0.12);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+
+  /* Fonts */
+  --font-family-pixel: 'Press Start 2P', monospace;
+  --font-family-body: 'Space Grotesk', sans-serif;
+
+  /* Font Sizes (8-step scale) */
+  --font-size-3xs: 0.38rem;
+  --font-size-2xs: 0.45rem;
+  --font-size-xs: 0.5rem;
+  --font-size-sm: 0.6rem;
+  --font-size-base: 0.75rem;
+  --font-size-md: 0.85rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.8rem;
+
+  /* Spacing (8px grid) */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 50%;
+}
 
 * {
     margin: 0;
