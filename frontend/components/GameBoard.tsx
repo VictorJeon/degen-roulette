@@ -975,6 +975,131 @@ export default function GameBoard() {
           font-size: 0.55rem;
           letter-spacing: 1px;
         }
+
+        @media (max-width: 768px) {
+          .game-card {
+            padding: 14px 16px;
+            max-width: 100%;
+          }
+
+          .revolver-frame {
+            width: min(280px, 70vw);
+            height: min(280px, 70vw);
+          }
+
+          .barrel-indicator {
+            width: 32px;
+            height: 28px;
+          }
+
+          .chamber-overlay {
+            min-width: 44px;
+            min-height: 44px;
+          }
+
+          .game-instruction {
+            font-size: 0.6rem;
+            padding: 0.5rem;
+          }
+
+          .game-instruction.big {
+            font-size: 0.7rem;
+            margin: 0.5rem 0;
+          }
+
+          .sub-actions {
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+          }
+
+          .mini-btn {
+            font-size: 0.4rem;
+            padding: 6px 10px;
+            min-height: 36px;
+          }
+
+          .mini-btn svg {
+            width: 9px;
+            height: 9px;
+          }
+
+          .modal-card {
+            width: calc(100vw - 2rem);
+            max-width: calc(100vw - 2rem);
+            padding: 20px;
+          }
+
+          .modal-card h3 {
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+          }
+
+          .modal-card ol,
+          .modal-card p {
+            font-size: 0.82rem;
+            line-height: 1.7;
+          }
+
+          .modal-card .mini-btn {
+            font-size: 0.5rem;
+            padding: 0.45rem 0.9rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .game-card {
+            padding: 12px 14px;
+          }
+
+          .revolver-frame {
+            width: min(240px, 65vw);
+            height: min(240px, 65vw);
+          }
+
+          .barrel-indicator {
+            width: 28px;
+            height: 24px;
+          }
+
+          .game-instruction {
+            font-size: 0.55rem;
+          }
+
+          .game-instruction.big {
+            font-size: 0.65rem;
+          }
+
+          .mini-btn {
+            font-size: 0.38rem;
+            padding: 5px 9px;
+          }
+
+          .modal-card h3 {
+            font-size: 0.7rem;
+          }
+
+          .modal-card ol,
+          .modal-card p {
+            font-size: 0.78rem;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .revolver-frame {
+            width: min(220px, 60vw);
+            height: min(220px, 60vw);
+          }
+
+          .game-instruction {
+            font-size: 0.5rem;
+          }
+
+          .mini-btn {
+            font-size: 0.36rem;
+            padding: 4px 8px;
+          }
+        }
       `}</style>
     </div>
   );

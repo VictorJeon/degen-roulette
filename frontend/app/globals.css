@@ -1454,9 +1454,23 @@ body.shake {
 
 /* ========== MOBILE ========== */
 @media (max-width: 768px) {
+    .main {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+        gap: 0.5rem;
+        min-height: auto;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    /* Header: compact mobile layout */
     .header {
-        padding: 0.7rem;
+        padding: 0.5rem;
         grid-template-columns: 1fr auto;
+        min-height: 48px;
+        height: auto;
     }
 
     .result-banner {
@@ -1467,21 +1481,286 @@ body.shake {
         display: none;
     }
 
-    .sidebar {
-        display: none;
+    .logo {
+        font-size: 0.55rem;
+        gap: 0.4rem;
     }
 
+    .logo svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .x-link {
+        font-size: 0.45rem;
+        padding: 0.3rem 0.4rem;
+    }
+
+    /* Game Title */
     .game-title {
-        font-size: 1.3rem;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+    }
+
+    .game-subtitle {
+        font-size: 0.45rem;
     }
 
     .game-result-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
+        letter-spacing: 0.15em;
     }
 
+    /* Revolver: responsive sizing */
     .revolver-frame {
-        width: 240px;
-        height: 240px;
+        width: min(280px, 70vw);
+        height: min(280px, 70vw);
+    }
+
+    /* Chamber overlays: larger touch targets */
+    .chamber-overlay {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Multiplier table */
+    .m-row {
+        padding: 8px 6px;
+        font-size: 0.6rem;
+    }
+
+    .m-row span:first-child {
+        font-size: 0.5rem;
+    }
+
+    .m-row span:last-child {
+        font-size: 0.65rem;
+    }
+
+    .m-row.active {
+        transform: scaleY(1.15) scaleX(1.04);
+    }
+
+    .m-row.active span:first-child {
+        font-size: 0.55rem;
+    }
+
+    .m-row.active span:last-child {
+        font-size: 0.75rem;
+    }
+
+    .odds-row {
+        margin-top: 3px;
+    }
+
+    .odds-cell {
+        font-size: 0.42rem;
+    }
+
+    .odds-cell.active {
+        font-size: 0.45rem;
+    }
+
+    /* Buttons: full width, large touch targets */
+    .trigger-btn {
+        width: 100%;
+        min-height: 48px;
+        font-size: 0.7rem;
+        padding: 0.9rem 1.5rem;
+        letter-spacing: 0.08em;
+    }
+
+    .trigger-btn-start {
+        font-size: 0.85rem;
+        padding: 1rem 2rem;
+        letter-spacing: 0.12em;
+    }
+
+    .cashout-btn {
+        width: 100%;
+        min-height: 44px;
+        font-size: 0.55rem;
+        padding: 0.7rem 1rem;
+    }
+
+    /* Betting input: prevent iOS zoom */
+    .bet-input-inline {
+        font-size: 16px;
+        width: 100%;
+        height: 48px;
+    }
+
+    /* Game instruction */
+    .game-instruction {
+        font-size: 0.6rem;
+        padding: 0.5rem;
+    }
+
+    .game-instruction.big {
+        font-size: 0.7rem;
+    }
+
+    /* Sub-actions */
+    .sub-actions {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin-top: 8px;
+    }
+
+    .mini-btn {
+        min-height: 36px;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.4rem;
+    }
+
+    /* Wallet button: compact */
+    .wallet-adapter-button {
+        font-size: 0.45rem !important;
+        padding: 0 0.5rem !important;
+        max-width: 140px;
+        height: 32px !important;
+        max-height: 32px !important;
+    }
+
+    .wallet-adapter-button img,
+    .wallet-adapter-button-start-icon,
+    .wallet-adapter-button-start-icon img,
+    .wallet-adapter-button i,
+    .wallet-adapter-button svg {
+        width: 16px !important;
+        height: 16px !important;
+        max-width: 16px !important;
+        max-height: 16px !important;
+    }
+
+    .wallet-adapter-button-start-icon {
+        width: 16px !important;
+        height: 16px !important;
+        min-width: 16px !important;
+        margin-right: 4px !important;
+    }
+
+    /* Modal: full width on mobile */
+    .wallet-adapter-modal-container {
+        margin: 1rem;
+        min-height: calc(100vh - 2rem);
+    }
+
+    .wallet-adapter-modal-wrapper {
+        max-width: calc(100vw - 2rem);
+    }
+
+    .wallet-adapter-modal-title {
+        padding: 40px 24px 24px 24px;
+        font-size: 18px;
+    }
+
+    /* Panel spacing */
+    .panel {
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    /* Fair badge */
+    .fair-badge {
+        font-size: 0.32rem;
+        gap: 0.25rem;
+        margin-top: 0.4rem;
+    }
+
+    .fair-badge svg {
+        width: 9px;
+        height: 9px;
+    }
+
+    /* Payout info */
+    .payout-info {
+        font-size: 0.34rem;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+    }
+
+    /* Quick bet buttons */
+    .quick-amounts-inline {
+        gap: 0.25rem;
+    }
+
+    .quick-btn-inline {
+        font-size: 0.38rem;
+        padding: 0.4rem 0.55rem;
+    }
+
+    /* Leaderboard & Feed: compact */
+    .panel-title {
+        font-size: 0.65rem;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.4rem;
+    }
+
+    .leaderboard-address,
+    .feed-player {
+        font-size: 0.38rem;
+    }
+
+    .leaderboard-profit,
+    .feed-profit {
+        font-size: 0.42rem;
+    }
+
+    .feed-tab {
+        font-size: 0.36rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .feed-result {
+        font-size: 0.34rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Small mobile: further optimizations */
+    .revolver-frame {
+        width: min(240px, 65vw);
+        height: min(240px, 65vw);
+    }
+
+    .game-title {
+        font-size: 0.85rem;
+    }
+
+    .game-subtitle {
+        font-size: 0.4rem;
+    }
+
+    .game-result-title {
+        font-size: 1.2rem;
+    }
+
+    .bet-input-inline {
+        font-size: 16px; /* iOS zoom prevention is critical */
+    }
+
+    .trigger-btn {
+        font-size: 0.65rem;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .panel {
+        padding: 8px;
+        border-radius: 3px;
+    }
+
+    .m-row {
+        padding: 6px 4px;
+        font-size: 0.55rem;
+    }
+
+    .m-row span:first-child {
+        font-size: 0.45rem;
+    }
+
+    .m-row span:last-child {
+        font-size: 0.6rem;
     }
 }
 

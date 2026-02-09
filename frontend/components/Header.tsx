@@ -44,8 +44,29 @@ export default function Header({ resultText, showResult }: HeaderProps) {
           </svg>
         </a>
 
-        <WalletMultiButton />
+        <div className="wallet-wrapper">
+          <WalletMultiButton />
+        </div>
       </div>
+
+      <style jsx>{`
+        .wallet-wrapper {
+          max-width: 180px;
+          overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+          .wallet-wrapper {
+            max-width: 140px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .wallet-wrapper {
+            max-width: 120px;
+          }
+        }
+      `}</style>
     </header>
   );
 }

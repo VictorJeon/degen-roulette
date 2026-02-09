@@ -111,9 +111,58 @@ export function StatsBar({ betAmount, currentMultiplier, potentialWin, roundsSur
           text-shadow: 0 0 8px var(--danger-glow);
         }
 
+        @media (max-width: 768px) {
+          .stats-grid {
+            gap: 5px;
+          }
+
+          .stat-card {
+            padding: 6px 4px;
+          }
+
+          .label {
+            font-size: 0.34rem;
+          }
+
+          .value {
+            font-size: 0.58rem;
+          }
+
+          .unit {
+            font-size: 0.3rem;
+          }
+        }
+
         @media (max-width: 500px) {
           .stats-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+          }
+
+          .stat-card {
+            padding: 5px 3px;
+          }
+
+          .label {
+            font-size: 0.32rem;
+          }
+
+          .value {
+            font-size: 0.52rem;
+          }
+
+          .unit {
+            font-size: 0.28rem;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .label {
+            font-size: 0.3rem;
+          }
+
+          .value {
+            font-size: 0.48rem;
           }
         }
       `}</style>

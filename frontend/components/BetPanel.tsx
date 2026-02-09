@@ -164,6 +164,8 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           box-shadow:
             0 0 10px var(--neon-glow-subtle),
             inset 0 0 15px rgba(0, 255, 65, 0.03);
+          width: 100%;
+          max-width: 300px;
         }
 
         .bet-input-inline {
@@ -175,6 +177,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           border: none;
           color: var(--neon);
           text-align: center;
+          flex: 1;
         }
 
         .bet-input-inline:focus {
@@ -207,6 +210,8 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           align-items: center;
           justify-content: center;
           transition: all 0.12s;
+          min-width: 20px;
+          min-height: 20px;
         }
 
         .arrow-btn:hover {
@@ -229,6 +234,8 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           gap: 0.5rem;
           justify-content: center;
           margin-top: 0.3rem;
+          flex-wrap: wrap;
+          text-align: center;
         }
 
         .payout-info strong {
@@ -243,6 +250,37 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
         .btn-inner {
           position: relative;
           z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+          .bet-input-wrapper {
+            max-width: 100%;
+          }
+
+          .bet-input-inline {
+            font-size: 16px; /* Prevent iOS zoom */
+            min-height: 44px;
+          }
+
+          .arrow-btn {
+            min-width: 24px;
+            min-height: 24px;
+          }
+
+          .payout-info {
+            font-size: 0.34rem;
+            gap: 0.4rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .bet-input-inline {
+            font-size: 16px; /* Critical for iOS */
+          }
+
+          .payout-info {
+            font-size: 0.32rem;
+          }
         }
       `}</style>
     </div>

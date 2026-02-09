@@ -398,12 +398,30 @@ export function ResultOverlay({
           .result-content {
             min-width: auto;
             width: 90%;
-            padding: 1.8rem;
+            padding: 1.8rem 1.5rem;
+            gap: 1.2rem;
           }
 
           .result-title {
             font-size: 1.5rem;
             letter-spacing: 3px;
+          }
+
+          .result-stats-grid {
+            gap: 0.6rem;
+          }
+
+          .result-stat {
+            padding: 0.6rem 0.7rem;
+            min-width: 100px;
+          }
+
+          .result-stat.wide {
+            min-width: 180px;
+          }
+
+          .stat-label {
+            font-size: 0.4rem;
           }
 
           .stat-value {
@@ -412,8 +430,75 @@ export function ResultOverlay({
 
           .play-again-btn {
             font-size: 0.7rem;
+            padding: 0.85rem 1.8rem;
+            letter-spacing: 3px;
+            min-width: 240px;
+            min-height: 48px;
+          }
+
+          .fair-btn {
+            font-size: 0.4rem;
+            padding: 6px 10px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .result-content {
+            width: calc(100% - 2rem);
+            padding: 1.5rem 1.2rem;
+            gap: 1rem;
+          }
+
+          .result-title {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+          }
+
+          .result-stats-grid {
+            gap: 0.5rem;
+          }
+
+          .result-stat {
+            padding: 0.5rem 0.6rem;
+            min-width: 90px;
+          }
+
+          .result-stat.wide {
+            min-width: 160px;
+          }
+
+          .stat-label {
+            font-size: 0.36rem;
+          }
+
+          .stat-value {
+            font-size: 0.65rem;
+          }
+
+          .play-again-btn {
+            font-size: 0.65rem;
             padding: 0.75rem 1.5rem;
             letter-spacing: 2px;
+            min-width: 200px;
+          }
+
+          .fair-btn {
+            font-size: 0.38rem;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .result-title {
+            font-size: 1rem;
+          }
+
+          .stat-value {
+            font-size: 0.6rem;
+          }
+
+          .play-again-btn {
+            font-size: 0.6rem;
+            min-width: 180px;
           }
         }
       `}</style>

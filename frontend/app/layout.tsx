@@ -29,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <script
           dangerouslySetInnerHTML={{
             __html: `if(new URLSearchParams(window.location.search).get('testMode')==='true'){window.__TEST_MODE_ENABLED__=true;try{localStorage.setItem('walletName','"Test Wallet"');}catch(e){}}`,
