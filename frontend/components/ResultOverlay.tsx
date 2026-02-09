@@ -22,486 +22,75 @@ export function ResultOverlay({
   const profit = payout - betAmount;
 
   return (
-    <div className={`result-overlay ${won ? 'won' : 'lost'}`}>
-      <div className="result-content">
-        {/* Corner decorations */}
-        <div className="corner corner-tl" />
-        <div className="corner corner-tr" />
-        <div className="corner corner-bl" />
-        <div className="corner corner-br" />
+    <div className="fixed inset-0 flex items-center justify-center bg-black/94 z-[1000] animate-[fadeIn_0.35s_ease-out]">
+      <div
+        className={`flex flex-col items-center gap-5 p-9 bg-bg-elevated border-2 rounded-xl min-w-[360px] relative max-md:min-w-0 max-md:w-[90%] max-md:p-7 max-md:gap-4 max-sm:w-[calc(100%-2rem)] max-sm:p-5 max-sm:gap-4 ${
+          won ? 'border-accent' : 'border-danger'
+        } ${!won ? 'animate-[shake_0.5s_ease-in-out]' : ''}`}
+      >
+        <h2
+          className={`font-display text-[2.8rem] m-0 tracking-[6px] max-md:text-2xl max-md:tracking-[3px] max-sm:text-xl max-sm:tracking-[2px] max-[360px]:text-lg ${
+            won ? 'text-accent' : 'text-danger'
+          }`}
+        >
+          {won ? 'YOU LIVE.' : 'YOU DIED.'}
+        </h2>
 
-        <h2 className="result-title">{won ? 'YOU LIVE.' : 'YOU DIED.'}</h2>
-
-        <div className="result-stats-grid">
+        <div className="grid grid-cols-2 gap-3 max-md:gap-2.5 max-sm:gap-2">
           {won ? (
             <>
-              <div className="result-stat">
-                <span className="stat-label">PAYOUT</span>
-                <span className="stat-value success">+{payout.toFixed(3)} SOL</span>
+              <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
+                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">PAYOUT</span>
+                <span className="font-display text-sm text-accent max-md:text-xs max-sm:text-2xs">+{payout.toFixed(3)} SOL</span>
               </div>
-              <div className="result-stat">
-                <span className="stat-label">PROFIT</span>
-                <span className="stat-value accent">+{profit.toFixed(3)} SOL</span>
+              <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
+                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">PROFIT</span>
+                <span className="font-display text-sm text-accent max-md:text-xs max-sm:text-2xs">+{profit.toFixed(3)} SOL</span>
               </div>
-              <div className="result-stat">
-                <span className="stat-label">MULTIPLIER</span>
-                <span className="stat-value">{multiplier.toFixed(2)}x</span>
+              <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
+                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">MULTIPLIER</span>
+                <span className="font-display text-sm text-white max-md:text-xs max-sm:text-2xs">{multiplier.toFixed(2)}x</span>
               </div>
-              <div className="result-stat">
-                <span className="stat-label">ROUNDS</span>
-                <span className="stat-value">{roundsSurvived}</span>
+              <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
+                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">ROUNDS</span>
+                <span className="font-display text-sm text-white max-md:text-xs max-sm:text-2xs">{roundsSurvived}</span>
               </div>
             </>
           ) : (
             <>
-              <div className="result-stat wide">
-                <span className="stat-label">DIED AT</span>
-                <span className="stat-value danger">ROUND {roundsSurvived + 1}</span>
+              <div className="col-span-2 flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[200px] max-md:min-w-[180px] max-sm:min-w-[160px] justify-self-center">
+                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">DIED AT</span>
+                <span className="font-display text-sm text-danger max-md:text-xs max-sm:text-2xs">ROUND {roundsSurvived + 1}</span>
               </div>
-              <div className="result-stat wide">
-                <span className="stat-label">LOST</span>
-                <span className="stat-value danger">-{betAmount.toFixed(3)} SOL</span>
+              <div className="col-span-2 flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[200px] max-md:min-w-[180px] max-sm:min-w-[160px] justify-self-center">
+                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">LOST</span>
+                <span className="font-display text-sm text-danger max-md:text-xs max-sm:text-2xs">-{betAmount.toFixed(3)} SOL</span>
               </div>
             </>
           )}
         </div>
 
-        <button className="play-again-btn" onClick={onNewGame} data-testid="play-again-button">
-          <span className="btn-text">PLAY AGAIN</span>
-          <span className="btn-glow" />
+        <button
+          className="font-display text-base px-8 py-4 bg-bg-surface border-2 border-accent rounded text-accent cursor-pointer transition-all uppercase tracking-[5px] mt-2 min-w-[300px] shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5 active:translate-y-0 max-md:text-xs max-md:px-6 max-md:py-3 max-md:tracking-[3px] max-md:min-w-[240px] max-md:min-h-[48px] max-sm:text-2xs max-sm:px-5 max-sm:py-3 max-sm:tracking-[2px] max-sm:min-w-[200px] max-[360px]:text-[0.6rem] max-[360px]:min-w-[180px]"
+          onClick={onNewGame}
+          data-testid="play-again-button"
+        >
+          PLAY AGAIN
         </button>
 
         {onShowFair && (
-          <button className="fair-btn" onClick={onShowFair} data-testid="result-provably-fair-button">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+          <button
+            className="font-display text-[0.625rem] text-gray-100 tracking-wide bg-bg-surface border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:text-[0.5rem] max-sm:text-[0.5rem]"
+            onClick={onShowFair}
+            data-testid="result-provably-fair-button"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
             </svg>
             Provably Fair
           </button>
         )}
       </div>
-
-      <style jsx>{`
-        .result-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(0, 3, 0, 0.94);
-          z-index: 1000;
-          animation: fadeIn 0.35s ease-out;
-        }
-
-        .result-overlay.lost .result-content {
-          animation: shake 0.5s ease-in-out;
-        }
-
-        .result-content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1.4rem;
-          padding: 2.2rem 2.8rem;
-          background: 
-            linear-gradient(180deg, rgba(10, 18, 10, 0.98) 0%, rgba(5, 10, 5, 0.99) 100%);
-          border: 2px solid;
-          border-radius: 8px;
-          min-width: 360px;
-          position: relative;
-        }
-
-        /* Corner decorations */
-        .corner {
-          position: absolute;
-          width: 16px;
-          height: 16px;
-          border: 1px solid;
-          opacity: 0.7;
-        }
-
-        .corner-tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-        .corner-tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
-        .corner-bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
-        .corner-br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
-
-        .result-overlay.won .result-content {
-          border-color: var(--success);
-          border-width: 2px;
-          box-shadow:
-            0 0 25px var(--success-glow),
-            0 0 50px rgba(0, 255, 65, 0.25),
-            0 0 80px rgba(0, 255, 65, 0.15),
-            0 0 120px rgba(0, 255, 65, 0.08),
-            inset 0 0 40px rgba(0, 255, 65, 0.06);
-        }
-
-        .result-overlay.won .corner {
-          border-color: var(--success);
-        }
-
-        .result-overlay.lost .result-content {
-          border-color: var(--danger);
-          border-width: 2px;
-          box-shadow:
-            0 0 25px var(--danger-glow),
-            0 0 50px rgba(255, 0, 64, 0.25),
-            0 0 80px rgba(255, 0, 64, 0.15),
-            0 0 120px rgba(255, 0, 64, 0.08),
-            inset 0 0 40px rgba(255, 0, 64, 0.06);
-        }
-
-        .result-overlay.lost .corner {
-          border-color: var(--danger);
-        }
-
-        .result-title {
-          font-family: var(--pixel-font);
-          font-size: 2.8rem;
-          margin: 0;
-          letter-spacing: 6px;
-        }
-
-        .result-overlay.won .result-title {
-          color: var(--success);
-          text-shadow:
-            0 0 15px var(--success),
-            0 0 30px var(--success-glow),
-            0 0 60px var(--success-glow),
-            0 0 90px rgba(0, 255, 65, 0.3),
-            0 0 120px rgba(0, 255, 65, 0.15);
-          animation: textGlow 1.5s ease-in-out infinite;
-        }
-
-        .result-overlay.lost .result-title {
-          color: var(--danger);
-          text-shadow:
-            0 0 15px var(--danger),
-            0 0 30px var(--danger-glow),
-            0 0 60px var(--danger-glow),
-            0 0 90px rgba(255, 0, 64, 0.2);
-          animation: flicker 0.15s step-end 4;
-        }
-
-        .result-stats-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 0.8rem;
-        }
-
-        .result-stat {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.35rem;
-          padding: 0.7rem 0.9rem;
-          background: 
-            linear-gradient(180deg, rgba(0, 20, 0, 0.5) 0%, rgba(0, 12, 0, 0.7) 100%);
-          border: 1px solid var(--border-dim);
-          border-radius: 4px;
-          min-width: 120px;
-        }
-
-        .result-stat.wide {
-          grid-column: span 2;
-          justify-self: center;
-          min-width: 200px;
-        }
-
-        .stat-label {
-          font-family: var(--pixel-font);
-          font-size: 0.46rem;
-          color: var(--text-muted);
-          letter-spacing: 1px;
-        }
-
-        .stat-value {
-          font-family: var(--pixel-font);
-          font-size: 0.85rem;
-          color: var(--text-primary);
-        }
-
-        .stat-value.success {
-          color: var(--success);
-          text-shadow: 0 0 10px var(--success-glow), 0 0 20px rgba(0, 255, 65, 0.2);
-        }
-
-        .stat-value.accent {
-          color: var(--neon);
-          text-shadow: 0 0 10px var(--neon-glow), 0 0 20px rgba(0, 255, 65, 0.2);
-        }
-
-        .stat-value.danger {
-          color: var(--danger);
-          text-shadow: 0 0 10px var(--danger-glow), 0 0 20px rgba(255, 0, 64, 0.2);
-        }
-
-        .play-again-btn {
-          font-family: var(--pixel-font);
-          font-size: 1rem;
-          padding: 1.15rem 3rem;
-          background:
-            linear-gradient(180deg, rgba(0, 40, 0, 0.8) 0%, rgba(0, 22, 0, 0.95) 100%);
-          border: 3px solid var(--neon);
-          border-radius: 4px;
-          color: var(--neon);
-          cursor: pointer;
-          transition: all 0.15s;
-          text-transform: uppercase;
-          letter-spacing: 5px;
-          margin-top: 0.6rem;
-          position: relative;
-          overflow: hidden;
-          min-width: 300px;
-
-          box-shadow:
-            0 0 15px var(--neon-glow),
-            0 0 30px var(--neon-glow-soft),
-            0 0 50px var(--neon-glow-subtle),
-            0 0 70px var(--neon-glow-subtle),
-            inset 0 0 25px var(--neon-glow-subtle),
-            inset 0 1px 0 rgba(255, 255, 255, 0.12);
-
-          text-shadow:
-            0 0 8px var(--neon),
-            0 0 15px var(--neon-glow);
-        }
-
-        .btn-text {
-          position: relative;
-          z-index: 1;
-        }
-
-        .btn-glow {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 120%;
-          height: 120%;
-          transform: translate(-50%, -50%);
-          background: radial-gradient(ellipse, var(--neon-glow-subtle) 0%, transparent 70%);
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .play-again-btn:hover {
-          background:
-            linear-gradient(180deg, rgba(0, 55, 0, 0.9) 0%, rgba(0, 35, 0, 0.98) 100%);
-          border-color: var(--neon-bright);
-
-          box-shadow:
-            0 0 25px var(--neon-glow),
-            0 0 50px var(--neon-glow-soft),
-            0 0 80px var(--neon-glow-soft),
-            0 0 110px rgba(0, 255, 65, 0.15),
-            inset 0 0 35px var(--neon-glow-soft),
-            inset 0 1px 0 rgba(255, 255, 255, 0.15);
-
-          text-shadow:
-            0 0 10px var(--neon),
-            0 0 20px var(--neon-glow),
-            0 0 35px var(--neon-glow-soft);
-
-          transform: translateY(-2px);
-        }
-
-        .play-again-btn:hover .btn-glow {
-          opacity: 1;
-        }
-
-        .play-again-btn:active {
-          transform: translateY(0);
-        }
-
-        .fair-btn {
-          font-family: var(--pixel-font);
-          color: var(--text-secondary);
-          font-size: 0.44rem;
-          letter-spacing: 1px;
-          background: linear-gradient(180deg, rgba(0, 20, 0, 0.6) 0%, rgba(0, 12, 0, 0.8) 100%);
-          border: 1px solid var(--border-neon);
-          padding: 7px 11px;
-          cursor: pointer;
-          transition: all 0.15s;
-          border-radius: 4px;
-          display: flex;
-          align-items: center;
-          gap: 5px;
-        }
-
-        .fair-btn svg {
-          opacity: 0.7;
-        }
-
-        .fair-btn:hover {
-          border-color: var(--neon);
-          color: var(--neon);
-          box-shadow: 0 0 10px var(--neon-glow-subtle), inset 0 0 8px var(--neon-glow-subtle);
-        }
-
-        .fair-btn:hover svg {
-          opacity: 1;
-          filter: drop-shadow(0 0 3px var(--neon-glow));
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes textGlow {
-          0%, 100% { 
-            text-shadow: 
-              0 0 10px var(--success),
-              0 0 20px var(--success-glow),
-              0 0 40px var(--success-glow),
-              0 0 60px rgba(0, 255, 65, 0.3);
-          }
-          50% { 
-            text-shadow: 
-              0 0 15px var(--success),
-              0 0 30px var(--success-glow),
-              0 0 50px var(--success-glow),
-              0 0 80px rgba(0, 255, 65, 0.4);
-          }
-        }
-
-        @keyframes shake {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          10%, 30%, 50%, 70%, 90% {
-            transform: translateX(-8px);
-          }
-          20%, 40%, 60%, 80% {
-            transform: translateX(8px);
-          }
-        }
-
-        @keyframes flicker {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.6;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .result-content {
-            min-width: auto;
-            width: 90%;
-            padding: 1.8rem 1.5rem;
-            gap: 1.2rem;
-          }
-
-          .result-title {
-            font-size: 1.5rem;
-            letter-spacing: 3px;
-          }
-
-          .result-stats-grid {
-            gap: 0.6rem;
-          }
-
-          .result-stat {
-            padding: 0.6rem 0.7rem;
-            min-width: 100px;
-          }
-
-          .result-stat.wide {
-            min-width: 180px;
-          }
-
-          .stat-label {
-            font-size: 0.4rem;
-          }
-
-          .stat-value {
-            font-size: 0.75rem;
-          }
-
-          .play-again-btn {
-            font-size: 0.7rem;
-            padding: 0.85rem 1.8rem;
-            letter-spacing: 3px;
-            min-width: 240px;
-            min-height: 48px;
-          }
-
-          .fair-btn {
-            font-size: 0.4rem;
-            padding: 6px 10px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .result-content {
-            width: calc(100% - 2rem);
-            padding: 1.5rem 1.2rem;
-            gap: 1rem;
-          }
-
-          .result-title {
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-          }
-
-          .result-stats-grid {
-            gap: 0.5rem;
-          }
-
-          .result-stat {
-            padding: 0.5rem 0.6rem;
-            min-width: 90px;
-          }
-
-          .result-stat.wide {
-            min-width: 160px;
-          }
-
-          .stat-label {
-            font-size: 0.36rem;
-          }
-
-          .stat-value {
-            font-size: 0.65rem;
-          }
-
-          .play-again-btn {
-            font-size: 0.65rem;
-            padding: 0.75rem 1.5rem;
-            letter-spacing: 2px;
-            min-width: 200px;
-          }
-
-          .fair-btn {
-            font-size: 0.38rem;
-          }
-        }
-
-        @media (max-width: 360px) {
-          .result-title {
-            font-size: 1rem;
-          }
-
-          .stat-value {
-            font-size: 0.6rem;
-          }
-
-          .play-again-btn {
-            font-size: 0.6rem;
-            min-width: 180px;
-          }
-        }
-      `}</style>
     </div>
   );
 }
