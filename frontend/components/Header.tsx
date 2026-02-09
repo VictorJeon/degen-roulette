@@ -14,6 +14,7 @@ export default function Header({ resultText, showResult }: HeaderProps) {
 
   return (
     <header className="header">
+      <span className="header-logo">🎯</span>
       <div className="stats-badge">
         Total Plays: <span>{totalPlays.toLocaleString()}</span>
       </div>
@@ -50,6 +51,11 @@ export default function Header({ resultText, showResult }: HeaderProps) {
       </div>
 
       <style jsx>{`
+        .header-logo {
+          font-size: 1.2rem;
+          margin-right: auto;
+        }
+
         .wallet-wrapper {
           max-width: 180px;
           overflow: hidden;

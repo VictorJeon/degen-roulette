@@ -650,7 +650,7 @@ export default function GameBoard() {
         </div>
 
         {/* Betting Panel (idle state) */}
-        {gameState.status === 'idle' && <BetPanel startGame={startGame} isLoading={isLoading} />}
+        {gameState.status === 'idle' && <BetPanel startGame={startGame} isLoading={isLoading} onShowFairModal={() => setShowFair(true)} />}
 
         {/* Active Game Controls */}
         {isActive && (

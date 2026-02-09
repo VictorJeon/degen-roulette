@@ -8,9 +8,10 @@ import { getPublicKey } from '@/lib/testMode';
 interface BetPanelProps {
   startGame: (betAmount: number) => Promise<void>;
   isLoading: boolean;
+  onShowFairModal?: () => void;
 }
 
-export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
+export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetPanelProps) {
   const { publicKey: walletPublicKey } = useWallet();
   const publicKey = getPublicKey(walletPublicKey);
   const [betAmount, setBetAmount] = useState(0.01);
@@ -23,7 +24,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
     console.log('[BetPanel] Wallet publicKey:', publicKey?.toString());
   }, [publicKey]);
 
-  const quickBets = [0.005, 0.001, 0.013, 0.015, 0.03];
+  const quickBets = [0.001, 0.01, 0.05, 0.10, 0.25, 0.50];
 
   const handleStartGame = async () => {
     if (!publicKey) {
@@ -68,6 +69,7 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
 
       <div className={`inline-betting ${shakeBetting ? 'animate-shake' : ''}`}>
         <div className="bet-input-wrapper">
+          <span className="bet-currency-label">SOL</span>
           <input
             type="number"
             value={betAmount}
@@ -79,27 +81,20 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
             className="bet-input-inline"
             data-testid="bet-amount-input"
           />
-          <div className="bet-arrows">
-            <button 
-              className="arrow-btn"
-              onClick={() => setBetAmount(prev => Math.max(MIN_BET, prev - 0.001))}
-              disabled={isLoading}
-            >
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 14l5-5 5 5z"/>
-              </svg>
-            </button>
-            <button 
-              className="arrow-btn"
-              onClick={() => setBetAmount(prev => prev + 0.001)}
-              disabled={isLoading}
-            >
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 10l5 5 5-5z"/>
-              </svg>
-            </button>
-          </div>
-          <span className="bet-currency">SOL</span>
+          <button
+            className="arrow-btn"
+            onClick={() => setBetAmount(prev => Math.max(MIN_BET, prev - 0.001))}
+            disabled={isLoading}
+          >
+            −
+          </button>
+          <button
+            className="arrow-btn"
+            onClick={() => setBetAmount(prev => prev + 0.001)}
+            disabled={isLoading}
+          >
+            +
+          </button>
         </div>
 
         <div className="quick-amounts-inline">
@@ -131,16 +126,16 @@ export default function BetPanel({ startGame, isLoading }: BetPanelProps) {
           data-testid="start-game-button"
         >
           <span className="btn-inner">
-            {isLoading ? 'SIGNING...' : 'PLAY AGAIN'}
+            {isLoading ? 'SIGNING...' : `BET ${betAmount} SOL`}
           </span>
         </button>
 
-        <div className="fair-badge">
+        <button className="fair-badge" onClick={onShowFairModal}>
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
           </svg>
-          Provably Fair
-        </div>
+          PROVABLY FAIR
+        </button>
       </div>
 
       <style jsx>{`
