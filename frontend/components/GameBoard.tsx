@@ -24,124 +24,27 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   return (
-    <>
-      <div className="modal-backdrop" onClick={onClose}>
-        <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-          <h3>HOW TO PLAY</h3>
-          <ol>
-            <li>Enter BET amount and click START</li>
-            <li>Select a chamber to load the bullet</li>
-            <li>Cylinder spins → bullet position hidden</li>
-            <li>PULL TRIGGER → fires top chamber</li>
-            <li>If you survive, cylinder rotates one chamber</li>
-            <li>CASH OUT anytime to collect winnings</li>
-          </ol>
-          <button className="mini-btn" onClick={onClose}>Close</button>
-        </div>
+    <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
+      <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
+        <h3 className="m-0 font-display text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
+          HOW TO PLAY
+        </h3>
+        <ol className="m-0 pl-4 text-white leading-[1.85] text-sm font-sans max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
+          <li className="mb-1.5">Enter BET amount and click START</li>
+          <li className="mb-1.5">Select a chamber to load the bullet</li>
+          <li className="mb-1.5">Cylinder spins → bullet position hidden</li>
+          <li className="mb-1.5">PULL TRIGGER → fires top chamber</li>
+          <li className="mb-1.5">If you survive, cylinder rotates one chamber</li>
+          <li className="mb-1.5">CASH OUT anytime to collect winnings</li>
+        </ol>
+        <button
+          className="font-display text-2xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
+          onClick={onClose}
+        >
+          Close
+        </button>
       </div>
-
-      <style jsx>{`
-        .modal-backdrop {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.88);
-          z-index: 1400;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .modal-card {
-          width: min(580px, 92vw);
-          background:
-            linear-gradient(180deg, rgba(12, 25, 12, 0.98) 0%, rgba(8, 18, 18, 0.99) 100%);
-          border: 1px solid var(--border-neon-bright);
-          border-radius: 8px;
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          position: relative;
-          box-shadow:
-            0 0 20px var(--neon-glow-soft),
-            0 0 40px var(--neon-glow-subtle),
-            0 0 60px var(--neon-glow-subtle),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            inset 0 0 40px rgba(0, 255, 65, 0.04);
-        }
-
-        .modal-card::before,
-        .modal-card::after {
-          content: '';
-          position: absolute;
-          width: 14px;
-          height: 14px;
-          border: 1px solid var(--neon);
-          opacity: 0.8;
-        }
-
-        .modal-card::before {
-          top: 6px;
-          left: 6px;
-          border-right: none;
-          border-bottom: none;
-        }
-
-        .modal-card::after {
-          bottom: 6px;
-          right: 6px;
-          border-left: none;
-          border-top: none;
-        }
-
-        .modal-card h3 {
-          margin: 0;
-          font-family: var(--pixel-font);
-          color: var(--neon);
-          font-size: 0.85rem;
-          text-shadow:
-            0 0 10px var(--neon),
-            0 0 20px var(--neon-glow),
-            0 0 35px var(--neon-glow-soft);
-          letter-spacing: 2px;
-          text-align: center;
-          padding-bottom: 8px;
-          border-bottom: 1px solid rgba(0, 255, 65, 0.15);
-        }
-
-        .modal-card ol {
-          margin: 0;
-          padding-left: 16px;
-          color: var(--text-primary);
-          line-height: 1.85;
-          font-size: 0.88rem;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
-        }
-
-        .modal-card li {
-          margin-bottom: 0.4rem;
-        }
-
-        .mini-btn {
-          font-family: var(--pixel-font);
-          color: var(--neon);
-          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
-          font-size: 0.55rem;
-          letter-spacing: 1px;
-          background: transparent;
-          border: 1px solid var(--border-neon);
-          padding: 0.4rem 0.8rem;
-          cursor: pointer;
-          transition: all 0.15s;
-          border-radius: 4px;
-        }
-
-        .mini-btn:hover {
-          border-color: var(--neon);
-          box-shadow: 0 0 10px var(--neon-glow-soft), inset 0 0 5px var(--neon-glow-subtle);
-        }
-      `}</style>
-    </>
+    </div>
   );
 }
 
@@ -158,163 +61,33 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
   }, [onClose]);
 
   return (
-    <>
-      <div className="modal-backdrop" onClick={onClose}>
-        <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-          <h3>PROVABLY FAIR</h3>
-          <p>At game start, a seed hash is committed on-chain. After settlement, the server seed is revealed for verification.</p>
-          {gameId && <p className="mono">Game ID: {gameId}</p>}
-          {serverSeed ? (
-            <>
-              <p className="mono">Server Seed (revealed):</p>
-              <p className="mono seed">{serverSeed}</p>
-            </>
-          ) : (
-            <p className="mono">Seed will be revealed after settlement.</p>
-          )}
-          <button className="mini-btn" onClick={onClose}>Close</button>
-        </div>
+    <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
+      <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
+        <h3 className="m-0 font-display text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
+          PROVABLY FAIR
+        </h3>
+        <p className="m-0 text-white leading-relaxed text-sm font-sans max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
+          At game start, a seed hash is committed on-chain. After settlement, the server seed is revealed for verification.
+        </p>
+        {gameId && <p className="m-0 font-mono text-xs text-gray-100">Game ID: {gameId}</p>}
+        {serverSeed ? (
+          <>
+            <p className="m-0 font-mono text-xs text-gray-100">Server Seed (revealed):</p>
+            <p className="m-0 font-mono text-xs text-accent bg-accent/5 border border-border-default rounded p-2 break-all">
+              {serverSeed}
+            </p>
+          </>
+        ) : (
+          <p className="m-0 font-mono text-xs text-gray-100">Seed will be revealed after settlement.</p>
+        )}
+        <button
+          className="font-display text-2xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
+          onClick={onClose}
+        >
+          Close
+        </button>
       </div>
-
-      <style jsx>{`
-        .modal-backdrop {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.88);
-          z-index: 1400;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .modal-card {
-          width: min(580px, 92vw);
-          background:
-            linear-gradient(180deg, rgba(12, 25, 12, 0.98) 0%, rgba(8, 18, 8, 0.99) 100%);
-          border: 1px solid var(--border-neon-bright);
-          border-radius: 8px;
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          position: relative;
-          box-shadow:
-            0 0 20px var(--neon-glow-soft),
-            0 0 40px var(--neon-glow-subtle),
-            0 0 60px var(--neon-glow-subtle),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            inset 0 0 40px rgba(0, 255, 65, 0.04);
-        }
-
-        .modal-card::before,
-        .modal-card::after {
-          content: '';
-          position: absolute;
-          width: 14px;
-          height: 14px;
-          border: 1px solid var(--neon);
-          opacity: 0.8;
-        }
-
-        .modal-card::before {
-          top: 6px;
-          left: 6px;
-          border-right: none;
-          border-bottom: none;
-        }
-
-        .modal-card::after {
-          bottom: 6px;
-          right: 6px;
-          border-left: none;
-          border-top: none;
-        }
-
-        .modal-card h3 {
-          margin: 0;
-          font-family: var(--pixel-font);
-          color: var(--neon);
-          font-size: 0.85rem;
-          text-shadow:
-            0 0 10px var(--neon),
-            0 0 20px var(--neon-glow),
-            0 0 35px var(--neon-glow-soft);
-          letter-spacing: 2px;
-          text-align: center;
-          padding-bottom: 8px;
-          border-bottom: 1px solid rgba(0, 255, 65, 0.15);
-        }
-
-        .modal-card p {
-          margin: 0;
-          color: var(--text-primary);
-          line-height: 1.6;
-          font-size: 0.85rem;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
-        }
-
-        .modal-card p.mono {
-          font-family: 'Courier New', monospace;
-          font-size: 0.75rem;
-          color: var(--text-secondary);
-        }
-
-        .modal-card p.seed {
-          background: rgba(0, 255, 65, 0.05);
-          border: 1px solid var(--border-neon);
-          border-radius: 4px;
-          padding: 0.5rem;
-          word-break: break-all;
-          font-size: 0.7rem;
-        }
-
-        .mini-btn {
-          font-family: var(--pixel-font);
-          color: var(--neon);
-          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
-          font-size: 0.55rem;
-          letter-spacing: 1px;
-          background: transparent;
-          border: 1px solid var(--border-neon);
-          padding: 0.4rem 0.8rem;
-          cursor: pointer;
-          transition: all 0.15s;
-          border-radius: 4px;
-        }
-
-        .mini-btn:hover {
-          border-color: var(--neon);
-          box-shadow: 0 0 10px var(--neon-glow-soft), inset 0 0 5px var(--neon-glow-subtle);
-        }
-      `}</style>
-    </>
-  );
-}
-
-// Decorative corner SVG component
-function CornerDecor({ position }: { position: 'tl' | 'tr' | 'bl' | 'br' }) {
-  const transforms: Record<string, string> = {
-    tl: '',
-    tr: 'scale(-1, 1)',
-    bl: 'scale(1, -1)',
-    br: 'scale(-1, -1)',
-  };
-  
-  return (
-    <svg 
-      className={`corner-decor corner-${position}`} 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24"
-      style={{ transform: transforms[position] }}
-    >
-      <path 
-        d="M0 0 L8 0 L8 2 L2 2 L2 8 L0 8 Z" 
-        fill="currentColor"
-        opacity="0.6"
-      />
-      <circle cx="4" cy="4" r="1.5" fill="currentColor" opacity="0.4" />
-    </svg>
+    </div>
   );
 }
 
@@ -381,22 +154,16 @@ export default function GameBoard() {
       soundRef.current?.playTrigger();
       await sleep(250);
 
-      // Await server response FIRST
       const result = await pullTrigger();
 
       if (result && !result.survived) {
-        // DEATH — rotate cylinder so bullet aligns with hammer (top)
-        // bulletPosition is 0-5, current round determines how many rotations happened
-        // The hammer fires at the "current" chamber. Rotate to show bullet at top.
         const bulletPos = result.bulletPosition ?? 0;
-        const targetAngle = -(bulletPos * 60); // rotate so bullet is at 0° (top)
+        const targetAngle = -(bulletPos * 60);
         const currentNormalized = cylinderRotation % 360;
         const delta = targetAngle - currentNormalized;
-        // Add full spins for drama
         setCylinderRotation(prev => prev + 360 + (delta % 360));
         soundRef.current?.playGunshot?.();
         setActionHint('');
-        // Clear selected chamber so only death bullet shows
         setSelectedChamber(null);
         setBulletVisible(false);
         await sleep(600);
@@ -404,7 +171,6 @@ export default function GameBoard() {
         return;
       }
 
-      // SURVIVED
       const nextRounds = gameState.roundsSurvived + 1;
       soundRef.current?.playEmptyChamber();
       setActionHint(`✓ YOU LIVE · R${nextRounds + 1}`);
@@ -500,7 +266,6 @@ export default function GameBoard() {
       ? 'none'
       : 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1.0)';
 
-  // Result text for display
   const getResultText = () => {
     if (gameState.status === 'won') return 'YOU LIVE.';
     if (gameState.status === 'lost') return 'YOU DIED.';
@@ -508,10 +273,7 @@ export default function GameBoard() {
   };
 
   return (
-    <div className="game-content">
-      {/* Vignette overlay */}
-      <div className="vignette" />
-      
+    <div className="flex flex-col items-center w-full">
       <div className={`flash-overlay success ${showFlashSuccess ? 'active' : ''}`} />
       <div className={`flash-overlay death ${showFlashDeath ? 'active' : ''}`} />
 
@@ -524,37 +286,66 @@ export default function GameBoard() {
         />
       )}
 
-      <div className="game-main game-card">
+      <div className="flex flex-col items-center gap-3 pt-3 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-5 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-2 max-md:pt-2">
         {/* Result Title or Game Title */}
         {isGameOver ? (
-          <h1 className={`game-result-title ${gameState.status === 'won' ? 'safe' : 'dead'}`}>
+          <h1 className={`font-display text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
+            gameState.status === 'won' ? 'text-accent' : 'text-danger'
+          }`}>
             {getResultText()}
           </h1>
         ) : (
-          <h1 className="game-title">DEGEN ROULETTE</h1>
+          <h1 className="font-display text-[1.8rem] text-center text-accent tracking-[0.15em] mb-0.5 max-md:text-base max-md:tracking-[0.08em] max-sm:text-sm">
+            DEGEN ROULETTE
+          </h1>
         )}
 
         {/* Tagline */}
-        <p className="game-subtitle">1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?</p>
+        <p className="font-display text-2xs text-gray-100 text-center tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">
+          1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?
+        </p>
 
-        {error && <p className="game-error">{error}</p>}
-        {actionHint && <p className="game-hint">{actionHint}</p>}
+        {error && <p className="text-danger font-body text-sm text-center">{error}</p>}
+        {actionHint && (
+          <p className="text-accent font-display text-sm font-bold min-h-[1.5em] text-center tracking-[2px] max-md:text-xs max-sm:text-2xs">
+            {actionHint}
+          </p>
+        )}
 
         {/* Multiplier Table with Odds */}
-        <div className="multiplier-table">
-          <div className="multiplier-row">
+        <div className="w-full flex flex-col gap-1 mb-2 max-w-[600px] mx-auto max-md:mb-1.5">
+          <div className="grid grid-cols-5 gap-1.5 w-full max-md:gap-1.5">
             {MULTIPLIERS.map((m, idx) => (
-              <div key={idx} className={`m-row ${isActive && gameState.roundsSurvived === idx ? 'active' : ''}`}>
-                <span>R{idx + 1}</span>
-                <span>{m.toFixed(2)}x</span>
+              <div
+                key={idx}
+                className={`border rounded flex flex-col items-center gap-1 p-3 font-display text-xs transition-all max-md:p-2.5 max-md:text-[0.55rem] max-sm:p-1 max-sm:text-[0.5rem] ${
+                  isActive && gameState.roundsSurvived === idx
+                    ? 'border-accent border-2 bg-accent/10 scale-y-[1.15] scale-x-[1.04] z-[2] max-md:scale-y-[1.08] max-md:scale-x-[1.02]'
+                    : 'border-border-default bg-bg-surface'
+                }`}
+              >
+                <span className={`text-[0.6rem] tracking-wide max-md:text-[0.55rem] max-sm:text-[0.42rem] ${
+                  isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-white'
+                }`}>
+                  R{idx + 1}
+                </span>
+                <span className={`text-xs font-bold max-md:text-[0.7rem] max-sm:text-[0.52rem] ${
+                  isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-accent'
+                }`}>
+                  {m.toFixed(2)}x
+                </span>
               </div>
             ))}
           </div>
-          <div className="odds-row">
+          <div className="grid grid-cols-5 gap-1.5 mt-1">
             {ROUND_ODDS.map((odds, idx) => (
               <div
                 key={idx}
-                className={`odds-cell ${isActive && gameState.roundsSurvived === idx ? 'active' : ''}`}
+                className={`font-display text-center py-1 transition-all max-md:text-[0.42rem] max-sm:text-[0.42rem] ${
+                  isActive && gameState.roundsSurvived === idx
+                    ? 'text-accent text-[0.52rem]'
+                    : 'text-gray-100 text-[0.48rem]'
+                }`}
               >
                 {odds}
               </div>
@@ -573,10 +364,10 @@ export default function GameBoard() {
         )}
 
         {/* Revolver Cylinder */}
-        <div className="revolver-frame">
+        <div className="relative w-[300px] h-[300px] mx-auto mb-2.5 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
           {/* Barrel indicator */}
-          <div className="barrel-indicator">
-            <svg viewBox="0 0 40 36" className="barrel-svg">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-9 h-8 pointer-events-none max-md:w-8 max-md:h-7 max-sm:w-7 max-sm:h-6">
+            <svg viewBox="0 0 40 36" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 6px rgba(0,255,65,0.3))' }}>
               <defs>
                 <linearGradient id="barrelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#00FF41" stopOpacity="0.9" />
@@ -596,21 +387,16 @@ export default function GameBoard() {
             </svg>
           </div>
 
-          {/* Sparkles - 8 particles */}
-          <div className="cylinder-sparkles">
-            <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-            <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
-          </div>
-
           {/* Cylinder PNG — rotates */}
-          <div className="cylinder-container" style={{
+          <div className="relative w-full h-full" style={{
             transition: spinTransition,
             transform: `rotate(${cylinderRotation}deg)`,
           }}>
             <img
               src="/cylinder-512.png"
               alt="Revolver cylinder"
-              className={`cylinder-png ${cylinderPhase === 'spinning' ? 'cylinder-blur' : ''}`}
+              className={`w-full h-full object-contain select-none ${cylinderPhase === 'spinning' ? 'blur-[8px] brightness-[1.3]' : ''}`}
+              style={{ filter: cylinderPhase !== 'spinning' ? 'drop-shadow(0 0 6px rgba(0,255,65,0.3))' : undefined }}
               draggable={false}
             />
 
@@ -624,25 +410,50 @@ export default function GameBoard() {
               return (
                 <div
                   key={i}
-                  className={`chamber-overlay ${canSelect ? 'selectable' : ''} ${isFired ? 'fired' : ''}`}
+                  className={`absolute transition-all duration-200 ${canSelect ? 'cursor-pointer' : 'cursor-default'}`}
                   data-testid={`chamber-${i}`}
                   style={{
-                    position: 'absolute',
                     left: `${pos.left}%`,
                     top: `${pos.top}%`,
                     transform: 'translate(-50%, -50%)',
                     width: '18.5%',
                     height: '18.5%',
                     borderRadius: '50%',
-                    cursor: canSelect ? 'pointer' : 'default',
                   }}
                   onClick={() => canSelect && handleSelectChamber(i)}
                 >
                   {(showBullet || isFired) && (
-                    <div className={`bullet-dot ${isFired ? 'fired' : ''}`} />
+                    <div
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] rounded-full transition-all duration-150"
+                      style={{
+                        background: isFired
+                          ? 'radial-gradient(circle, #5a1a1a 30%, #FF3B3B 60%, #FF5C5C 80%, rgba(255,59,59,0.3) 100%)'
+                          : 'radial-gradient(circle, #1a5a1a 30%, #00cc33 60%, #00ff41 80%, rgba(0,255,65,0.3) 100%)',
+                        boxShadow: isFired
+                          ? '0 0 10px rgba(255,59,59,0.6), 0 0 20px rgba(255,59,59,0.3), inset 0 0 8px rgba(0,0,0,0.4)'
+                          : '0 0 10px rgba(0,255,65,0.6), 0 0 20px rgba(0,255,65,0.3), inset 0 0 8px rgba(0,0,0,0.4)',
+                      }}
+                    >
+                      {/* Plus icon */}
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[14%] bg-white/85 rounded-sm" />
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[14%] h-[40%] bg-white/85 rounded-sm" />
+                    </div>
                   )}
-                  {canSelect && <div className="chamber-select-ring" />}
-                  {isFired && <div className="chamber-fired-overlay" />}
+                  {canSelect && (
+                    <div
+                      className="absolute -inset-[3px] rounded-full border-2 border-accent/40 animate-pulse"
+                      style={{ boxShadow: '0 0 8px rgba(0,255,65,0.3), inset 0 0 8px rgba(0,255,65,0.15)' }}
+                    />
+                  )}
+                  {isFired && (
+                    <div
+                      className="absolute inset-[8%] rounded-full"
+                      style={{
+                        background: 'radial-gradient(circle, rgba(255,59,59,0.4) 0%, rgba(255,59,59,0.1) 70%)',
+                        boxShadow: '0 0 15px rgba(255,59,59,0.5), inset 0 0 10px rgba(255,59,59,0.5)',
+                      }}
+                    />
+                  )}
                 </div>
               );
             })}
@@ -655,12 +466,18 @@ export default function GameBoard() {
         {/* Active Game Controls */}
         {isActive && (
           <>
-            <p className="game-instruction">{getInstruction()}</p>
-            <div className="button-group">
+            <p className="font-display text-2xs text-gray-200 text-center tracking-wide max-md:text-xs max-md:p-2 max-sm:text-2xs max-[360px]:text-[0.5rem]">
+              {getInstruction()}
+            </p>
+            <div className="flex flex-col gap-2 items-center">
               <button
                 onClick={handlePullTrigger}
                 disabled={!triggerReady}
-                className={`trigger-btn ${gameState.roundsSurvived >= 3 ? 'danger' : ''} ${!triggerReady ? 'locked' : ''}`}
+                className={`font-display text-sm px-9 py-4 border-2 rounded cursor-pointer transition-all uppercase tracking-[0.12em] max-md:w-full max-md:min-h-[48px] max-md:text-xs max-md:px-6 max-md:py-3.5 max-md:tracking-[0.08em] max-sm:text-2xs max-sm:px-5 max-sm:py-3 max-[360px]:text-[0.5rem] ${
+                  gameState.roundsSurvived >= 3
+                    ? 'border-danger text-danger bg-bg-surface animate-pulse'
+                    : 'border-accent text-accent bg-bg-surface shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5'
+                } ${!triggerReady ? 'opacity-35 cursor-not-allowed' : ''} active:translate-y-0 disabled:opacity-35 disabled:cursor-not-allowed`}
                 data-testid="pull-trigger-button"
               >
                 {cylinderPhase === 'selecting' ? 'LOAD FIRST'
@@ -670,7 +487,7 @@ export default function GameBoard() {
               </button>
               {gameState.roundsSurvived >= 1 && cylinderPhase === 'ready' && (
                 <button onClick={handleCashOut} disabled={isLoading || isReloading}
-                  className="cashout-btn visible"
+                  className="font-display text-2xs px-4 py-2.5 bg-transparent border border-accent rounded text-accent cursor-pointer transition-all uppercase max-md:w-full max-md:min-h-[44px] max-md:text-2xs max-md:px-4 max-md:py-3 hover:bg-accent/5"
                   data-testid="cashout-button">
                   CASH OUT
                 </button>
@@ -680,15 +497,22 @@ export default function GameBoard() {
         )}
 
         {/* Sub Actions */}
-        <div className="sub-actions">
-          <button className="mini-btn" onClick={() => setShowHowTo(true)}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+        <div className="flex gap-2 mt-3 justify-center max-md:gap-1.5 max-md:mt-2.5 max-md:flex-wrap">
+          <button
+            className="bg-bg-surface border border-border-default text-gray-100 font-display text-[0.625rem] px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:text-[0.5rem] max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:text-[0.5rem] max-sm:px-2 max-sm:py-1 max-[360px]:text-[0.45rem]"
+            onClick={() => setShowHowTo(true)}
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
             </svg>
             How to Play
           </button>
-          <button className="mini-btn" onClick={() => setShowFair(true)} data-testid="provably-fair-button">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+          <button
+            className="bg-bg-surface border border-border-default text-gray-100 font-display text-[0.625rem] px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:text-[0.5rem] max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:text-[0.5rem] max-sm:px-2 max-sm:py-1 max-[360px]:text-[0.45rem]"
+            onClick={() => setShowFair(true)}
+            data-testid="provably-fair-button"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
             </svg>
             Provably Fair
@@ -697,9 +521,9 @@ export default function GameBoard() {
 
         {/* Settling State */}
         {isSettling && (
-          <div className="settling-state">
-            <div className="spinner"></div>
-            <p>SETTLING...</p>
+          <div className="flex flex-col items-center gap-3 mt-3">
+            <div className="w-9 h-9 border-2 border-gray-300 border-t-accent rounded-full animate-spin" />
+            <p className="font-display text-accent text-2xs tracking-wide">SETTLING...</p>
           </div>
         )}
       </div>
@@ -716,399 +540,6 @@ export default function GameBoard() {
           onShowFair={() => setShowFair(true)}
         />
       )}
-
-      <style jsx>{`
-        .game-card {
-          background:
-            linear-gradient(180deg, rgba(10, 18, 10, 0.95) 0%, rgba(5, 10, 5, 0.98) 100%);
-          border: 1px solid var(--border-neon-bright);
-          border-radius: 8px;
-          padding: 18px 20px;
-          position: relative;
-          width: 100%;
-          max-width: 680px;
-
-          box-shadow:
-            0 0 20px var(--neon-glow-soft),
-            0 0 40px var(--neon-glow-subtle),
-            0 0 60px var(--neon-glow-subtle),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            inset 0 0 50px rgba(0, 255, 65, 0.03);
-        }
-
-        .corner-decor {
-          position: absolute;
-          color: var(--neon);
-          filter: drop-shadow(0 0 4px var(--neon-glow));
-        }
-
-        .corner-tl { top: 6px; left: 6px; }
-        .corner-tr { top: 6px; right: 6px; }
-        .corner-bl { bottom: 6px; left: 6px; }
-        .corner-br { bottom: 6px; right: 6px; }
-
-        .game-error {
-          color: var(--danger);
-          font-family: var(--body-font);
-          font-size: 0.82rem;
-          text-align: center;
-        }
-
-        .game-hint {
-          color: var(--neon);
-          font-family: var(--pixel-font);
-          font-size: 0.85rem;
-          font-weight: bold;
-          text-shadow:
-            0 0 10px var(--neon),
-            0 0 20px var(--neon-glow),
-            0 0 35px var(--neon-glow-soft),
-            0 0 50px var(--neon-glow-subtle);
-          min-height: 1.5em;
-          text-align: center;
-          letter-spacing: 2px;
-          animation: textGlow 1.5s ease-in-out infinite;
-        }
-
-        .max-label {
-          color: var(--neon);
-          text-shadow: 0 0 4px var(--neon-glow);
-        }
-
-        /* Revolver frame */
-        .revolver-frame {
-          position: relative;
-          width: 300px;
-          height: 300px;
-          margin: 0 auto 10px;
-          padding: 0;
-        }
-
-        .barrel-indicator {
-          position: absolute;
-          top: -12px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 10;
-          width: 36px;
-          height: 32px;
-          pointer-events: none;
-        }
-
-        .barrel-svg {
-          width: 100%;
-          height: 100%;
-          filter: 
-            drop-shadow(0 0 6px var(--neon)) 
-            drop-shadow(0 0 12px var(--neon-glow))
-            drop-shadow(0 0 20px var(--neon-glow-soft));
-        }
-
-        .trigger-btn.locked {
-          opacity: 0.35;
-          cursor: not-allowed;
-        }
-
-        .sub-actions {
-          display: flex;
-          gap: 8px;
-          margin-top: 12px;
-          justify-content: center;
-        }
-
-        .mini-btn {
-          background: 
-            linear-gradient(180deg, rgba(0, 20, 0, 0.6) 0%, rgba(0, 12, 0, 0.8) 100%);
-          border: 1px solid var(--border-neon);
-          color: var(--text-secondary);
-          font-family: var(--pixel-font);
-          font-size: 0.44rem;
-          padding: 7px 11px;
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.15s;
-          display: flex;
-          align-items: center;
-          gap: 5px;
-        }
-
-        .mini-btn svg {
-          opacity: 0.7;
-        }
-
-        .mini-btn:hover {
-          border-color: var(--neon);
-          color: var(--neon);
-          box-shadow: 0 0 10px var(--neon-glow-subtle), inset 0 0 8px var(--neon-glow-subtle);
-        }
-
-        .mini-btn:hover svg {
-          opacity: 1;
-          filter: drop-shadow(0 0 3px var(--neon-glow));
-        }
-
-        .modal-backdrop {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.88);
-          z-index: 1400;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .modal-card {
-          width: min(580px, 92vw);
-          background:
-            linear-gradient(180deg, rgba(12, 25, 12, 0.98) 0%, rgba(8, 18, 8, 0.99) 100%);
-          border: 1px solid var(--border-neon-bright);
-          border-radius: 8px;
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          position: relative;
-          box-shadow:
-            0 0 20px var(--neon-glow-soft),
-            0 0 40px var(--neon-glow-subtle),
-            0 0 60px var(--neon-glow-subtle),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            inset 0 0 40px rgba(0, 255, 65, 0.04);
-        }
-
-        /* Modal corner accents */
-        .modal-card::before,
-        .modal-card::after {
-          content: '';
-          position: absolute;
-          width: 14px;
-          height: 14px;
-          border: 1px solid var(--neon);
-          opacity: 0.8;
-        }
-
-        .modal-card::before {
-          top: 6px;
-          left: 6px;
-          border-right: none;
-          border-bottom: none;
-        }
-
-        .modal-card::after {
-          bottom: 6px;
-          right: 6px;
-          border-left: none;
-          border-top: none;
-        }
-
-        .modal-card h3 {
-          margin: 0;
-          font-family: var(--pixel-font);
-          color: var(--neon);
-          font-size: 0.85rem;
-          text-shadow:
-            0 0 10px var(--neon),
-            0 0 20px var(--neon-glow),
-            0 0 35px var(--neon-glow-soft);
-          letter-spacing: 2px;
-          text-align: center;
-          padding-bottom: 8px;
-          border-bottom: 1px solid rgba(0, 255, 65, 0.15);
-        }
-
-        .modal-card ol {
-          margin: 0;
-          padding-left: 16px;
-          color: var(--text-primary);
-          line-height: 1.85;
-          font-size: 0.88rem;
-        }
-
-        .modal-card p {
-          color: var(--text-secondary);
-          font-size: 0.9rem;
-          line-height: 1.6;
-          margin: 0;
-        }
-
-        .mono {
-          font-family: var(--body-font);
-          font-size: 0.82rem;
-          color: var(--text-secondary);
-          margin: 0;
-        }
-
-        .seed {
-          word-break: break-all;
-          color: var(--neon);
-          text-shadow: 0 0 5px var(--neon-glow);
-        }
-
-        .settling-state {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.8rem;
-          margin-top: 0.8rem;
-        }
-
-        .spinner {
-          width: 36px;
-          height: 36px;
-          border: 2px solid var(--neon-glow-soft);
-          border-top-color: var(--neon);
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-          box-shadow: 0 0 15px var(--neon-glow-subtle);
-        }
-
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        .settling-state p {
-          font-family: var(--pixel-font);
-          color: var(--neon);
-          text-shadow: 0 0 8px var(--neon-glow), 0 0 15px var(--neon-glow-soft);
-          font-size: 0.55rem;
-          letter-spacing: 1px;
-        }
-
-        @media (max-width: 768px) {
-          .game-card {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 8px 12px;
-            max-width: 100%;
-          }
-
-          .game-card::before,
-          .game-card::after {
-            display: none;
-          }
-
-          .revolver-frame {
-            width: min(300px, 75vw);
-            height: min(300px, 75vw);
-          }
-
-          .barrel-indicator {
-            width: 32px;
-            height: 28px;
-          }
-
-          .chamber-overlay {
-            min-width: 44px;
-            min-height: 44px;
-          }
-
-          .game-instruction {
-            font-size: 0.6rem;
-            padding: 0.5rem;
-          }
-
-          .game-instruction.big {
-            font-size: 0.7rem;
-            margin: 0.5rem 0;
-          }
-
-          .sub-actions {
-            gap: 6px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-          }
-
-          .mini-btn {
-            font-size: 0.4rem;
-            padding: 6px 10px;
-            min-height: 36px;
-          }
-
-          .mini-btn svg {
-            width: 9px;
-            height: 9px;
-          }
-
-          .modal-card {
-            width: calc(100vw - 2rem);
-            max-width: calc(100vw - 2rem);
-            padding: 20px;
-          }
-
-          .modal-card h3 {
-            font-size: 0.75rem;
-            letter-spacing: 1.5px;
-          }
-
-          .modal-card ol,
-          .modal-card p {
-            font-size: 0.82rem;
-            line-height: 1.7;
-          }
-
-          .modal-card .mini-btn {
-            font-size: 0.5rem;
-            padding: 0.45rem 0.9rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .game-card {
-            padding: 8px 12px;
-          }
-
-          .revolver-frame {
-            width: min(260px, 70vw);
-            height: min(260px, 70vw);
-          }
-
-          .barrel-indicator {
-            width: 28px;
-            height: 24px;
-          }
-
-          .game-instruction {
-            font-size: 0.55rem;
-          }
-
-          .game-instruction.big {
-            font-size: 0.65rem;
-          }
-
-          .mini-btn {
-            font-size: 0.38rem;
-            padding: 5px 9px;
-          }
-
-          .modal-card h3 {
-            font-size: 0.7rem;
-          }
-
-          .modal-card ol,
-          .modal-card p {
-            font-size: 0.78rem;
-          }
-        }
-
-        @media (max-width: 360px) {
-          .revolver-frame {
-            width: min(220px, 60vw);
-            height: min(220px, 60vw);
-          }
-
-          .game-instruction {
-            font-size: 0.5rem;
-          }
-
-          .mini-btn {
-            font-size: 0.36rem;
-            padding: 4px 8px;
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -57,19 +57,18 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
     }
   };
 
-  // Calculate potential payout/loss (using R3 multiplier as reference)
   const potentialPayout = (betAmount * 1.94).toFixed(3);
   const potentialLoss = betAmount.toFixed(2);
 
   return (
-    <div className="bet-panel">
-      <div className="game-instruction">
+    <div className="flex flex-col items-center w-full">
+      <div className="font-display text-2xs text-gray-200 text-center tracking-wide">
         {instruction || '>>> SELECT YOUR BET <<<'}
       </div>
 
-      <div className={`inline-betting ${shakeBetting ? 'animate-shake' : ''}`}>
-        <div className="bet-input-wrapper">
-          <span className="bet-currency-label">SOL</span>
+      <div className={`flex flex-col items-center gap-2.5 mt-2.5 w-full max-w-[360px] ${shakeBetting ? 'animate-shake' : ''}`}>
+        <div className="flex items-center gap-1.5 bg-bg-surface border border-border-default rounded-xl px-3 py-2 w-full max-w-[300px] max-md:max-w-full focus-within:border-accent transition-colors">
+          <span className="font-display text-2xs text-gray-200">SOL</span>
           <input
             type="number"
             value={betAmount}
@@ -78,18 +77,18 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
             min={MIN_BET}
             disabled={isLoading}
             aria-label="Bet amount in SOL"
-            className="bet-input-inline"
+            className="font-display text-sm w-[130px] flex-1 px-2 py-1.5 bg-transparent border-none text-accent text-center outline-none max-md:text-[16px] max-md:min-h-[44px]"
             data-testid="bet-amount-input"
           />
           <button
-            className="arrow-btn"
+            className="bg-accent/10 border border-border-default rounded-sm text-gray-200 cursor-pointer p-0.5 flex items-center justify-center transition-colors min-w-5 min-h-5 max-md:min-w-6 max-md:min-h-6 hover:text-accent hover:border-accent"
             onClick={() => setBetAmount(prev => Math.max(MIN_BET, prev - 0.001))}
             disabled={isLoading}
           >
             −
           </button>
           <button
-            className="arrow-btn"
+            className="bg-accent/10 border border-border-default rounded-sm text-gray-200 cursor-pointer p-0.5 flex items-center justify-center transition-colors min-w-5 min-h-5 max-md:min-w-6 max-md:min-h-6 hover:text-accent hover:border-accent"
             onClick={() => setBetAmount(prev => prev + 0.001)}
             disabled={isLoading}
           >
@@ -97,7 +96,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
           </button>
         </div>
 
-        <div className="quick-amounts-inline">
+        <div className="flex gap-1.5 flex-wrap justify-center">
           {quickBets.map((amount) => (
             <button
               key={amount}
@@ -106,178 +105,39 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
                 setSelectedBet(amount);
               }}
               disabled={isLoading}
-              className={`quick-btn-inline ${selectedBet === amount ? 'selected' : ''}`}
+              className={`font-display text-[0.625rem] px-2.5 py-2 border rounded cursor-pointer transition-colors ${
+                selectedBet === amount
+                  ? 'border-accent text-accent bg-accent/10'
+                  : 'border-border-default text-gray-200 bg-transparent hover:border-accent hover:text-accent'
+              }`}
             >
               {amount}
             </button>
           ))}
         </div>
 
-        <div className="payout-info">
-          <span>Potential Payout: <strong>{potentialPayout}</strong></span>
-          <span className="separator">·</span>
-          <span>Potential Loss: <strong>{potentialLoss} SOL</strong></span>
+        <div className="font-display text-[0.5rem] text-gray-200 flex gap-2 justify-center mt-1 flex-wrap text-center max-md:text-[0.5rem]">
+          <span>Potential Payout: <strong className="text-gray-100">{potentialPayout}</strong></span>
+          <span className="text-gray-300">·</span>
+          <span>Potential Loss: <strong className="text-gray-100">{potentialLoss} SOL</strong></span>
         </div>
 
         <button
           onClick={handleStartGame}
           disabled={isLoading}
-          className="trigger-btn trigger-btn-start"
+          className="w-full max-w-[420px] font-display text-lg px-8 py-5 border-2 border-accent rounded bg-bg-surface text-accent cursor-pointer transition-all uppercase tracking-widest shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-35 disabled:cursor-not-allowed disabled:shadow-none"
           data-testid="start-game-button"
         >
-          <span className="btn-inner">
-            {isLoading ? 'SIGNING...' : `BET ${betAmount} SOL`}
-          </span>
+          {isLoading ? 'SIGNING...' : `BET ${betAmount} SOL`}
         </button>
 
-        <button className="fair-badge" onClick={onShowFairModal}>
-          <svg viewBox="0 0 24 24" fill="currentColor">
+        <button className="flex items-center gap-1.5 font-display text-[0.5rem] text-gray-200 uppercase bg-transparent border border-border-default rounded px-3 py-1.5 cursor-pointer transition-colors hover:border-accent hover:text-accent" onClick={onShowFairModal}>
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-[11px] h-[11px] opacity-70">
             <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
           </svg>
           PROVABLY FAIR
         </button>
       </div>
-
-      <style jsx>{`
-        .bet-panel {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-        }
-
-        .bet-input-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          background:
-            linear-gradient(180deg, rgba(0, 25, 0, 0.7) 0%, rgba(0, 15, 0, 0.85) 100%);
-          border: 2px solid var(--border-neon-bright);
-          border-radius: 4px;
-          padding: 0.5rem 0.7rem;
-          position: relative;
-          box-shadow:
-            0 0 10px var(--neon-glow-subtle),
-            inset 0 0 15px rgba(0, 255, 65, 0.03);
-          width: 100%;
-          max-width: 300px;
-        }
-
-        .bet-input-inline {
-          font-family: var(--pixel-font);
-          font-size: 0.9rem;
-          width: 130px;
-          padding: 0.4rem 0.5rem;
-          background: transparent;
-          border: none;
-          color: var(--neon);
-          text-align: center;
-          flex: 1;
-        }
-
-        .bet-input-inline:focus {
-          outline: none;
-        }
-
-        .bet-input-wrapper:focus-within {
-          border-color: var(--neon);
-          box-shadow:
-            0 0 12px var(--neon-glow),
-            0 0 25px var(--neon-glow-soft),
-            0 0 40px var(--neon-glow-subtle),
-            inset 0 0 20px rgba(0, 255, 65, 0.05);
-        }
-
-        .bet-arrows {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
-
-        .arrow-btn {
-          background: rgba(0, 255, 65, 0.1);
-          border: 1px solid var(--border-dim);
-          border-radius: 2px;
-          color: var(--text-muted);
-          cursor: pointer;
-          padding: 2px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.12s;
-          min-width: 20px;
-          min-height: 20px;
-        }
-
-        .arrow-btn:hover {
-          color: var(--neon);
-          border-color: var(--neon);
-        }
-
-        .bet-currency {
-          font-family: var(--pixel-font);
-          font-size: 0.5rem;
-          color: var(--text-muted);
-          margin-left: 0.3rem;
-        }
-
-        .payout-info {
-          font-family: var(--pixel-font);
-          font-size: 0.38rem;
-          color: var(--text-muted);
-          display: flex;
-          gap: 0.5rem;
-          justify-content: center;
-          margin-top: 0.3rem;
-          flex-wrap: wrap;
-          text-align: center;
-        }
-
-        .payout-info strong {
-          color: var(--text-secondary);
-          text-shadow: 0 0 4px var(--neon-glow-subtle);
-        }
-
-        .separator {
-          color: var(--text-dim);
-        }
-
-        .btn-inner {
-          position: relative;
-          z-index: 1;
-        }
-
-        @media (max-width: 768px) {
-          .bet-input-wrapper {
-            max-width: 100%;
-          }
-
-          .bet-input-inline {
-            font-size: 16px; /* Prevent iOS zoom */
-            min-height: 44px;
-          }
-
-          .arrow-btn {
-            min-width: 24px;
-            min-height: 24px;
-          }
-
-          .payout-info {
-            font-size: 0.34rem;
-            gap: 0.4rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .bet-input-inline {
-            font-size: 16px; /* Critical for iOS */
-          }
-
-          .payout-info {
-            font-size: 0.32rem;
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -13,17 +13,17 @@ export default function Header({ resultText, showResult }: HeaderProps) {
   const [showBanner, setShowBanner] = useState(true);
 
   return (
-    <header className="header">
-      <span className="header-logo">🎯</span>
-      <div className="stats-badge">
-        Total Plays: <span>{totalPlays.toLocaleString()}</span>
+    <header className="grid grid-cols-[1fr_auto_1fr] items-center h-14 px-5 bg-bg-surface border-b border-border-default relative z-100 max-md:grid-cols-[1fr_auto] max-md:px-2 max-md:h-12">
+      <span className="text-xl mr-auto">🎯</span>
+      <div className="font-display text-2xs text-gray-100 px-2 py-1.5 bg-bg-elevated border border-border-default rounded whitespace-nowrap max-md:hidden">
+        Total Plays: <span className="text-accent ml-1">{totalPlays.toLocaleString()}</span>
       </div>
 
       {showResult && resultText && showBanner && (
-        <div className="result-banner">
-          <span className="result-banner-text">RESULT: {resultText}</span>
+        <div className="flex items-center justify-center gap-3 px-6 py-2 bg-bg-elevated border-2 border-accent rounded-full col-start-2 max-md:hidden">
+          <span className="font-display text-2xs text-accent tracking-widest">RESULT: {resultText}</span>
           <button
-            className="result-banner-close"
+            className="bg-transparent border-none text-gray-200 cursor-pointer p-0.5 text-lg leading-none hover:text-accent transition-colors"
             onClick={() => setShowBanner(false)}
             aria-label="Close result banner"
           >
@@ -32,12 +32,12 @@ export default function Header({ resultText, showResult }: HeaderProps) {
         </div>
       )}
 
-      <div className="header-right">
+      <div className="flex items-center justify-end gap-2.5 col-start-3 max-md:col-start-2">
         <a
           href="https://x.com"
           target="_blank"
           rel="noreferrer"
-          className="x-link"
+          className="font-display text-2xs text-gray-100 no-underline border border-border-default rounded px-2 py-1.5 transition-colors hover:text-accent hover:border-accent"
           aria-label="Open X"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -45,34 +45,10 @@ export default function Header({ resultText, showResult }: HeaderProps) {
           </svg>
         </a>
 
-        <div className="wallet-wrapper">
+        <div className="max-w-[180px] max-md:max-w-[140px] max-sm:max-w-[120px] overflow-hidden">
           <WalletMultiButton />
         </div>
       </div>
-
-      <style jsx>{`
-        .header-logo {
-          font-size: 1.2rem;
-          margin-right: auto;
-        }
-
-        .wallet-wrapper {
-          max-width: 180px;
-          overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-          .wallet-wrapper {
-            max-width: 140px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .wallet-wrapper {
-            max-width: 120px;
-          }
-        }
-      `}</style>
     </header>
   );
 }
