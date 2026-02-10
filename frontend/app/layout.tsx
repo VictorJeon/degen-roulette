@@ -1,19 +1,30 @@
 import type { Metadata } from "next";
-import { Press_Start_2P, Space_Grotesk } from "next/font/google";
+import { Silkscreen, Bungee, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { WalletProviderWrapper } from "@/components/WalletProviderWrapper";
 import { BufferPolyfill } from "@/components/BufferPolyfill";
 import { ErrorReporterInit } from "@/components/ErrorReporterInit";
 
-const pressStart2P = Press_Start_2P({
+const silkscreen = Silkscreen({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--nf-pixel",
+});
+
+const bungee = Bungee({
   weight: "400",
   subsets: ["latin"],
-  variable: "--font-pixel",
+  variable: "--nf-heading",
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--nf-body",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--nf-code",
 });
 
 export const metadata: Metadata = {
@@ -36,7 +47,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${pressStart2P.variable} ${spaceGrotesk.variable}`}>
+      <body className={`${silkscreen.variable} ${bungee.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
         <BufferPolyfill />
         <WalletProviderWrapper>
           <ErrorReporterInit />

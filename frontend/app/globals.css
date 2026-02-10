@@ -1,38 +1,69 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors — Background */
+  /* ===== COLORS ===== */
+
+  /* Background */
   --color-bg-primary: #080C08;
   --color-bg-surface: #0E130E;
   --color-bg-elevated: #151A15;
 
-  /* Colors — Accent */
+  /* Accent — CTA, win amounts, key numbers ONLY */
   --color-accent: #00FF41;
   --color-accent-muted: #00CC34;
 
-  /* Colors — Neutrals */
+  /* Neutrals */
   --color-white: #F0F0F0;
   --color-gray-100: #B0B0B0;
   --color-gray-200: #707070;
   --color-gray-300: #404040;
   --color-gray-400: #252525;
 
-  /* Colors — Semantic */
+  /* Semantic */
   --color-border-default: #252525;
+  --color-border-active: #404040;
   --color-danger: #FF3B3B;
 
-  /* Font Sizes */
-  --text-2xs: 0.625rem;
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2rem;
+  /* ===== TYPOGRAPHY ===== */
 
-  /* Fonts */
-  --font-display: 'Press Start 2P', monospace;
+  /* 4-Font System
+     Display (Bungee)     → font-display  → titles, CTA, result amounts
+     Pixel   (Silkscreen) → font-pixel    → round labels, multipliers, status text
+     Body    (Space Grotesk) → font-body  → descriptions, form labels, body text
+     Mono    (JetBrains Mono) → font-mono → wallet addresses, TX hashes */
+  --font-display: 'Bungee', sans-serif;
+  --font-pixel: 'Silkscreen', monospace;
   --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Font sizes — pixel font reads ~1.5x larger, so display uses smaller steps */
+  --text-3xs: 0.5rem;      /* 8px  — pixel badges, micro labels */
+  --text-2xs: 0.625rem;    /* 10px — pixel buttons, secondary */
+  --text-xs: 0.75rem;      /* 12px — pixel normal, body small */
+  --text-sm: 0.875rem;     /* 14px — pixel emphasis, body base */
+  --text-base: 1rem;       /* 16px — body normal */
+  --text-lg: 1.25rem;      /* 20px — section titles */
+  --text-xl: 1.5rem;       /* 24px — bet amounts */
+  --text-2xl: 2rem;        /* 32px — result amounts */
+  --text-3xl: 2.5rem;      /* 40px — hero (desktop) */
+
+  /* ===== SPACING (4px base grid) ===== */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+
+  /* ===== RADIUS ===== */
+  /* Pixel aesthetic = sharp. Use sparingly. */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
 }
 
 /* ========== RESET ========== */
@@ -131,8 +162,8 @@ input[type="number"] {
   background: var(--color-bg-surface) !important;
   border: 1px solid var(--color-border-default) !important;
   color: var(--color-accent) !important;
-  font-family: var(--font-display) !important;
-  font-size: 0.625rem !important;
+  font-family: var(--font-pixel) !important;
+  font-size: 0.75rem !important;
   height: 36px !important;
   max-height: 36px !important;
   padding: 0 0.75rem !important;
