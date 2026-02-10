@@ -26,10 +26,10 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
-        <h3 className="m-0 font-display text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
+        <h3 className="m-0 font-pixel text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
           HOW TO PLAY
         </h3>
-        <ol className="m-0 pl-4 text-white leading-[1.85] text-sm font-sans max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
+        <ol className="m-0 pl-4 text-white leading-[1.85] text-sm max-md:text-xs font-body">
           <li className="mb-1.5">Enter BET amount and click START</li>
           <li className="mb-1.5">Select a chamber to load the bullet</li>
           <li className="mb-1.5">Cylinder spins → bullet position hidden</li>
@@ -38,7 +38,7 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
           <li className="mb-1.5">CASH OUT anytime to collect winnings</li>
         </ol>
         <button
-          className="font-display text-2xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
+          className="font-pixel text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
@@ -63,25 +63,25 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
   return (
     <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
-        <h3 className="m-0 font-display text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
+        <h3 className="m-0 font-pixel text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
           PROVABLY FAIR
         </h3>
-        <p className="m-0 text-white leading-relaxed text-sm font-sans max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
+        <p className="m-0 text-white leading-relaxed text-sm max-md:text-xs font-body">
           At game start, a seed hash is committed on-chain. After settlement, the server seed is revealed for verification.
         </p>
-        {gameId && <p className="m-0 font-mono text-xs text-gray-100">Game ID: {gameId}</p>}
+        {gameId && <p className="m-0 font-mono text-sm max-md:text-xs text-gray-100">Game ID: {gameId}</p>}
         {serverSeed ? (
           <>
-            <p className="m-0 font-mono text-xs text-gray-100">Server Seed (revealed):</p>
-            <p className="m-0 font-mono text-xs text-accent bg-accent/5 border border-border-default rounded p-2 break-all">
+            <p className="m-0 font-mono text-sm max-md:text-xs text-gray-100">Server Seed (revealed):</p>
+            <p className="m-0 font-mono text-sm max-md:text-xs text-accent bg-accent/5 border border-border-default rounded p-2 break-all">
               {serverSeed}
             </p>
           </>
         ) : (
-          <p className="m-0 font-mono text-xs text-gray-100">Seed will be revealed after settlement.</p>
+          <p className="m-0 font-mono text-sm max-md:text-xs text-gray-100">Seed will be revealed after settlement.</p>
         )}
         <button
-          className="font-display text-2xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
+          className="font-pixel text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
@@ -301,13 +301,13 @@ export default function GameBoard() {
         )}
 
         {/* Tagline */}
-        <p className="font-display text-2xs text-gray-100 text-center tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">
+        <p className="font-body text-sm max-md:text-xs text-gray-100 text-center tracking-wide">
           1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?
         </p>
 
         {error && <p className="text-danger font-body text-sm text-center">{error}</p>}
         {actionHint && (
-          <p className="text-accent font-display text-sm font-bold min-h-[1.5em] text-center tracking-[2px] max-md:text-xs max-sm:text-2xs">
+          <p className="text-accent font-pixel text-sm max-md:text-xs font-bold min-h-[1.5em] text-center tracking-[2px]">
             {actionHint}
           </p>
         )}
@@ -318,18 +318,18 @@ export default function GameBoard() {
             {MULTIPLIERS.map((m, idx) => (
               <div
                 key={idx}
-                className={`border rounded flex flex-col items-center gap-1 p-3 font-display text-xs transition-all max-md:p-2.5 max-md:text-[0.55rem] max-sm:p-1 max-sm:text-[0.5rem] ${
+                className={`border rounded flex flex-col items-center gap-1 p-3 transition-all max-md:p-2.5 max-sm:p-1 ${
                   isActive && gameState.roundsSurvived === idx
                     ? 'border-accent border-2 bg-accent/10 scale-y-[1.15] scale-x-[1.04] z-[2] max-md:scale-y-[1.08] max-md:scale-x-[1.02]'
                     : 'border-border-default bg-bg-surface'
                 }`}
               >
-                <span className={`text-[0.6rem] tracking-wide max-md:text-[0.55rem] max-sm:text-[0.42rem] ${
+                <span className={`font-pixel text-sm max-md:text-xs tracking-wide ${
                   isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-white'
                 }`}>
                   R{idx + 1}
                 </span>
-                <span className={`text-xs font-bold max-md:text-[0.7rem] max-sm:text-[0.52rem] ${
+                <span className={`font-pixel text-sm max-md:text-xs font-bold ${
                   isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-accent'
                 }`}>
                   {m.toFixed(2)}x
@@ -341,10 +341,10 @@ export default function GameBoard() {
             {ROUND_ODDS.map((odds, idx) => (
               <div
                 key={idx}
-                className={`font-display text-center py-1 transition-all max-md:text-[0.42rem] max-sm:text-[0.42rem] ${
+                className={`font-body text-center py-1 transition-all text-sm max-md:text-xs ${
                   isActive && gameState.roundsSurvived === idx
-                    ? 'text-accent text-[0.52rem]'
-                    : 'text-gray-100 text-[0.48rem]'
+                    ? 'text-accent'
+                    : 'text-gray-100'
                 }`}
               >
                 {odds}
@@ -466,7 +466,7 @@ export default function GameBoard() {
         {/* Active Game Controls */}
         {isActive && (
           <>
-            <p className="font-display text-2xs text-gray-200 text-center tracking-wide max-md:text-xs max-md:p-2 max-sm:text-2xs max-[360px]:text-[0.5rem]">
+            <p className="font-pixel text-sm max-md:text-xs text-gray-200 text-center tracking-wide max-md:p-2">
               {getInstruction()}
             </p>
             <div className="flex flex-col gap-2 items-center">
@@ -487,7 +487,7 @@ export default function GameBoard() {
               </button>
               {gameState.roundsSurvived >= 1 && cylinderPhase === 'ready' && (
                 <button onClick={handleCashOut} disabled={isLoading || isReloading}
-                  className="font-display text-2xs px-4 py-2.5 bg-transparent border border-accent rounded text-accent cursor-pointer transition-all uppercase max-md:w-full max-md:min-h-[44px] max-md:text-2xs max-md:px-4 max-md:py-3 hover:bg-accent/5"
+                  className="font-display text-sm max-md:text-xs px-4 py-2.5 bg-transparent border border-accent rounded text-accent cursor-pointer transition-all uppercase max-md:w-full max-md:min-h-[44px] max-md:px-4 max-md:py-3 hover:bg-accent/5"
                   data-testid="cashout-button">
                   CASH OUT
                 </button>
@@ -499,7 +499,7 @@ export default function GameBoard() {
         {/* Sub Actions */}
         <div className="flex gap-2 mt-3 justify-center max-md:gap-1.5 max-md:mt-2.5 max-md:flex-wrap">
           <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-display text-[0.625rem] px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:text-[0.5rem] max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:text-[0.5rem] max-sm:px-2 max-sm:py-1 max-[360px]:text-[0.45rem]"
+            className="bg-bg-surface border border-border-default text-gray-100 font-pixel text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
             onClick={() => setShowHowTo(true)}
           >
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
@@ -508,7 +508,7 @@ export default function GameBoard() {
             How to Play
           </button>
           <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-display text-[0.625rem] px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:text-[0.5rem] max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:text-[0.5rem] max-sm:px-2 max-sm:py-1 max-[360px]:text-[0.45rem]"
+            className="bg-bg-surface border border-border-default text-gray-100 font-pixel text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
             onClick={() => setShowFair(true)}
             data-testid="provably-fair-button"
           >
@@ -523,7 +523,7 @@ export default function GameBoard() {
         {isSettling && (
           <div className="flex flex-col items-center gap-3 mt-3">
             <div className="w-9 h-9 border-2 border-gray-300 border-t-accent rounded-full animate-spin" />
-            <p className="font-display text-accent text-2xs tracking-wide">SETTLING...</p>
+            <p className="font-pixel text-accent text-sm max-md:text-xs tracking-wide">SETTLING...</p>
           </div>
         )}
       </div>

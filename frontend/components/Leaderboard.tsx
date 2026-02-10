@@ -17,14 +17,14 @@ export default function Leaderboard() {
     <>
       {/* Hall of Degens */}
       <div className="bg-bg-surface border border-border-default rounded-xl p-4">
-        <h3 className="font-display text-2xs uppercase text-accent mb-3 pb-2 border-b border-border-default tracking-wide">
+        <h3 className="font-pixel text-sm max-md:text-xs uppercase text-accent mb-3 pb-2 border-b border-border-default tracking-wide">
           HALL OF DEGENS
         </h3>
 
         {isLoading ? (
-          <div className="text-center py-5 px-2 text-gray-200 font-display text-2xs leading-relaxed">Loading...</div>
+          <div className="text-center py-5 px-2 text-gray-200 font-body text-sm max-md:text-xs leading-relaxed">Loading...</div>
         ) : topDegens.length === 0 ? (
-          <div className="text-center py-5 px-2 text-gray-200 font-display text-2xs leading-relaxed">No degens yet.</div>
+          <div className="text-center py-5 px-2 text-gray-200 font-body text-sm max-md:text-xs leading-relaxed">No degens yet.</div>
         ) : (
           <ul className="list-none">
             {topDegens.map((entry) => (
@@ -34,9 +34,9 @@ export default function Leaderboard() {
                   entry.isCurrentUser ? 'bg-accent/5 border-l-2 border-l-accent pl-2 -ml-1' : ''
                 }`}
               >
-                <span className="font-display text-[0.625rem] text-gray-100 tracking-wide">{shortAddress(entry.fullAddress)}</span>
+                <span className="font-mono text-sm max-md:text-xs text-gray-100 tracking-wide">{shortAddress(entry.fullAddress)}</span>
                 <span
-                  className={`font-display text-[0.625rem] ${
+                  className={`font-body text-sm max-md:text-xs ${
                     entry.totalProfit > 0 ? 'text-accent' : entry.totalProfit < 0 ? 'text-danger' : 'text-gray-200'
                   }`}
                 >
@@ -52,8 +52,8 @@ export default function Leaderboard() {
       {/* Secondary Rank Section */}
       {rankList.length > 0 && (
         <div className="bg-bg-surface border border-border-default rounded-xl p-4 border-t-2 border-t-border-default">
-          <h3 className="font-display text-2xs uppercase text-accent mb-3 pb-2 border-b border-border-default tracking-wide flex items-center gap-1.5">
-            <span className="text-xs">◇</span>
+          <h3 className="font-pixel text-sm max-md:text-xs uppercase text-accent mb-3 pb-2 border-b border-border-default tracking-wide flex items-center gap-1.5">
+            <span className="text-sm max-md:text-xs">◇</span>
             RANK
           </h3>
           <ul className="list-none">
@@ -64,9 +64,9 @@ export default function Leaderboard() {
                   entry.isCurrentUser ? 'bg-accent/5 border-l-2 border-l-accent pl-2 -ml-1' : ''
                 }`}
               >
-                <span className="font-display text-[0.625rem] text-gray-100 tracking-wide">{shortAddress(entry.fullAddress)}</span>
+                <span className="font-mono text-sm max-md:text-xs text-gray-100 tracking-wide">{shortAddress(entry.fullAddress)}</span>
                 <span
-                  className={`font-display text-[0.625rem] ${
+                  className={`font-body text-sm max-md:text-xs ${
                     entry.totalProfit > 0 ? 'text-accent' : entry.totalProfit < 0 ? 'text-danger' : 'text-gray-200'
                   }`}
                 >
