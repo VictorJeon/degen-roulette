@@ -63,7 +63,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
     <div className={`flex flex-col items-center w-full max-w-[460px] mx-auto gap-3 max-md:px-4 ${shakeBetting ? 'animate-shake' : ''}`}>
       {/* Error / instruction */}
       {instruction && (
-        <p className="font-body text-sm text-danger text-center tracking-wide max-md:text-xs">
+        <p className="font-pixel text-sm text-danger text-center tracking-wide max-md:text-xs" role="alert">
           {instruction}
         </p>
       )}
@@ -74,6 +74,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
           className="flex items-center justify-center w-10 border-r border-border-active font-body text-lg text-gray-100 transition-colors hover:text-accent hover:bg-bg-elevated max-md:w-11"
           onClick={() => setBetAmount(prev => Math.max(MIN_BET, +(prev - 0.001).toFixed(3)))}
           disabled={isLoading}
+          aria-label="Decrease bet amount"
         >−</button>
         <div className="flex-1 min-w-0 relative flex items-center justify-center">
           <input
@@ -91,7 +92,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
             className="w-full h-full bg-transparent px-4 pr-14 font-body text-lg text-white text-center outline-none max-md:text-base"
             data-testid="bet-amount-input"
           />
-          <span className="absolute right-4 font-body text-xs text-gray-300 pointer-events-none">
+          <span className="absolute right-4 font-pixel text-xs text-gray-300 pointer-events-none">
             SOL
           </span>
         </div>
@@ -99,6 +100,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
           className="flex items-center justify-center w-10 border-l border-border-active font-body text-lg text-gray-100 transition-colors hover:text-accent hover:bg-bg-elevated max-md:w-11"
           onClick={() => setBetAmount(prev => +(prev + 0.001).toFixed(3))}
           disabled={isLoading}
+          aria-label="Increase bet amount"
         >+</button>
       </div>
 
@@ -109,6 +111,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
             key={amount}
             onClick={() => { setBetAmount(amount); setSelectedBet(amount); }}
             disabled={isLoading}
+            aria-label={`Set bet to ${amount} SOL`}
             className={`flex-1 h-9 font-body text-base tracking-wide transition-all max-md:h-10 max-md:text-sm ${
               selectedBet === amount
                 ? 'bg-accent text-bg-primary font-bold border border-accent'
@@ -124,6 +127,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
       <button
         onClick={handleStartGame}
         disabled={isLoading}
+        aria-label={isLoading ? 'Signing transaction' : connected ? `Bet ${betAmount} SOL and start game` : 'Connect wallet to start'}
         className="w-full h-12 bg-accent font-display font-bold text-xl text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,65,0.25)] active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none max-md:h-14 max-md:text-lg"
         data-testid="start-game-button"
       >

@@ -13,7 +13,7 @@ export default function Header({ resultText, showResult }: HeaderProps) {
   const [showBanner, setShowBanner] = useState(true);
 
   return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center h-14 px-5 bg-bg-surface border-b border-border-default relative z-100 max-md:grid-cols-[1fr_auto] max-md:px-2 max-md:h-12">
+    <header className="grid grid-cols-[1fr_auto_1fr] items-center h-14 px-5 bg-bg-surface border-b border-border-default relative z-100 max-md:grid-cols-[1fr_auto] max-md:px-2 max-md:h-12" aria-label="Game header">
       <span className="text-xl mr-auto">🎯</span>
       <div className="bg-bg-elevated border border-border-default rounded whitespace-nowrap px-2 py-1.5 max-md:hidden">
         <span className="font-display text-sm max-md:text-xs text-gray-100">TOTAL PLAYS:</span> <span className="font-body text-sm max-md:text-xs text-accent ml-1">{totalPlays.toLocaleString()}</span>
@@ -21,7 +21,7 @@ export default function Header({ resultText, showResult }: HeaderProps) {
 
       {showResult && resultText && showBanner && (
         <div className="flex items-center justify-center gap-3 px-6 py-2 bg-bg-elevated border-2 border-accent rounded-full col-start-2 max-md:hidden">
-          <span className="font-body text-sm max-md:text-xs text-accent tracking-widest">RESULT: {resultText}</span>
+          <span className="font-pixel text-sm max-md:text-xs text-accent tracking-widest">RESULT: {resultText}</span>
           <button
             className="bg-transparent border-none text-gray-200 cursor-pointer p-0.5 text-lg leading-none hover:text-accent transition-colors"
             onClick={() => setShowBanner(false)}
@@ -37,7 +37,7 @@ export default function Header({ resultText, showResult }: HeaderProps) {
           href="https://x.com"
           target="_blank"
           rel="noreferrer"
-          className="font-body text-sm max-md:text-xs text-gray-100 no-underline border border-border-default rounded px-2 py-1.5 transition-colors hover:text-accent hover:border-accent"
+          className="font-pixel text-sm max-md:text-xs text-gray-100 no-underline border border-border-default rounded px-2 py-1.5 transition-colors hover:text-accent hover:border-accent"
           aria-label="Open X"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">

@@ -13,22 +13,22 @@ export function StatsBar({ betAmount, currentMultiplier, potentialWin, roundsSur
   const deathOdds = (((roundsSurvived + 1) / CHAMBERS) * 100).toFixed(0);
 
   return (
-    <div className="grid grid-cols-4 max-[500px]:grid-cols-2 gap-1.5 w-full mb-2.5">
-      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center">
+    <div className="grid grid-cols-4 max-[500px]:grid-cols-2 gap-1.5 w-full mb-2.5" role="region" aria-label="Game statistics">
+      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center" aria-label={`Bet: ${betAmount.toFixed(3)} SOL`}>
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">BET</span>
         <span className="font-body text-sm max-md:text-xs text-white">{betAmount.toFixed(3)}</span>
-        <span className="font-body text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
+        <span className="font-pixel text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
       </div>
-      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center">
+      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center" aria-label={`Multiplier: ${currentMultiplier.toFixed(2)}x`}>
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">MULTIPLIER</span>
         <span className="font-body text-sm max-md:text-xs text-accent">{currentMultiplier.toFixed(2)}x</span>
       </div>
-      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center">
+      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center" aria-label={`Potential win: ${potentialWin.toFixed(3)} SOL`}>
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">POTENTIAL WIN</span>
         <span className="font-body text-sm max-md:text-xs text-accent">{potentialWin.toFixed(3)}</span>
-        <span className="font-body text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
+        <span className="font-pixel text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
       </div>
-      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-danger/30 rounded-lg p-2 text-center">
+      <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-danger/30 rounded-lg p-2 text-center" aria-label={`Death probability: ${deathOdds}%`}>
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">DEATH %</span>
         <span className="font-body text-sm max-md:text-xs text-danger">{deathOdds}%</span>
       </div>

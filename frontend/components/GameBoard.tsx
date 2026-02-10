@@ -22,7 +22,7 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose} role="dialog" aria-modal="true" aria-label="How to play">
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
         <h3 className="m-0 font-display text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
           HOW TO PLAY
@@ -36,7 +36,7 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
           <li className="mb-1.5">CASH OUT anytime to collect winnings</li>
         </ol>
         <button
-          className="font-body text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
+          className="font-pixel text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
@@ -59,7 +59,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose} role="dialog" aria-modal="true" aria-label="Provably fair verification">
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
         <h3 className="m-0 font-display text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
           PROVABLY FAIR
@@ -79,7 +79,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
           <p className="m-0 font-mono text-sm max-md:text-xs text-gray-100">Seed will be revealed after settlement.</p>
         )}
         <button
-          className="font-body text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
+          className="font-pixel text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
@@ -284,7 +284,7 @@ export default function GameBoard() {
         />
       )}
 
-      <div className="flex flex-col items-center gap-5 pt-4 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-6 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:px-5 max-md:py-3 max-md:max-w-[360px] max-md:gap-4 max-md:pt-2 max-sm:max-w-[340px] max-sm:px-4">
+      <div className="flex flex-col items-center gap-3 pt-3 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-5 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-2 max-md:pt-2">
         {/* Result Title or Game Title */}
         {isGameOver ? (
           <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
@@ -303,19 +303,20 @@ export default function GameBoard() {
           1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?
         </p>
 
-        {error && <p className="text-danger font-body text-sm text-center">{error}</p>}
+        {error && <p className="text-danger font-body text-sm text-center" role="alert">{error}</p>}
         {actionHint && (
-          <p className="text-accent font-body text-sm max-md:text-xs font-bold min-h-[1.5em] text-center tracking-[2px]">
+          <p className="text-accent font-body text-sm max-md:text-xs font-bold min-h-[1.5em] text-center tracking-[2px]" aria-live="polite">
             {actionHint}
           </p>
         )}
 
         {/* Multiplier Table */}
-        <div className="w-full flex flex-col gap-1 mb-2 max-w-[600px] mx-auto max-md:mb-1">
+        <div className="w-full flex flex-col gap-1 mb-4 max-w-[600px] mx-auto max-md:mb-3" role="group" aria-label="Round multipliers">
           <div className="grid grid-cols-5 gap-1.5 w-full max-md:gap-1.5">
             {MULTIPLIERS.map((m, idx) => (
               <div
                 key={idx}
+                aria-label={`Round ${idx + 1}: ${m.toFixed(2)}x`}
                 className={`border rounded flex flex-col items-center gap-1 p-3 transition-all max-md:p-2.5 max-sm:p-1 ${
                   isActive && gameState.roundsSurvived === idx
                     ? 'border-accent border-2 bg-accent/10 scale-y-[1.15] scale-x-[1.04] z-[2] max-md:scale-y-[1.08] max-md:scale-x-[1.02]'
@@ -348,7 +349,7 @@ export default function GameBoard() {
         )}
 
         {/* Revolver Cylinder */}
-        <div className="relative w-[280px] h-[280px] mx-auto mt-4 mb-4 max-md:w-[min(260px,65vw)] max-md:h-[min(260px,65vw)] max-md:mt-2 max-md:mb-2 max-sm:w-[min(230px,60vw)] max-sm:h-[min(230px,60vw)] max-[360px]:w-[min(200px,55vw)] max-[360px]:h-[min(200px,55vw)]">
+        <div className="relative w-[300px] h-[300px] mx-auto mt-2 mb-2.5 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
           {/* Barrel indicator */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-9 h-8 pointer-events-none max-md:w-8 max-md:h-7 max-sm:w-7 max-sm:h-6">
             <svg viewBox="0 0 40 36" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.15))' }}>
@@ -378,7 +379,7 @@ export default function GameBoard() {
           }}>
             <img
               src="/cylinder-512.png"
-              alt="Revolver cylinder"
+              alt="Revolver cylinder - click chamber to spin"
               className={`w-full h-full object-contain select-none transition-all duration-700 ease-out ${
                 cylinderPhase === 'spinning'
                   ? 'blur-[8px] brightness-[1.3]'
@@ -463,6 +464,7 @@ export default function GameBoard() {
               <button
                 onClick={handlePullTrigger}
                 disabled={!triggerReady}
+                aria-label="Pull trigger - risk current round"
                 className={`font-display text-sm px-9 py-4 border-2 rounded cursor-pointer transition-all uppercase tracking-[0.12em] max-md:w-full max-md:min-h-[48px] max-md:text-xs max-md:px-6 max-md:py-3.5 max-md:tracking-[0.08em] max-sm:text-xs max-sm:px-5 max-sm:py-3 ${
                   gameState.roundsSurvived >= 3
                     ? 'border-danger text-danger bg-bg-surface animate-pulse'
@@ -477,6 +479,7 @@ export default function GameBoard() {
               </button>
               {gameState.roundsSurvived >= 1 && cylinderPhase === 'ready' && (
                 <button onClick={handleCashOut} disabled={isLoading || isReloading}
+                  aria-label={`Cash out ${gameState.potentialWin.toFixed(3)} SOL`}
                   className="font-display text-sm max-md:text-xs px-4 py-2.5 bg-transparent border border-accent rounded text-accent cursor-pointer transition-all uppercase max-md:w-full max-md:min-h-[44px] max-md:px-4 max-md:py-3 hover:bg-accent/5"
                   data-testid="cashout-button">
                   CASH OUT
@@ -495,24 +498,30 @@ export default function GameBoard() {
           </div>
         )}
 
-      </div>
-
-      {/* Footer Links — outside game card */}
-      <div className="flex gap-3 mt-4 justify-center max-md:gap-2 max-md:mt-3">
-        <button
-          className="text-gray-200 font-body text-sm max-md:text-xs px-2 py-1 cursor-pointer transition-colors hover:text-accent"
-          onClick={() => setShowHowTo(true)}
-        >
-          How to Play
-        </button>
-        <span className="text-gray-300">·</span>
-        <button
-          className="text-gray-200 font-body text-sm max-md:text-xs px-2 py-1 cursor-pointer transition-colors hover:text-accent"
-          onClick={() => setShowFair(true)}
-          data-testid="provably-fair-button"
-        >
-          Provably Fair
-        </button>
+        {/* Footer Links */}
+        <div className="flex gap-2 mt-5 justify-center max-md:gap-1.5 max-md:mt-3 max-md:flex-wrap">
+          <button
+            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
+            onClick={() => setShowHowTo(true)}
+            aria-label="How to play"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+            </svg>
+            How to Play
+          </button>
+          <button
+            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
+            onClick={() => setShowFair(true)}
+            aria-label="Provably fair verification"
+            data-testid="provably-fair-button"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+            Provably Fair
+          </button>
+        </div>
       </div>
 
       {/* Result Overlay */}
