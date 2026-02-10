@@ -37,7 +37,7 @@ export default function Header({ resultText, showResult }: HeaderProps) {
           href="https://x.com"
           target="_blank"
           rel="noreferrer"
-          className="font-pixel text-sm max-md:text-xs text-gray-100 no-underline border border-border-default rounded px-2 py-1.5 transition-colors hover:text-accent hover:border-accent"
+          className="flex items-center justify-center w-9 h-9 text-gray-100 no-underline border border-border-active rounded transition-colors hover:text-accent hover:border-accent"
           aria-label="Open X"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">

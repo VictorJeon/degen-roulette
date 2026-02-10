@@ -284,7 +284,7 @@ export default function GameBoard() {
         />
       )}
 
-      <div className="flex flex-col items-center gap-[26px] pt-0 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-5 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-3 max-md:pt-2">
+      <div className="flex flex-col items-center gap-[26px] w-full max-w-[680px] bg-bg-surface border border-border-default py-1 px-0 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-3 max-md:pt-2">
         {/* Result Title or Game Title */}
         {isGameOver ? (
           <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
@@ -499,9 +499,9 @@ export default function GameBoard() {
         )}
 
         {/* Footer Links */}
-        <div className="flex gap-2 mt-5 justify-center max-md:gap-1.5 max-md:mt-3 max-md:flex-wrap">
+        <div className="flex gap-6 mt-0 justify-center max-md:gap-3 max-md:mt-0 max-md:flex-wrap">
           <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
+            className="bg-bg-surface text-gray-100 font-body text-sm max-md:text-xs px-0 py-0 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:text-accent max-md:min-h-[36px]"
             onClick={() => setShowHowTo(true)}
             aria-label="How to play"
           >
@@ -511,7 +511,7 @@ export default function GameBoard() {
             How to Play
           </button>
           <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
+            className="bg-bg-surface text-gray-100 font-body text-sm max-md:text-xs px-0 py-0 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:text-accent max-md:min-h-[36px]"
             onClick={() => setShowFair(true)}
             aria-label="Provably fair verification"
             data-testid="provably-fair-button"
