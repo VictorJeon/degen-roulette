@@ -16,8 +16,8 @@ export default function Leaderboard() {
   return (
     <>
       {/* Hall of Degens */}
-      <div className="bg-bg-surface border border-border-default p-0" role="region" aria-label="Leaderboard">
-        <h3 className="font-display text-sm max-md:text-xs uppercase text-accent mb-0 py-1 border-b border-border-default tracking-wide text-center" aria-label="Top players">
+      <div className="bg-bg-surface border border-border-default p-2" role="region" aria-label="Leaderboard">
+        <h3 className="font-display text-sm max-md:text-xs uppercase text-accent mb-0 py-2 border-b border-border-default tracking-wide text-center" aria-label="Top players">
           HALL OF DEGENS
         </h3>
 
@@ -31,7 +31,7 @@ export default function Leaderboard() {
               <li
                 key={entry.fullAddress}
                 aria-label={`Player ${shortAddress(entry.fullAddress)}: ${entry.totalProfit > 0 ? '+' : ''}${entry.totalProfit.toFixed(3)} SOL`}
-                className={`flex justify-between items-center p-[5px] border-b border-border-default last:border-b-0 hover:bg-white/[0.02] transition-colors ${
+                className={`flex justify-between items-center py-3 px-2 border-b border-border-default last:border-b-0 hover:bg-white/[0.02] transition-colors ${
                   entry.isCurrentUser ? 'bg-accent/5 border-l-2 border-l-accent pl-2 -ml-1' : ''
                 }`}
               >
@@ -52,8 +52,8 @@ export default function Leaderboard() {
 
       {/* Secondary Rank Section */}
       {rankList.length > 0 && (
-        <div className="bg-bg-surface border border-border-default p-0 border-t-2 border-t-border-default" aria-label="Player rankings">
-          <h3 className="font-display text-sm max-md:text-xs uppercase text-accent mb-0 py-1 border-b border-border-default tracking-wide flex items-center gap-1.5 justify-center">
+        <div className="bg-bg-surface border border-border-default p-2 border-t-2 border-t-border-default" aria-label="Player rankings">
+          <h3 className="font-display text-sm max-md:text-xs uppercase text-accent mb-0 py-2 border-b border-border-default tracking-wide flex items-center gap-1.5 justify-center">
             <span className="text-sm max-md:text-xs">◇</span>
             RANK
           </h3>
@@ -62,7 +62,7 @@ export default function Leaderboard() {
               <li
                 key={entry.fullAddress}
                 aria-label={`Player ${shortAddress(entry.fullAddress)}: ${entry.totalProfit > 0 ? '+' : ''}${entry.totalProfit.toFixed(3)} SOL`}
-                className={`flex justify-between items-center p-[5px] border-b border-border-default last:border-b-0 hover:bg-white/[0.02] transition-colors ${
+                className={`flex justify-between items-center py-3 px-2 border-b border-border-default last:border-b-0 hover:bg-white/[0.02] transition-colors ${
                   entry.isCurrentUser ? 'bg-accent/5 border-l-2 border-l-accent pl-2 -ml-1' : ''
                 }`}
               >

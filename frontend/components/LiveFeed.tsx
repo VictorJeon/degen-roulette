@@ -6,8 +6,8 @@ export function LiveFeed() {
   const { feed } = useLiveFeed();
 
   return (
-    <div className="bg-bg-surface border border-border-default p-0 flex flex-col h-full max-h-[680px]" role="log" aria-label="Live game feed" aria-live="polite">
-      <div className="flex justify-between items-center mb-0 py-1 border-b border-border-default">
+    <div className="bg-bg-surface border border-border-default p-2 flex flex-col h-full max-h-[680px]" role="log" aria-label="Live game feed" aria-live="polite">
+      <div className="flex justify-center items-center mb-0 py-2 border-b border-border-default">
         <h3 className="font-display text-sm max-md:text-xs text-accent tracking-wide">RECENT GAMES</h3>
       </div>
 

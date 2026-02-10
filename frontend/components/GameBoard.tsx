@@ -285,23 +285,26 @@ export default function GameBoard() {
       )}
 
       <div className="flex flex-col items-center gap-[26px] w-full max-w-[680px] bg-bg-surface border border-border-default py-1 px-0 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-3 max-md:pt-2">
-        {/* Result Title or Game Title */}
-        {isGameOver ? (
-          <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
-            gameState.status === 'won' ? 'text-accent' : 'text-danger'
-          }`}>
-            {getResultText()}
-          </h1>
-        ) : (
-          <h1 className="font-pixel text-[2.8rem] text-center text-accent tracking-[0.15em] mb-0 max-md:text-xl max-md:tracking-[0.08em] max-sm:text-lg">
-            DEGEN ROULETTE
-          </h1>
-        )}
+        {/* Title + Tagline wrapper (Figma: Frame 1, 448×88, gap 0) */}
+        <div className="flex flex-col items-center gap-0">
+          {/* Result Title or Game Title */}
+          {isGameOver ? (
+            <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
+              gameState.status === 'won' ? 'text-accent' : 'text-danger'
+            }`}>
+              {getResultText()}
+            </h1>
+          ) : (
+            <h1 className="font-pixel text-[2.8rem] text-center text-accent tracking-[0.15em] max-md:text-xl max-md:tracking-[0.08em] max-sm:text-lg">
+              DEGEN ROULETTE
+            </h1>
+          )}
 
-        {/* Tagline */}
-        <p className="font-body text-sm max-md:text-xs text-gray-100 text-center tracking-wide">
-          1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?
-        </p>
+          {/* Tagline */}
+          <p className="font-body text-sm max-md:text-xs text-gray-100 text-center tracking-wide">
+            1 BULLET. 6 CHAMBERS. HOW DEGEN ARE YOU?
+          </p>
+        </div>
 
         {error && <p className="text-danger font-body text-sm text-center" role="alert">{error}</p>}
         {actionHint && (
@@ -328,8 +331,8 @@ export default function GameBoard() {
                 }`}>
                   Round {idx + 1}
                 </span>
-                <span className={`font-body text-sm max-md:text-xs font-bold ${
-                  isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-accent'
+                <span className={`font-body text-base max-md:text-xs font-bold ${
+                  isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-[#FFFDF8]'
                 }`}>
                   {m.toFixed(2)}x
                 </span>
