@@ -6,7 +6,7 @@ export function LiveFeed() {
   const { feed } = useLiveFeed();
 
   return (
-    <div className="bg-bg-surface border border-border-default rounded-xl p-4 flex flex-col h-full max-h-[680px]">
+    <div className="bg-bg-surface border border-border-default rounded-xl p-4 flex flex-col h-full max-h-[400px] lg:max-h-[680px]">
       <div className="flex justify-between items-center mb-3 pb-2 border-b border-border-default">
         <h3 className="font-display text-sm max-md:text-xs text-accent tracking-wide">LIVE FEED</h3>
         <span className="font-display text-sm max-md:text-xs text-gray-200">GLOBAL</span>

@@ -8,19 +8,19 @@ export default function Home() {
     <div className="min-h-screen relative">
       <Header />
 
-      <main className="grid grid-cols-[240px_minmax(0,1fr)_260px] gap-6 px-6 py-4 max-w-[1700px] mx-auto min-h-[calc(100vh-56px)] relative z-[1] max-lg:grid-cols-1 max-lg:px-4 max-lg:gap-4">
-        {/* Left Sidebar */}
-        <aside className="flex flex-col gap-3 min-w-0 max-lg:hidden">
+      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[200px_1fr_220px] xl:grid-cols-[240px_1fr_260px] gap-4 lg:gap-6 px-4 lg:px-6 py-4 max-w-[1700px] mx-auto min-h-[calc(100vh-56px)] relative z-[1]">
+        {/* Left Sidebar — hidden mobile, below game on tablet, left col on desktop */}
+        <aside className="hidden md:flex flex-col gap-3 min-w-0 order-2 lg:order-1">
           <Leaderboard />
         </aside>
 
-        {/* Game Area */}
-        <section className="flex flex-col items-center justify-start min-h-[calc(100vh-76px)] min-w-0">
+        {/* Game Area — always first visually */}
+        <section className="flex flex-col items-center justify-start min-w-0 order-1 lg:order-2 md:col-span-2 lg:col-span-1">
           <GameBoard />
         </section>
 
-        {/* Right Sidebar */}
-        <aside className="flex flex-col gap-3 min-w-0 max-lg:hidden">
+        {/* Right Sidebar — hidden mobile, below game on tablet, right col on desktop */}
+        <aside className="hidden md:flex flex-col gap-3 min-w-0 order-3">
           <LiveFeed />
         </aside>
       </main>
