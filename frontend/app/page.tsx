@@ -8,9 +8,9 @@ export default function Home() {
     <div className="min-h-screen relative">
       <Header />
 
-      <main className="grid grid-cols-[220px_1fr_300px] gap-4 p-4 max-w-[1560px] mx-auto min-h-[calc(100vh-56px)] relative z-[1] max-lg:grid-cols-1 max-lg:p-4">
+      <main className="grid grid-cols-[240px_minmax(0,1fr)_260px] gap-6 px-6 py-4 max-w-[1700px] mx-auto min-h-[calc(100vh-56px)] relative z-[1] max-lg:grid-cols-1 max-lg:px-4 max-lg:gap-4">
         {/* Left Sidebar */}
-        <aside className="flex flex-col gap-3 min-w-0 overflow-hidden max-lg:hidden">
+        <aside className="flex flex-col gap-3 min-w-0 max-lg:hidden">
           <Leaderboard />
         </aside>
 
@@ -20,7 +20,7 @@ export default function Home() {
         </section>
 
         {/* Right Sidebar */}
-        <aside className="flex flex-col gap-3 min-w-0 overflow-hidden max-lg:hidden">
+        <aside className="flex flex-col gap-3 min-w-0 max-lg:hidden">
           <LiveFeed />
         </aside>
       </main>

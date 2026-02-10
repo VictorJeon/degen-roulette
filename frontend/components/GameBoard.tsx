@@ -284,7 +284,7 @@ export default function GameBoard() {
         />
       )}
 
-      <div className="flex flex-col items-center gap-3 pt-3 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-5 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-2 max-md:pt-2">
+      <div className="flex flex-col items-center gap-4 pt-4 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-6 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-3 max-md:pt-2">
         {/* Result Title or Game Title */}
         {isGameOver ? (
           <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
@@ -495,28 +495,24 @@ export default function GameBoard() {
           </div>
         )}
 
-        {/* Footer Links */}
-        <div className="flex gap-2 mt-5 justify-center max-md:gap-1.5 max-md:mt-3 max-md:flex-wrap">
-          <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
-            onClick={() => setShowHowTo(true)}
-          >
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-            </svg>
-            How to Play
-          </button>
-          <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
-            onClick={() => setShowFair(true)}
-            data-testid="provably-fair-button"
-          >
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
-              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-            </svg>
-            Provably Fair
-          </button>
-        </div>
+      </div>
+
+      {/* Footer Links — outside game card */}
+      <div className="flex gap-3 mt-4 justify-center max-md:gap-2 max-md:mt-3">
+        <button
+          className="text-gray-200 font-body text-sm max-md:text-xs px-2 py-1 cursor-pointer transition-colors hover:text-accent"
+          onClick={() => setShowHowTo(true)}
+        >
+          How to Play
+        </button>
+        <span className="text-gray-300">·</span>
+        <button
+          className="text-gray-200 font-body text-sm max-md:text-xs px-2 py-1 cursor-pointer transition-colors hover:text-accent"
+          onClick={() => setShowFair(true)}
+          data-testid="provably-fair-button"
+        >
+          Provably Fair
+        </button>
       </div>
 
       {/* Result Overlay */}
