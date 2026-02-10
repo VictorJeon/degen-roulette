@@ -6,10 +6,9 @@ export function LiveFeed() {
   const { feed } = useLiveFeed();
 
   return (
-    <div className="bg-bg-surface border border-border-default rounded-xl p-4 flex flex-col h-full max-h-[680px]" role="log" aria-label="Live game feed" aria-live="polite">
+    <div className="bg-bg-surface border border-border-default p-4 flex flex-col h-full max-h-[680px]" role="log" aria-label="Live game feed" aria-live="polite">
       <div className="flex justify-between items-center mb-3 pb-2 border-b border-border-default">
-        <h3 className="font-display text-sm max-md:text-xs text-accent tracking-wide">LIVE FEED</h3>
-        <span className="font-display text-sm max-md:text-xs text-gray-200">GLOBAL</span>
+        <h3 className="font-display text-sm max-md:text-xs text-accent tracking-wide">RECENT GAMES</h3>
       </div>
 
       <div className="flex-1 overflow-y-auto flex flex-col gap-1.5 scrollbar-thin scrollbar-thumb-gray-400">

@@ -284,7 +284,7 @@ export default function GameBoard() {
         />
       )}
 
-      <div className="flex flex-col items-center gap-3 pt-3 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-5 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-2 max-md:pt-2">
+      <div className="flex flex-col items-center gap-[26px] pt-0 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-5 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-3 max-md:pt-2">
         {/* Result Title or Game Title */}
         {isGameOver ? (
           <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
@@ -293,7 +293,7 @@ export default function GameBoard() {
             {getResultText()}
           </h1>
         ) : (
-          <h1 className="font-pixel text-[1.8rem] text-center text-accent tracking-[0.15em] mb-0.5 max-md:text-base max-md:tracking-[0.08em] max-sm:text-sm">
+          <h1 className="font-pixel text-[2.8rem] text-center text-accent tracking-[0.15em] mb-0 max-md:text-xl max-md:tracking-[0.08em] max-sm:text-lg">
             DEGEN ROULETTE
           </h1>
         )}
@@ -311,13 +311,13 @@ export default function GameBoard() {
         )}
 
         {/* Multiplier Table */}
-        <div className="w-full flex flex-col gap-1 mb-4 max-w-[600px] mx-auto max-md:mb-3" role="group" aria-label="Round multipliers">
+        <div className="w-full flex flex-col gap-1 mb-0 max-w-[600px] mx-auto max-md:mb-0" role="group" aria-label="Round multipliers">
           <div className="grid grid-cols-5 gap-1.5 w-full max-md:gap-1.5">
             {MULTIPLIERS.map((m, idx) => (
               <div
                 key={idx}
                 aria-label={`Round ${idx + 1}: ${m.toFixed(2)}x`}
-                className={`border rounded flex flex-col items-center gap-1 p-3 transition-all max-md:p-2.5 max-sm:p-1 ${
+                className={`border rounded flex flex-col items-center gap-1 py-2 px-1 transition-all max-md:py-1.5 max-md:px-1 max-sm:p-1 ${
                   isActive && gameState.roundsSurvived === idx
                     ? 'border-accent border-2 bg-accent/10 scale-y-[1.15] scale-x-[1.04] z-[2] max-md:scale-y-[1.08] max-md:scale-x-[1.02]'
                     : 'border-border-default bg-bg-surface'
@@ -326,7 +326,7 @@ export default function GameBoard() {
                 <span className={`font-display text-sm max-md:text-xs tracking-wide ${
                   isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-white'
                 }`}>
-                  R{idx + 1}
+                  Round {idx + 1}
                 </span>
                 <span className={`font-body text-sm max-md:text-xs font-bold ${
                   isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-accent'
@@ -349,7 +349,7 @@ export default function GameBoard() {
         )}
 
         {/* Revolver Cylinder */}
-        <div className="relative w-[300px] h-[300px] mx-auto mt-2 mb-2.5 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
+        <div className="relative w-[300px] h-[300px] mx-auto mt-0 mb-0 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
           {/* Barrel indicator */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-9 h-8 pointer-events-none max-md:w-8 max-md:h-7 max-sm:w-7 max-sm:h-6">
             <svg viewBox="0 0 40 36" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.15))' }}>

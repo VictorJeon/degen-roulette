@@ -16,7 +16,7 @@ export default function Leaderboard() {
   return (
     <>
       {/* Hall of Degens */}
-      <div className="bg-bg-surface border border-border-default rounded-xl p-4" role="region" aria-label="Leaderboard">
+      <div className="bg-bg-surface border border-border-default p-4" role="region" aria-label="Leaderboard">
         <h3 className="font-display text-sm max-md:text-xs uppercase text-accent mb-3 pb-2 border-b border-border-default tracking-wide" aria-label="Top players">
           HALL OF DEGENS
         </h3>
@@ -52,7 +52,7 @@ export default function Leaderboard() {
 
       {/* Secondary Rank Section */}
       {rankList.length > 0 && (
-        <div className="bg-bg-surface border border-border-default rounded-xl p-4 border-t-2 border-t-border-default" aria-label="Player rankings">
+        <div className="bg-bg-surface border border-border-default p-4 border-t-2 border-t-border-default" aria-label="Player rankings">
           <h3 className="font-display text-sm max-md:text-xs uppercase text-accent mb-3 pb-2 border-b border-border-default tracking-wide flex items-center gap-1.5">
             <span className="text-sm max-md:text-xs">◇</span>
             RANK

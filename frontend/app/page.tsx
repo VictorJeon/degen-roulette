@@ -8,7 +8,7 @@ export default function Home() {
     <div className="min-h-screen relative">
       <Header />
 
-      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[200px_1fr_220px] xl:grid-cols-[240px_1fr_260px] gap-4 lg:gap-6 px-4 lg:px-6 py-4 max-w-[1700px] mx-auto min-h-[calc(100vh-56px)] relative z-[1]">
+      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[268px_1fr_260px] gap-4 lg:gap-[46px] px-4 lg:px-6 py-4 max-w-[1700px] mx-auto min-h-[calc(100vh-56px)] relative z-[1]">
         {/* Left Sidebar — hidden mobile, below game on tablet, left col on desktop */}
         <aside className="hidden md:flex flex-col gap-3 min-w-0 order-2 lg:order-1">
           <Leaderboard />

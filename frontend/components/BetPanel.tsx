@@ -128,7 +128,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
         onClick={handleStartGame}
         disabled={isLoading}
         aria-label={isLoading ? 'Signing transaction' : connected ? `Bet ${betAmount} SOL and start game` : 'Connect wallet to start'}
-        className="w-full h-12 bg-accent font-display font-bold text-xl text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,65,0.25)] active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none max-md:h-14 max-md:text-lg"
+        className="w-full h-12 bg-accent font-display font-bold text-2xl text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,65,0.25)] active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none max-md:h-14 max-md:text-lg"
         data-testid="start-game-button"
       >
         {isLoading ? 'SIGNING...' : connected ? `BET ${betAmount} SOL` : 'CONNECT WALLET'}
