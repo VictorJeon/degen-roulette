@@ -29,7 +29,7 @@ export function ResultOverlay({
         } ${!won ? 'animate-[shake_0.5s_ease-in-out]' : ''}`}
       >
         <h2
-          className={`font-display text-[2.8rem] m-0 tracking-[6px] max-md:text-2xl max-md:tracking-[3px] max-sm:text-xl max-sm:tracking-[2px] max-[360px]:text-lg ${
+          className={`font-pixel text-[2.8rem] m-0 tracking-[6px] max-md:text-2xl max-md:tracking-[3px] max-sm:text-xl max-sm:tracking-[2px] max-[360px]:text-lg ${
             won ? 'text-accent' : 'text-danger'
           }`}
         >
@@ -40,30 +40,30 @@ export function ResultOverlay({
           {won ? (
             <>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-pixel text-sm max-md:text-xs text-gray-200 tracking-wide">PAYOUT</span>
+                <span className="font-body text-sm max-md:text-xs text-gray-200 tracking-wide">PAYOUT</span>
                 <span className="font-body text-sm max-md:text-xs text-accent">+{payout.toFixed(3)} SOL</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-pixel text-sm max-md:text-xs text-gray-200 tracking-wide">PROFIT</span>
+                <span className="font-body text-sm max-md:text-xs text-gray-200 tracking-wide">PROFIT</span>
                 <span className="font-body text-sm max-md:text-xs text-accent">+{profit.toFixed(3)} SOL</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-pixel text-sm max-md:text-xs text-gray-200 tracking-wide">MULTIPLIER</span>
-                <span className="font-pixel text-sm max-md:text-xs text-white">{multiplier.toFixed(2)}x</span>
+                <span className="font-body text-sm max-md:text-xs text-gray-200 tracking-wide">MULTIPLIER</span>
+                <span className="font-body text-sm max-md:text-xs text-white">{multiplier.toFixed(2)}x</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-pixel text-sm max-md:text-xs text-gray-200 tracking-wide">ROUNDS</span>
+                <span className="font-body text-sm max-md:text-xs text-gray-200 tracking-wide">ROUNDS</span>
                 <span className="font-body text-sm max-md:text-xs text-white">{roundsSurvived}</span>
               </div>
             </>
           ) : (
             <>
               <div className="col-span-2 flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[200px] max-md:min-w-[180px] max-sm:min-w-[160px] justify-self-center">
-                <span className="font-pixel text-sm max-md:text-xs text-gray-200 tracking-wide">DIED AT</span>
+                <span className="font-body text-sm max-md:text-xs text-gray-200 tracking-wide">DIED AT</span>
                 <span className="font-body text-sm max-md:text-xs text-danger">ROUND {roundsSurvived + 1}</span>
               </div>
               <div className="col-span-2 flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[200px] max-md:min-w-[180px] max-sm:min-w-[160px] justify-self-center">
-                <span className="font-pixel text-sm max-md:text-xs text-gray-200 tracking-wide">LOST</span>
+                <span className="font-body text-sm max-md:text-xs text-gray-200 tracking-wide">LOST</span>
                 <span className="font-body text-sm max-md:text-xs text-danger">-{betAmount.toFixed(3)} SOL</span>
               </div>
             </>
@@ -80,7 +80,7 @@ export function ResultOverlay({
 
         {onShowFair && (
           <button
-            className="font-pixel text-sm max-md:text-xs text-gray-100 tracking-wide bg-bg-surface border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded flex items-center gap-1.5 hover:border-accent hover:text-accent"
+            className="font-body text-sm max-md:text-xs text-gray-100 tracking-wide bg-bg-surface border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded flex items-center gap-1.5 hover:border-accent hover:text-accent"
             onClick={onShowFair}
             data-testid="result-provably-fair-button"
           >

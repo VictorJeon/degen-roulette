@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { MIN_BET, MAX_BET } from '@/lib/constants';
 import { getPublicKey } from '@/lib/testMode';
 
@@ -12,7 +13,8 @@ interface BetPanelProps {
 }
 
 export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetPanelProps) {
-  const { publicKey: walletPublicKey } = useWallet();
+  const { publicKey: walletPublicKey, connected } = useWallet();
+  const { setVisible } = useWalletModal();
   const publicKey = getPublicKey(walletPublicKey);
   const [betAmount, setBetAmount] = useState(0.05);
   const [selectedBet, setSelectedBet] = useState(0.05);
@@ -26,6 +28,12 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
   const quickBets = [0.001, 0.01, 0.05, 0.10, 0.25, 0.50];
 
   const handleStartGame = async () => {
+    // If wallet not connected, open wallet modal
+    if (!connected) {
+      setVisible(true);
+      return;
+    }
+
     if (!publicKey) {
       setInstruction('CONNECT WALLET');
       return;
@@ -119,7 +127,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
         className="w-full h-12 bg-accent font-display font-bold text-xl text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,65,0.25)] active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none max-md:h-14 max-md:text-lg"
         data-testid="start-game-button"
       >
-        {isLoading ? 'SIGNING...' : `BET ${betAmount} SOL`}
+        {isLoading ? 'SIGNING...' : connected ? `BET ${betAmount} SOL` : 'CONNECT WALLET'}
       </button>
     </div>
   );

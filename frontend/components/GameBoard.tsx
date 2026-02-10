@@ -8,8 +8,6 @@ import { StatsBar } from './StatsBar';
 import { ResultOverlay } from './ResultOverlay';
 import { MULTIPLIERS } from '@/lib/constants';
 
-// Odds for each round (survival probability display)
-const ROUND_ODDS = ['5/6', '4/5', '3/4', '2/3', '1/2'];
 
 function HowToPlayModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
@@ -26,7 +24,7 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
-        <h3 className="m-0 font-pixel text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
+        <h3 className="m-0 font-display text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
           HOW TO PLAY
         </h3>
         <ol className="m-0 pl-4 text-white leading-[1.85] text-sm max-md:text-xs font-body">
@@ -63,7 +61,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
   return (
     <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
-        <h3 className="m-0 font-pixel text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
+        <h3 className="m-0 font-display text-sm max-md:text-xs text-accent tracking-[2px] text-center pb-2 border-b border-border-default">
           PROVABLY FAIR
         </h3>
         <p className="m-0 text-white leading-relaxed text-sm max-md:text-xs font-body">
@@ -289,13 +287,13 @@ export default function GameBoard() {
       <div className="flex flex-col items-center gap-3 pt-3 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-5 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-2 max-md:pt-2">
         {/* Result Title or Game Title */}
         {isGameOver ? (
-          <h1 className={`font-display text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
+          <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
             gameState.status === 'won' ? 'text-accent' : 'text-danger'
           }`}>
             {getResultText()}
           </h1>
         ) : (
-          <h1 className="font-display text-[1.8rem] text-center text-accent tracking-[0.15em] mb-0.5 max-md:text-base max-md:tracking-[0.08em] max-sm:text-sm">
+          <h1 className="font-pixel text-[1.8rem] text-center text-accent tracking-[0.15em] mb-0.5 max-md:text-base max-md:tracking-[0.08em] max-sm:text-sm">
             DEGEN ROULETTE
           </h1>
         )}
@@ -307,13 +305,13 @@ export default function GameBoard() {
 
         {error && <p className="text-danger font-body text-sm text-center">{error}</p>}
         {actionHint && (
-          <p className="text-accent font-pixel text-sm max-md:text-xs font-bold min-h-[1.5em] text-center tracking-[2px]">
+          <p className="text-accent font-body text-sm max-md:text-xs font-bold min-h-[1.5em] text-center tracking-[2px]">
             {actionHint}
           </p>
         )}
 
-        {/* Multiplier Table with Odds */}
-        <div className="w-full flex flex-col gap-1 mb-2 max-w-[600px] mx-auto max-md:mb-1.5">
+        {/* Multiplier Table */}
+        <div className="w-full flex flex-col gap-1 mb-4 max-w-[600px] mx-auto max-md:mb-3">
           <div className="grid grid-cols-5 gap-1.5 w-full max-md:gap-1.5">
             {MULTIPLIERS.map((m, idx) => (
               <div
@@ -324,30 +322,16 @@ export default function GameBoard() {
                     : 'border-border-default bg-bg-surface'
                 }`}
               >
-                <span className={`font-pixel text-sm max-md:text-xs tracking-wide ${
+                <span className={`font-display text-sm max-md:text-xs tracking-wide ${
                   isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-white'
                 }`}>
                   R{idx + 1}
                 </span>
-                <span className={`font-pixel text-sm max-md:text-xs font-bold ${
+                <span className={`font-body text-sm max-md:text-xs font-bold ${
                   isActive && gameState.roundsSurvived === idx ? 'text-accent' : 'text-accent'
                 }`}>
                   {m.toFixed(2)}x
                 </span>
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-5 gap-1.5 mt-1">
-            {ROUND_ODDS.map((odds, idx) => (
-              <div
-                key={idx}
-                className={`font-body text-center py-1 transition-all text-sm max-md:text-xs ${
-                  isActive && gameState.roundsSurvived === idx
-                    ? 'text-accent'
-                    : 'text-gray-100'
-                }`}
-              >
-                {odds}
               </div>
             ))}
           </div>
@@ -364,7 +348,7 @@ export default function GameBoard() {
         )}
 
         {/* Revolver Cylinder */}
-        <div className="relative w-[300px] h-[300px] mx-auto mb-2.5 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
+        <div className="relative w-[300px] h-[300px] mx-auto mt-2 mb-2.5 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
           {/* Barrel indicator */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-9 h-8 pointer-events-none max-md:w-8 max-md:h-7 max-sm:w-7 max-sm:h-6">
             <svg viewBox="0 0 40 36" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.15))' }}>
@@ -395,8 +379,14 @@ export default function GameBoard() {
             <img
               src="/cylinder-512.png"
               alt="Revolver cylinder"
-              className={`w-full h-full object-contain select-none ${cylinderPhase === 'spinning' ? 'blur-[8px] brightness-[1.3]' : ''}`}
-              style={{ filter: cylinderPhase !== 'spinning' ? 'drop-shadow(0 0 3px rgba(0,255,65,0.12))' : undefined }}
+              className={`w-full h-full object-contain select-none transition-all duration-700 ease-out ${
+                cylinderPhase === 'spinning'
+                  ? 'blur-[8px] brightness-[1.3]'
+                  : !isActive && !isGameOver
+                    ? 'brightness-[0.35] saturate-[0.3]'
+                    : ''
+              }`}
+              style={{ filter: cylinderPhase !== 'spinning' && (isActive || isGameOver) ? 'drop-shadow(0 0 3px rgba(0,255,65,0.12))' : undefined }}
               draggable={false}
             />
 
@@ -466,7 +456,7 @@ export default function GameBoard() {
         {/* Active Game Controls */}
         {isActive && (
           <>
-            <p className="font-pixel text-sm max-md:text-xs text-gray-200 text-center tracking-wide max-md:p-2">
+            <p className="font-body text-sm max-md:text-xs text-gray-200 text-center tracking-wide max-md:p-2">
               {getInstruction()}
             </p>
             <div className="flex flex-col gap-2 items-center">
@@ -496,10 +486,19 @@ export default function GameBoard() {
           </>
         )}
 
-        {/* Sub Actions */}
-        <div className="flex gap-2 mt-3 justify-center max-md:gap-1.5 max-md:mt-2.5 max-md:flex-wrap">
+
+        {/* Settling State */}
+        {isSettling && (
+          <div className="flex flex-col items-center gap-3 mt-3">
+            <div className="w-9 h-9 border-2 border-gray-300 border-t-accent rounded-full animate-spin" />
+            <p className="font-body text-accent text-sm max-md:text-xs tracking-wide">SETTLING...</p>
+          </div>
+        )}
+
+        {/* Footer Links */}
+        <div className="flex gap-2 mt-5 justify-center max-md:gap-1.5 max-md:mt-3 max-md:flex-wrap">
           <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-pixel text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
+            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
             onClick={() => setShowHowTo(true)}
           >
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="opacity-70 max-md:w-[9px] max-md:h-[9px]">
@@ -508,7 +507,7 @@ export default function GameBoard() {
             How to Play
           </button>
           <button
-            className="bg-bg-surface border border-border-default text-gray-100 font-pixel text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
+            className="bg-bg-surface border border-border-default text-gray-100 font-body text-sm max-md:text-xs px-3 py-1.5 rounded cursor-pointer transition-colors flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:px-2.5 max-md:py-1.5 max-md:min-h-[36px] max-sm:px-2 max-sm:py-1"
             onClick={() => setShowFair(true)}
             data-testid="provably-fair-button"
           >
@@ -518,14 +517,6 @@ export default function GameBoard() {
             Provably Fair
           </button>
         </div>
-
-        {/* Settling State */}
-        {isSettling && (
-          <div className="flex flex-col items-center gap-3 mt-3">
-            <div className="w-9 h-9 border-2 border-gray-300 border-t-accent rounded-full animate-spin" />
-            <p className="font-pixel text-accent text-sm max-md:text-xs tracking-wide">SETTLING...</p>
-          </div>
-        )}
       </div>
 
       {/* Result Overlay */}

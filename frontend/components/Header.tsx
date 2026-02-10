@@ -16,7 +16,7 @@ export default function Header({ resultText, showResult }: HeaderProps) {
     <header className="grid grid-cols-[1fr_auto_1fr] items-center h-14 px-5 bg-bg-surface border-b border-border-default relative z-100 max-md:grid-cols-[1fr_auto] max-md:px-2 max-md:h-12">
       <span className="text-xl mr-auto">🎯</span>
       <div className="bg-bg-elevated border border-border-default rounded whitespace-nowrap px-2 py-1.5 max-md:hidden">
-        <span className="font-pixel text-sm max-md:text-xs text-gray-100">Total Plays:</span> <span className="font-body text-sm max-md:text-xs text-accent ml-1">{totalPlays.toLocaleString()}</span>
+        <span className="font-display text-sm max-md:text-xs text-gray-100">TOTAL PLAYS:</span> <span className="font-body text-sm max-md:text-xs text-accent ml-1">{totalPlays.toLocaleString()}</span>
       </div>
 
       {showResult && resultText && showBanner && (

@@ -8,8 +8,8 @@ export function LiveFeed() {
   return (
     <div className="bg-bg-surface border border-border-default rounded-xl p-4 flex flex-col h-full max-h-[680px]">
       <div className="flex justify-between items-center mb-3 pb-2 border-b border-border-default">
-        <h3 className="font-pixel text-sm max-md:text-xs text-accent tracking-wide">LIVE FEED</h3>
-        <span className="font-pixel text-sm max-md:text-xs text-gray-200">GLOBAL</span>
+        <h3 className="font-display text-sm max-md:text-xs text-accent tracking-wide">LIVE FEED</h3>
+        <span className="font-display text-sm max-md:text-xs text-gray-200">GLOBAL</span>
       </div>
 
       <div className="flex-1 overflow-y-auto flex flex-col gap-1.5 scrollbar-thin scrollbar-thumb-gray-400">
@@ -31,7 +31,7 @@ export function LiveFeed() {
               </div>
               <div className="flex items-center gap-1.5">
                 <span
-                  className={`font-pixel text-sm max-md:text-xs px-1.5 py-0.5 rounded-sm tracking-wide ${
+                  className={`font-body text-sm max-md:text-xs px-1.5 py-0.5 rounded-sm tracking-wide ${
                     item.won
                       ? 'text-accent bg-accent/10 border border-accent/30'
                       : 'text-danger bg-danger/10 border border-danger/30'
