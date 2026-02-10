@@ -67,7 +67,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
             key={amount}
             onClick={() => { setBetAmount(amount); setSelectedBet(amount); }}
             disabled={isLoading}
-            className={`flex-1 h-11 font-body text-sm tracking-wide transition-all max-md:h-12 max-md:text-xs ${
+            className={`flex-1 h-9 font-body text-base tracking-wide transition-all max-md:h-10 max-md:text-sm ${
               selectedBet === amount
                 ? 'bg-accent text-bg-primary font-bold border border-accent'
                 : 'bg-bg-elevated text-gray-100 border border-border-default hover:border-gray-300 hover:text-white'
@@ -79,9 +79,9 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
       </div>
 
       {/* ── Custom Amount ── */}
-      <div className="flex items-stretch h-12 w-full border border-border-active bg-bg-primary overflow-hidden max-md:h-14">
+      <div className="flex items-stretch h-10 w-full border border-border-active bg-bg-primary overflow-hidden max-md:h-12">
         <button
-          className="flex items-center justify-center w-11 border-r border-border-active font-body text-base text-gray-100 transition-colors hover:text-accent hover:bg-bg-elevated max-md:w-12"
+          className="flex items-center justify-center w-10 border-r border-border-active font-body text-lg text-gray-100 transition-colors hover:text-accent hover:bg-bg-elevated max-md:w-11"
           onClick={() => setBetAmount(prev => Math.max(MIN_BET, +(prev - 0.001).toFixed(3)))}
           disabled={isLoading}
         >−</button>
@@ -106,7 +106,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
           </span>
         </div>
         <button
-          className="flex items-center justify-center w-11 border-l border-border-active font-body text-base text-gray-100 transition-colors hover:text-accent hover:bg-bg-elevated max-md:w-12"
+          className="flex items-center justify-center w-10 border-l border-border-active font-body text-lg text-gray-100 transition-colors hover:text-accent hover:bg-bg-elevated max-md:w-11"
           onClick={() => setBetAmount(prev => +(prev + 0.001).toFixed(3))}
           disabled={isLoading}
         >+</button>
@@ -116,7 +116,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
       <button
         onClick={handleStartGame}
         disabled={isLoading}
-        className="w-full h-14 bg-accent font-display font-bold text-xl text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,65,0.25)] active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none max-md:h-16 max-md:text-lg"
+        className="w-full h-12 bg-accent font-display font-bold text-xl text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,65,0.25)] active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none max-md:h-14 max-md:text-lg"
         data-testid="start-game-button"
       >
         {isLoading ? 'SIGNING...' : `BET ${betAmount} SOL`}
