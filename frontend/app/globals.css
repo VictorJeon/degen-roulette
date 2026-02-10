@@ -26,15 +26,14 @@
 
   /* ===== TYPOGRAPHY ===== */
 
-  /* 4-Font System
-     Display (Bungee)     → font-display  → titles, CTA, result amounts
-     Pixel   (Silkscreen) → font-pixel    → round labels, multipliers, status text
-     Body    (Space Grotesk) → font-body  → descriptions, form labels, body text
-     Mono    (JetBrains Mono) → font-mono → wallet addresses, TX hashes */
+  /* 3-Font System
+     Display (Bungee)      → font-display → titles, CTA, result amounts
+     Pixel   (Silkscreen)  → font-pixel   → round labels, multipliers, status text
+     Body    (Space Mono)   → font-body   → body text, numbers, addresses, mono */
   --font-display: 'Bungee', sans-serif;
   --font-pixel: 'Silkscreen', monospace;
-  --font-body: 'Space Grotesk', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Space Mono', monospace;
+  --font-mono: 'Space Mono', monospace;
 
   /* Font sizes — pixel font reads ~1.5x larger, so display uses smaller steps */
   --text-3xs: 0.5rem;      /* 8px  — pixel badges, micro labels */

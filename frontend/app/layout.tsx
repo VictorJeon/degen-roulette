@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Silkscreen, Bungee, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Silkscreen, Bungee, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { WalletProviderWrapper } from "@/components/WalletProviderWrapper";
 import { BufferPolyfill } from "@/components/BufferPolyfill";
@@ -17,14 +17,10 @@ const bungee = Bungee({
   variable: "--nf-heading",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--nf-body",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--nf-code",
 });
 
 export const metadata: Metadata = {
@@ -47,7 +43,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${silkscreen.variable} ${bungee.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+      <body className={`${silkscreen.variable} ${bungee.variable} ${spaceMono.variable}`}>
         <BufferPolyfill />
         <WalletProviderWrapper>
           <ErrorReporterInit />
