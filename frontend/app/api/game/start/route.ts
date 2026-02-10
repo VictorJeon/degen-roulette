@@ -66,29 +66,13 @@ export async function POST(request: Request): Promise<NextResponse> {
         AND status = 'pending'
     `;
 
-    // Check for existing started (on-chain confirmed) game within 5 minutes
-    const { rows: active } = await sql`
-      SELECT id FROM games
-      WHERE player_wallet = ${playerWallet}
-        AND status = 'started'
-        AND created_at > NOW() - INTERVAL '5 minutes'
-      LIMIT 1
-    `;
-
-    if (active.length > 0) {
-      return NextResponse.json(
-        { error: 'Active game already exists', gameId: active[0].id },
-        { status: 409 }
-      );
-    }
-
-    // Clean up old started games (>5 minutes) - likely abandoned
+    // Clean up any existing started games — user explicitly starting a new game
+    // means any previous game is abandoned (handles stuck games from failed settlements)
     await sql`
       UPDATE games
       SET status = 'lost'
       WHERE player_wallet = ${playerWallet}
         AND status = 'started'
-        AND created_at <= NOW() - INTERVAL '5 minutes'
     `;
 
     // Generate server seed
