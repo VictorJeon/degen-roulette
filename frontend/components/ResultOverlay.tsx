@@ -40,38 +40,38 @@ export function ResultOverlay({
           {won ? (
             <>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">PAYOUT</span>
-                <span className="font-display text-sm text-accent max-md:text-xs max-sm:text-2xs">+{payout.toFixed(3)} SOL</span>
+                <span className="font-pixel text-sm text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">PAYOUT</span>
+                <span className="font-body text-sm text-accent max-md:text-xs max-sm:text-2xs">+{payout.toFixed(3)} SOL</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">PROFIT</span>
-                <span className="font-display text-sm text-accent max-md:text-xs max-sm:text-2xs">+{profit.toFixed(3)} SOL</span>
+                <span className="font-pixel text-sm text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">PROFIT</span>
+                <span className="font-body text-sm text-accent max-md:text-xs max-sm:text-2xs">+{profit.toFixed(3)} SOL</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">MULTIPLIER</span>
-                <span className="font-display text-sm text-white max-md:text-xs max-sm:text-2xs">{multiplier.toFixed(2)}x</span>
+                <span className="font-pixel text-sm text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">MULTIPLIER</span>
+                <span className="font-body text-sm text-white max-md:text-xs max-sm:text-2xs">{multiplier.toFixed(2)}x</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[120px] max-md:min-w-[100px] max-md:p-2.5 max-sm:min-w-[90px] max-sm:p-2">
-                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">ROUNDS</span>
-                <span className="font-display text-sm text-white max-md:text-xs max-sm:text-2xs">{roundsSurvived}</span>
+                <span className="font-pixel text-sm text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">ROUNDS</span>
+                <span className="font-body text-sm text-white max-md:text-xs max-sm:text-2xs">{roundsSurvived}</span>
               </div>
             </>
           ) : (
             <>
               <div className="col-span-2 flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[200px] max-md:min-w-[180px] max-sm:min-w-[160px] justify-self-center">
-                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">DIED AT</span>
-                <span className="font-display text-sm text-danger max-md:text-xs max-sm:text-2xs">ROUND {roundsSurvived + 1}</span>
+                <span className="font-pixel text-sm text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">DIED AT</span>
+                <span className="font-body text-sm text-danger max-md:text-xs max-sm:text-2xs">ROUND {roundsSurvived + 1}</span>
               </div>
               <div className="col-span-2 flex flex-col items-center gap-1.5 p-3 bg-bg-surface border border-border-default rounded-lg min-w-[200px] max-md:min-w-[180px] max-sm:min-w-[160px] justify-self-center">
-                <span className="font-display text-2xs text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">LOST</span>
-                <span className="font-display text-sm text-danger max-md:text-xs max-sm:text-2xs">-{betAmount.toFixed(3)} SOL</span>
+                <span className="font-pixel text-sm text-gray-200 tracking-wide max-md:text-[0.5rem] max-sm:text-[0.5rem]">LOST</span>
+                <span className="font-body text-sm text-danger max-md:text-xs max-sm:text-2xs">-{betAmount.toFixed(3)} SOL</span>
               </div>
             </>
           )}
         </div>
 
         <button
-          className="font-display text-base px-8 py-4 bg-bg-surface border-2 border-accent rounded text-accent cursor-pointer transition-all uppercase tracking-[5px] mt-2 min-w-[300px] shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5 active:translate-y-0 max-md:text-xs max-md:px-6 max-md:py-3 max-md:tracking-[3px] max-md:min-w-[240px] max-md:min-h-[48px] max-sm:text-2xs max-sm:px-5 max-sm:py-3 max-sm:tracking-[2px] max-sm:min-w-[200px] max-[360px]:text-[0.6rem] max-[360px]:min-w-[180px]"
+          className="font-display font-bold text-base px-8 py-4 bg-bg-surface border-2 border-accent rounded text-accent cursor-pointer transition-all uppercase tracking-[5px] mt-2 min-w-[300px] shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5 active:translate-y-0 max-md:text-xs max-md:px-6 max-md:py-3 max-md:tracking-[3px] max-md:min-w-[240px] max-md:min-h-[48px] max-sm:text-2xs max-sm:px-5 max-sm:py-3 max-sm:tracking-[2px] max-sm:min-w-[200px] max-[360px]:text-[0.6rem] max-[360px]:min-w-[180px]"
           onClick={onNewGame}
           data-testid="play-again-button"
         >
@@ -80,7 +80,7 @@ export function ResultOverlay({
 
         {onShowFair && (
           <button
-            className="font-display text-[0.625rem] text-gray-100 tracking-wide bg-bg-surface border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:text-[0.5rem] max-sm:text-[0.5rem]"
+            className="font-pixel text-sm text-gray-100 tracking-wide bg-bg-surface border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded flex items-center gap-1.5 hover:border-accent hover:text-accent max-md:text-[0.5rem] max-sm:text-[0.5rem]"
             onClick={onShowFair}
             data-testid="result-provably-fair-button"
           >
