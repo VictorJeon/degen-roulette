@@ -26,10 +26,10 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
-        <h3 className="m-0 font-pixel text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
+        <h3 className="m-0 font-display text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
           HOW TO PLAY
         </h3>
-        <ol className="m-0 pl-4 text-white leading-[1.85] text-sm font-body max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
+        <ol className="m-0 pl-4 text-white leading-[1.85] text-sm font-sans max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
           <li className="mb-1.5">Enter BET amount and click START</li>
           <li className="mb-1.5">Select a chamber to load the bullet</li>
           <li className="mb-1.5">Cylinder spins → bullet position hidden</li>
@@ -38,7 +38,7 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
           <li className="mb-1.5">CASH OUT anytime to collect winnings</li>
         </ol>
         <button
-          className="font-pixel text-sm text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
+          className="font-display text-2xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
@@ -63,10 +63,10 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
   return (
     <div className="fixed inset-0 bg-black/88 z-[1400] flex items-center justify-center" onClick={onClose}>
       <div className="w-[min(580px,92vw)] bg-bg-elevated border border-border-default rounded-xl p-6 flex flex-col gap-3.5 max-md:w-[calc(100vw-2rem)] max-md:p-5" onClick={(e) => e.stopPropagation()}>
-        <h3 className="m-0 font-pixel text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
+        <h3 className="m-0 font-display text-sm text-accent tracking-[2px] text-center pb-2 border-b border-border-default max-md:text-xs">
           PROVABLY FAIR
         </h3>
-        <p className="m-0 text-white leading-relaxed text-sm font-body max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
+        <p className="m-0 text-white leading-relaxed text-sm font-sans max-md:text-[0.82rem] max-md:leading-[1.7] max-sm:text-[0.78rem]">
           At game start, a seed hash is committed on-chain. After settlement, the server seed is revealed for verification.
         </p>
         {gameId && <p className="m-0 font-mono text-xs text-gray-100">Game ID: {gameId}</p>}
@@ -81,7 +81,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
           <p className="m-0 font-mono text-xs text-gray-100">Seed will be revealed after settlement.</p>
         )}
         <button
-          className="font-pixel text-sm text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
+          className="font-display text-2xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:text-xs max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
