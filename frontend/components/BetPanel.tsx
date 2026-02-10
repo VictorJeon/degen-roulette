@@ -60,25 +60,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
         </p>
       )}
 
-      {/* ── Quick Bets — individual buttons with gaps ── */}
-      <div className="flex gap-2 w-full max-md:gap-1.5">
-        {quickBets.map((amount) => (
-          <button
-            key={amount}
-            onClick={() => { setBetAmount(amount); setSelectedBet(amount); }}
-            disabled={isLoading}
-            className={`flex-1 h-9 font-body text-base tracking-wide transition-all max-md:h-10 max-md:text-sm ${
-              selectedBet === amount
-                ? 'bg-accent text-bg-primary font-bold border border-accent'
-                : 'bg-bg-elevated text-gray-100 border border-border-default hover:border-gray-300 hover:text-white'
-            }`}
-          >
-            {amount}
-          </button>
-        ))}
-      </div>
-
-      {/* ── Custom Amount ── */}
+      {/* ── Custom Amount (input first) ── */}
       <div className="flex items-stretch h-10 w-full border border-border-active bg-bg-primary overflow-hidden max-md:h-12">
         <button
           className="flex items-center justify-center w-10 border-r border-border-active font-body text-lg text-gray-100 transition-colors hover:text-accent hover:bg-bg-elevated max-md:w-11"
@@ -110,6 +92,24 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
           onClick={() => setBetAmount(prev => +(prev + 0.001).toFixed(3))}
           disabled={isLoading}
         >+</button>
+      </div>
+
+      {/* ── Quick Bets ── */}
+      <div className="flex gap-2 w-full max-md:gap-1.5">
+        {quickBets.map((amount) => (
+          <button
+            key={amount}
+            onClick={() => { setBetAmount(amount); setSelectedBet(amount); }}
+            disabled={isLoading}
+            className={`flex-1 h-9 font-body text-base tracking-wide transition-all max-md:h-10 max-md:text-sm ${
+              selectedBet === amount
+                ? 'bg-accent text-bg-primary font-bold border border-accent'
+                : 'bg-bg-elevated text-gray-100 border border-border-default hover:border-gray-300 hover:text-white'
+            }`}
+          >
+            {amount}
+          </button>
+        ))}
       </div>
 
       {/* ── CTA ── */}
