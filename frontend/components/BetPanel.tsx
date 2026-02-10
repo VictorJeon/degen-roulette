@@ -116,7 +116,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
         <button
           onClick={handleStartGame}
           disabled={isLoading}
-          className="w-full h-14 bg-accent font-display text-lg text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 max-md:h-16 max-md:text-base"
+          className="w-full h-14 bg-accent font-display font-bold text-lg text-bg-primary tracking-[0.08em] uppercase transition-all hover:brightness-110 hover:-translate-y-px active:translate-y-0 active:brightness-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0 max-md:h-16 max-md:text-base"
           data-testid="start-game-button"
         >
           {isLoading ? 'SIGNING...' : `BET ${betAmount} SOL`}

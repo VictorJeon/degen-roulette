@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Silkscreen, Bungee, Space_Mono } from "next/font/google";
+import { Silkscreen, Chakra_Petch, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { WalletProviderWrapper } from "@/components/WalletProviderWrapper";
 import { BufferPolyfill } from "@/components/BufferPolyfill";
@@ -11,8 +11,8 @@ const silkscreen = Silkscreen({
   variable: "--nf-pixel",
 });
 
-const bungee = Bungee({
-  weight: "400",
+const chakraPetch = Chakra_Petch({
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--nf-heading",
 });
@@ -43,7 +43,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${silkscreen.variable} ${bungee.variable} ${spaceMono.variable}`}>
+      <body className={`${silkscreen.variable} ${chakraPetch.variable} ${spaceMono.variable}`}>
         <BufferPolyfill />
         <WalletProviderWrapper>
           <ErrorReporterInit />
