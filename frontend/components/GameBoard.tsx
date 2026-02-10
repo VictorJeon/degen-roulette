@@ -284,7 +284,7 @@ export default function GameBoard() {
         />
       )}
 
-      <div className="flex flex-col items-center gap-4 pt-4 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-6 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:p-3 max-md:max-w-full max-md:gap-3 max-md:pt-2">
+      <div className="flex flex-col items-center gap-5 pt-4 w-full max-w-[680px] bg-bg-surface border border-border-default rounded-xl p-6 max-md:bg-transparent max-md:border-none max-md:shadow-none max-md:px-5 max-md:py-3 max-md:max-w-[360px] max-md:gap-4 max-md:pt-2 max-sm:max-w-[340px] max-sm:px-4">
         {/* Result Title or Game Title */}
         {isGameOver ? (
           <h1 className={`font-pixel text-[2.8rem] text-center tracking-[0.25em] mb-0.5 max-md:text-2xl max-md:tracking-[0.15em] max-sm:text-xl max-[360px]:text-lg ${
@@ -311,7 +311,7 @@ export default function GameBoard() {
         )}
 
         {/* Multiplier Table */}
-        <div className="w-full flex flex-col gap-1 mb-4 max-w-[600px] mx-auto max-md:mb-3">
+        <div className="w-full flex flex-col gap-1 mb-2 max-w-[600px] mx-auto max-md:mb-1">
           <div className="grid grid-cols-5 gap-1.5 w-full max-md:gap-1.5">
             {MULTIPLIERS.map((m, idx) => (
               <div
@@ -348,7 +348,7 @@ export default function GameBoard() {
         )}
 
         {/* Revolver Cylinder */}
-        <div className="relative w-[300px] h-[300px] mx-auto mt-2 mb-2.5 max-md:w-[min(300px,75vw)] max-md:h-[min(300px,75vw)] max-sm:w-[min(260px,70vw)] max-sm:h-[min(260px,70vw)] max-[360px]:w-[min(220px,60vw)] max-[360px]:h-[min(220px,60vw)]">
+        <div className="relative w-[280px] h-[280px] mx-auto mt-4 mb-4 max-md:w-[min(260px,65vw)] max-md:h-[min(260px,65vw)] max-md:mt-2 max-md:mb-2 max-sm:w-[min(230px,60vw)] max-sm:h-[min(230px,60vw)] max-[360px]:w-[min(200px,55vw)] max-[360px]:h-[min(200px,55vw)]">
           {/* Barrel indicator */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-9 h-8 pointer-events-none max-md:w-8 max-md:h-7 max-sm:w-7 max-sm:h-6">
             <svg viewBox="0 0 40 36" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.15))' }}>
