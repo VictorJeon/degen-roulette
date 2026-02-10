@@ -215,34 +215,35 @@ Tailwind 유틸리티 클래스로 자동 매핑:
 - 텍스트 전체에 `text-shadow` 네온
 - 배경 요소에 네온 글로우
 
-### Typography
+### 3-Font System (2026-02-10 확정)
 ```
-/* === Fonts === */
---pixel-font:  'Press Start 2P', monospace   /* 로고, 배팅금액, 결과, 라운드 숫자 */
---body-font:   'Space Grotesk', sans-serif    /* 나머지 전부 */
+/* === 3 Fonts === */
+--font-display: 'Chakra Petch', sans-serif   /* 타이틀, CTA, 결과 금액 — 임팩트 */
+--font-pixel:   'Silkscreen', monospace      /* 라운드 라벨, 멀티플라이어, 섹션 헤더, 상태 텍스트 — 레트로 아이덴티티 */
+--font-body:    'Space Mono', monospace      /* 본문, 숫자, 주소, 설명 — 가독성 */
+--font-mono:    'Space Mono', monospace      /* = font-body (주소/해시용 alias) */
 ```
 
-| 용도 | 폰트 | 사이즈 | 비고 |
-|------|-------|--------|------|
-| 로고 "DEGEN ROULETTE" | pixel | 0.8rem | 헤더 |
-| 배팅 금액 (인풋) | pixel | 1.2-1.5rem | 중앙 강조 |
-| 결과 금액 "+0.5 SOL" | pixel | 1.8-2.5rem | 가장 큰 텍스트 |
-| 라운드 카운터 "R3" | pixel | 0.7-0.8rem | |
-| 배율 "2.91x" | pixel | 0.6-0.8rem | |
-| 프리셋 버튼 "0.1" | body (semibold) | 0.65-0.75rem | |
-| 설명/라벨 | body | 0.5-0.6rem | |
-| 지갑 주소 | body (mono fallback) | 0.4-0.5rem | truncated |
+| Tailwind Class | Font | 용도 |
+|----------------|------|------|
+| `font-display` | Chakra Petch | "DEGEN ROULETTE" 타이틀, CTA 버튼 (font-bold 필수), 결과 금액 |
+| `font-pixel` | Silkscreen | "LIVE FEED", "HALL OF DEGENS", R1-R5, 멀티플라이어, SOL 라벨, WIN/LOSS 배지 |
+| `font-body` | Space Mono | 퀵벳 숫자, 인풋 값, 주소, 설명 텍스트, 풋터 링크 |
+| `font-mono` | Space Mono | 지갑 주소, TX 해시, seed (font-body와 동일 폰트) |
 
-**font-size 정리 원칙**: 현재 20종+ → **8단계 스케일**로 통합
-```
---text-3xs:  0.38rem   /* 6px  — 극소 라벨 */
---text-2xs:  0.45rem   /* 7px  — 미세 텍스트 */
---text-xs:   0.5rem    /* 8px  — 보조 정보, 지갑주소 */
---text-sm:   0.6rem    /* 10px — 라벨, 설명 */
---text-base: 0.75rem   /* 12px — 본문 기본 */
---text-md:   0.85rem   /* 14px — 강조 본문 */
---text-lg:   1.2rem    /* 19px — 배팅 금액, 섹션 타이틀 */
---text-xl:   1.8rem    /* 29px — 결과 금액, 히어로 */
+### Font Size Rules
+- **데스크탑 최소: 14px (text-sm)**. text-2xs(10px), text-[0.5rem](8px) 데스크탑 사용 금지.
+- 모바일은 `max-md:` 프리픽스로 1단계 작게: `text-sm max-md:text-xs`
+- **모든 폰트 사이즈에 반응형 브레이크포인트 프리픽스 적용** (max-md: 필수)
+
+### Responsive Pattern
+```tsx
+// ✅ Good — breakpoint prefix로 데스크탑/모바일 분리
+className="text-base max-md:text-sm"
+className="h-10 max-md:h-12"  // 모바일 터치 타겟 더 크게
+
+// ❌ Bad — 고정 사이즈
+className="text-sm"  // 모바일에서 너무 크거나 작을 수 있음
 ```
 
 ### Spacing (8px grid)
@@ -289,28 +290,36 @@ Tailwind 유틸리티 클래스로 자동 매핑:
 - CSS 회전 애니메이션 기존 로직 유지
 - **교체하지 마라** — 이 이미지가 브랜드 아이덴티티
 
-### Component Patterns
+### Component Patterns (BetPanel 기준 — 2026-02-10 Mason 승인)
+
+**레이아웃 순서**: 입력창(커스텀 금액) → 퀵벳 → CTA
+**Sharp corners**: border-radius 없음 (wallet adapter만 예외)
+**패딩**: 텍스트가 박스를 채워야 함. 빈 공간 최소화.
+
 **CTA 버튼 (BET/PULL TRIGGER)**:
-- `border: 2-3px solid var(--neon)`
-- `box-shadow: 0 0 15-20px var(--neon-glow-soft)` — 유일한 강한 글로우
-- `:hover` → 글로우 강화
-- `:disabled` → `border-color: var(--text-muted)`, 글로우 제거
+- `bg-accent font-display font-bold text-xl text-bg-primary`
+- `hover:brightness-110 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,65,0.25)]`
+- h-12 데스크탑, h-14 모바일
+- `:disabled` → `opacity-30 cursor-not-allowed`
+
+**퀵벳 버튼**:
+- 개별 버튼 (연결 X), `gap-2` 사이 갭
+- 선택됨: `bg-accent text-bg-primary font-bold border border-accent`
+- 미선택: `bg-bg-elevated text-gray-100 border border-border-default hover:border-gray-300`
+- h-9 데스크탑, h-10 모바일
+
+**인풋 스트립**: [−] [  0.05 SOL  ] [+]
+- `border border-border-active bg-bg-primary`
+- SOL: absolute right suffix, `font-pixel text-xs text-gray-300`
+- −/+ 버튼: `w-10 font-body text-lg hover:text-accent hover:bg-bg-elevated`
+- h-10 데스크탑, h-12 모바일
 
 **일반 패널/카드**:
-- `background: var(--bg-secondary)` 또는 `var(--bg-panel)`
-- `border: 1px solid var(--border-dim)` — 약한 네온, 글로우 없음
-- `border-radius: var(--radius-md)` (6px)
-- `padding: var(--space-3)~var(--space-4)`
+- `bg-bg-surface border border-border-default`
+- 글로우 없음 (CTA만 글로우)
 
-**프리셋 베팅 버튼**:
-- `background: var(--bg-tertiary)`
-- `border: 1px solid var(--border-dim)`
-- `.active` → `border-color: var(--neon)`, `color: var(--neon)`, 배경 미세 틴트
-
-**인풋 필드**:
-- `background: var(--bg-primary)`
-- `border: 1px solid var(--border-dim)`
-- `:focus` → `border-color: var(--neon)`, outline 제거
+**선택/활성 상태**:
+- accent 그린 fill (`bg-accent text-bg-primary`) — 명확한 반전
 
 ### 배경 정리
 - `body::before` 그리드 패턴 → 제거 또는 극히 미세하게
