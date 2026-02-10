@@ -71,7 +71,7 @@ export function ResultOverlay({
         </div>
 
         <button
-          className="font-display text-base px-8 py-4 bg-bg-surface border-2 border-accent rounded text-accent cursor-pointer transition-all uppercase tracking-[5px] mt-2 min-w-[300px] shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5 active:translate-y-0 max-md:text-xs max-md:px-6 max-md:py-3 max-md:tracking-[3px] max-md:min-w-[240px] max-md:min-h-[48px] max-sm:text-2xs max-sm:px-5 max-sm:py-3 max-sm:tracking-[2px] max-sm:min-w-[200px] max-[360px]:text-[0.6rem] max-[360px]:min-w-[180px]"
+          className="font-display text-base px-8 py-4 bg-bg-surface border-2 border-accent rounded text-accent cursor-pointer transition-all uppercase tracking-[5px] mt-2 min-w-[300px] shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5 active:translate-y-0 max-md:text-xs max-md:px-6 max-md:py-3 max-md:tracking-[3px] max-md:min-w-[240px] max-md:min-h-[48px] max-sm:text-xs max-sm:px-5 max-sm:py-3 max-sm:tracking-[2px] max-sm:min-w-[200px] max-[360px]:min-w-[180px]"
           onClick={onNewGame}
           data-testid="play-again-button"
         >

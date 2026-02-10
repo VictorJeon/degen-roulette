@@ -473,7 +473,7 @@ export default function GameBoard() {
               <button
                 onClick={handlePullTrigger}
                 disabled={!triggerReady}
-                className={`font-display text-sm px-9 py-4 border-2 rounded cursor-pointer transition-all uppercase tracking-[0.12em] max-md:w-full max-md:min-h-[48px] max-md:text-xs max-md:px-6 max-md:py-3.5 max-md:tracking-[0.08em] max-sm:text-2xs max-sm:px-5 max-sm:py-3 max-[360px]:text-[0.5rem] ${
+                className={`font-display text-sm px-9 py-4 border-2 rounded cursor-pointer transition-all uppercase tracking-[0.12em] max-md:w-full max-md:min-h-[48px] max-md:text-xs max-md:px-6 max-md:py-3.5 max-md:tracking-[0.08em] max-sm:text-xs max-sm:px-5 max-sm:py-3 ${
                   gameState.roundsSurvived >= 3
                     ? 'border-danger text-danger bg-bg-surface animate-pulse'
                     : 'border-accent text-accent bg-bg-surface shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:bg-bg-elevated hover:shadow-[0_0_30px_rgba(0,255,65,0.25)] hover:-translate-y-0.5'
