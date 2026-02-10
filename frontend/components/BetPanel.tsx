@@ -63,7 +63,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
     <div className={`flex flex-col items-center w-full max-w-[460px] mx-auto gap-3 max-md:px-4 ${shakeBetting ? 'animate-shake' : ''}`}>
       {/* Error / instruction */}
       {instruction && (
-        <p className="font-pixel text-sm text-danger text-center tracking-wide max-md:text-xs">
+        <p className="font-body text-sm text-danger text-center tracking-wide max-md:text-xs">
           {instruction}
         </p>
       )}
@@ -91,7 +91,7 @@ export default function BetPanel({ startGame, isLoading, onShowFairModal }: BetP
             className="w-full h-full bg-transparent px-4 pr-14 font-body text-lg text-white text-center outline-none max-md:text-base"
             data-testid="bet-amount-input"
           />
-          <span className="absolute right-4 font-pixel text-xs text-gray-300 pointer-events-none">
+          <span className="absolute right-4 font-body text-xs text-gray-300 pointer-events-none">
             SOL
           </span>
         </div>

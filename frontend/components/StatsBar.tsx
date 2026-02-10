@@ -17,7 +17,7 @@ export function StatsBar({ betAmount, currentMultiplier, potentialWin, roundsSur
       <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center">
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">BET</span>
         <span className="font-body text-sm max-md:text-xs text-white">{betAmount.toFixed(3)}</span>
-        <span className="font-pixel text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
+        <span className="font-body text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
       </div>
       <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center">
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">MULTIPLIER</span>
@@ -26,7 +26,7 @@ export function StatsBar({ betAmount, currentMultiplier, potentialWin, roundsSur
       <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-border-default rounded-lg p-2 text-center">
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">POTENTIAL WIN</span>
         <span className="font-body text-sm max-md:text-xs text-accent">{potentialWin.toFixed(3)}</span>
-        <span className="font-pixel text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
+        <span className="font-body text-sm max-md:text-xs text-gray-300 -mt-0.5">SOL</span>
       </div>
       <div className="flex flex-col items-center gap-0.5 bg-bg-surface border border-danger/30 rounded-lg p-2 text-center">
         <span className="font-display text-sm max-md:text-xs text-gray-200 tracking-wide">DEATH %</span>

@@ -36,7 +36,7 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
           <li className="mb-1.5">CASH OUT anytime to collect winnings</li>
         </ol>
         <button
-          className="font-pixel text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
+          className="font-body text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
@@ -79,7 +79,7 @@ function FairModal({ serverSeed, gameId, onClose }: { serverSeed: string | null;
           <p className="m-0 font-mono text-sm max-md:text-xs text-gray-100">Seed will be revealed after settlement.</p>
         )}
         <button
-          className="font-pixel text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
+          className="font-body text-sm max-md:text-xs text-accent tracking-wide bg-transparent border border-border-default px-3 py-1.5 cursor-pointer transition-colors rounded hover:border-accent max-md:px-3.5 max-md:py-2"
           onClick={onClose}
         >
           Close
